@@ -14,20 +14,22 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
-/*-
- * File containing tunable settings for every subsystem on the robot.
- *
- * We use StuyLib's SmartNumber / SmartBoolean in order to have tunable
- * values that we can edit on Shuffleboard.
- */
 public interface Settings {
 
     double DT = 0.020;
     boolean DEBUG_MODE = true;
-    CANBus canBus3 = new CANBus("");
+    CANBus CANIVORE = new CANBus("DEFAULT_NAME", "./logs/example.hoot");
 
     public interface EnabledSubsystems {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
+    }
+
+    public interface Intake {
+
+    }
+
+    public interface Shooter {
+        
     }
 
     public interface Swerve {
