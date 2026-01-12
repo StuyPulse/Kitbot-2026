@@ -29,7 +29,8 @@ public interface Settings {
     }
 
     public interface Shooter {
-        
+        double SHOOTER_SHOOT_SPEED = 1.0;
+        double SHOOTER_INTAKE_SPEED = -1.0;
     }
 
     public interface Swerve {
