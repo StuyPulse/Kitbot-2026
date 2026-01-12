@@ -12,4 +12,8 @@ public interface Ports {
         int OPERATOR = 1;
         int DEBUGGER = 2;
     }
+
+    public interface Shooter {
+        int shooterMotor = 3; // this should be the port number in which the shooter is plugged to, replace 3
+    }
 }
