@@ -24,11 +24,7 @@ public interface Settings {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
     }
 
-    public interface Intake {
-
-    }
-
-    public interface Shooter {
+    public interface Superstructure {
         
     }
 
