@@ -9,6 +9,7 @@ package com.stuypulse.robot.subsystems.swerve;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.constants.Settings;
 
 import edu.wpi.first.math.Matrix;
@@ -134,10 +135,10 @@ public class TunerConstants {
 
 
     // Front Left (Module 0)
-    private static final int kFrontLeftDriveMotorId = 13;
-    private static final int kFrontLeftSteerMotorId = 12;
-    private static final int kFrontLeftEncoderId = 2;
-    private static final Angle kFrontLeftEncoderOffset = Rotations.of(Units.degreesToRotations(1.757812));
+    private static final int kFrontLeftDriveMotorId = Ports.Swerve.Drive.FRONT_LEFT;
+    private static final int kFrontLeftSteerMotorId = Ports.Swerve.Turn.FRONT_LEFT;
+    private static final int kFrontLeftEncoderId = Ports.Swerve.CANCoderIds.FRONT_LEFT;
+    private static final Angle kFrontLeftEncoderOffset = Rotations.of(Units.degreesToRotations(Settings.Swerve.Encoder_Offsets.FRONT_LEFT_OFFSET));
     private static final boolean kFrontLeftSteerMotorInverted = true;
     private static final boolean kFrontLeftEncoderInverted = false;
 
@@ -145,10 +146,10 @@ public class TunerConstants {
     private static final Distance kFrontLeftYPos = Inches.of(12);
 
     // Front Right (Module 1)
-    private static final int kFrontRightDriveMotorId = 15;
-    private static final int kFrontRightSteerMotorId = 14;
-    private static final int kFrontRightEncoderId = 3;
-    private static final Angle kFrontRightEncoderOffset = Rotations.of(Units.degreesToRotations(233.964844));
+    private static final int kFrontRightDriveMotorId = Ports.Swerve.Drive.FRONT_RIGHT;
+    private static final int kFrontRightSteerMotorId = Ports.Swerve.Turn.FRONT_RIGHT;
+    private static final int kFrontRightEncoderId = Ports.Swerve.CANCoderIds.FRONT_RIGHT;
+    private static final Angle kFrontRightEncoderOffset = Rotations.of(Units.degreesToRotations(Settings.Swerve.Encoder_Offsets.FRONT_RIGHT_OFFSET));
     private static final boolean kFrontRightSteerMotorInverted = true;
     private static final boolean kFrontRightEncoderInverted = false;
 
@@ -156,10 +157,10 @@ public class TunerConstants {
     private static final Distance kFrontRightYPos = Inches.of(-12);
 
     // Back Left (Module 2)
-    private static final int kBackLeftDriveMotorId = 11;
-    private static final int kBackLeftSteerMotorId = 10;
-    private static final int kBackLeftEncoderId = 1;
-    private static final Angle kBackLeftEncoderOffset = Rotations.of(Units.degreesToRotations(62.359375));
+    private static final int kBackLeftDriveMotorId = Ports.Swerve.Drive.BACK_LEFT;
+    private static final int kBackLeftSteerMotorId = Ports.Swerve.Turn.BACK_LEFT;
+    private static final int kBackLeftEncoderId = Ports.Swerve.CANCoderIds.BACK_LEFT;
+    private static final Angle kBackLeftEncoderOffset = Rotations.of(Units.degreesToRotations(Settings.Swerve.Encoder_Offsets.BACK_LEFT_OFFSET));
     private static final boolean kBackLeftSteerMotorInverted = true;
     private static final boolean kBackLeftEncoderInverted = false;
 
@@ -167,10 +168,10 @@ public class TunerConstants {
     private static final Distance kBackLeftYPos = Inches.of(12);
 
     // Back Right (Module 3)
-    private static final int kBackRightDriveMotorId = 17;
-    private static final int kBackRightSteerMotorId = 16;
-    private static final int kBackRightEncoderId = 4;
-    private static final Angle kBackRightEncoderOffset = Rotations.of(Units.degreesToRotations(-51.152344));
+    private static final int kBackRightDriveMotorId = Ports.Swerve.Drive.BACK_RIGHT;
+    private static final int kBackRightSteerMotorId = Ports.Swerve.Turn.BACK_RIGHT;
+    private static final int kBackRightEncoderId = Ports.Swerve.CANCoderIds.BACK_RIGHT;
+    private static final Angle kBackRightEncoderOffset = Rotations.of(Units.degreesToRotations(Settings.Swerve.Encoder_Offsets.BACK_RIGHT_OFFSET));
     private static final boolean kBackRightSteerMotorInverted = true;
     private static final boolean kBackRightEncoderInverted = false;
 

@@ -24,17 +24,27 @@ public interface Settings {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
     }
 
-    public interface Intake {
-
+    public interface Intake_Shooter {
+        double INTAKE_SPEED = 0.5;
+        double OUTTAKE_SPEED = -0.5;
+        double SHOOT_SPEED = 1;
     }
 
-    public interface Shooter {
-        
+    public interface Indexer {
+        double INTAKE_OUTTAKE_SPEED = 1.0;
+        double SHOOT_SPEED = -1.0;
     }
 
     public interface Swerve {
         double MODULE_VELOCITY_DEADBAND_M_PER_S = 0.1;
         double ROTATIONAL_DEADBAND_RAD_PER_S = 0.1;
+
+        public interface Encoder_Offsets {
+            double FRONT_LEFT_OFFSET = 1.757812;
+            double FRONT_RIGHT_OFFSET = 233.964844;
+            double BACK_LEFT_OFFSET = 62.359375;
+            double BACK_RIGHT_OFFSET = -51.152344;
+        }
         
         public interface Constraints {    
             double MAX_VELOCITY_M_PER_S = 4.3;
