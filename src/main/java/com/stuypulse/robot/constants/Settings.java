@@ -24,14 +24,7 @@ public interface Settings {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
     }
 
-    public interface Intake {
-
-    }
-
-    public interface Shooter {
-        double SHOOTER_SHOOT_SPEED = 1.0;
-        double SHOOTER_INTAKE_SPEED = -1.0;
-    }
+    public interface Superstructure {}
 
     public interface Swerve {
         double MODULE_VELOCITY_DEADBAND_M_PER_S = 0.1;
