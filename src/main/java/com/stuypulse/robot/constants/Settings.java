@@ -24,7 +24,33 @@ public interface Settings {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
     }
 
-    public interface Superstructure {}
+    public interface Superstructure {
+        public interface Intake_Shooter_Speeds {
+            // states we have
+            // intaking <
+            // outtaking <
+            // preparing to shoot (we dont need additional values for this, we'll just run the shooter to speed while not touching the indexer)
+            // shooting <
+            // we dont need anything for STOP because its 0, 0
+
+            // TODO: find acutal values for these
+            double INTAKE_SPEED = 0.5;
+            double OUTTAKE_SPEED = -0.5;
+            double SHOOTING_SPEED = 1;
+            
+            // TODO: Tune ts
+            double SHOOT_TOLERANCE_RPM = 50.0;
+        }
+
+        public interface Indexer_Speeds {
+            // for the indexer we really only need it to run in one direction or the other, 
+            // we don't need anything in between. 
+            // you can have one value for when youre intaking
+            // and another for when you are outtaking, whether through the shooter or back out through the intake
+            double INTAKE_SPEED = 1;
+            double OUTTAKE_SPEED = -1;
+        }
+    }
 
     public interface Swerve {
         double MODULE_VELOCITY_DEADBAND_M_PER_S = 0.1;
