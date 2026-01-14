@@ -40,4 +40,18 @@ public class Superstructure extends SubsystemBase {
             return this.indexer_speed.doubleValue();
         }
     }
+
+    protected SuperstructureState state;
+
+    protected Superstructure() {
+        this.state = SuperstructureState.STOP;
+    }
+
+    public SuperstructureState getState() {
+        return state;
+    }
+
+    public void setState(SuperstructureState state) {
+        this.state = state;
+    }
 }
