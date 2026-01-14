@@ -38,8 +38,8 @@ public interface Settings {
         }
 
         public interface Indexer {
-            double INTAKE_OUTTAKE_SPEED = 1.0;
-            double SHOOT_SPEED = -1.0;
+            double INTAKE_SPEED = 1.0;
+            double OUTTAKE_SPEED = -1.0;
         }
     }
 
