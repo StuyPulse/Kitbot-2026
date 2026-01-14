@@ -13,7 +13,8 @@ public interface Ports {
         int DEBUGGER = 2;
     }
 
-    public interface Shooter {
-        int shooterMotor = 3; // this should be the port number in which the shooter is plugged to, replace 3
+    public interface Superstructure {
+        int intakeShooterMotor = 3; // this should be the port number in which the shooter is plugged to, replace 3
+        int indexerMotor = 2;
     }
 }
