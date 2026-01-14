@@ -12,4 +12,9 @@ public interface Ports {
         int OPERATOR = 1;
         int DEBUGGER = 2;
     }
+
+    public interface Superstructure {
+        int INTAKE_MOTOR_PORT = 0;
+        int INDEXER_MOTOR_PORT = 0;
+    }
 }

@@ -25,7 +25,14 @@ public interface Settings {
     }
 
     public interface Superstructure {
-        
+        double SHOOTING_INTAKE_SHOOTER_SPEED = 0.0;
+        double SHOOTING_INDEXER_SPEED = 0.0;
+
+        double INTAKING_INTAKE_SHOOTER_SPEED = 0.0;
+        double INTAKING_INDEXER_SPEED = 0.0;
+
+        double OUTTAKING_INTAKE_SHOOTER_SPEED = 0.0;
+        double OUTTAKING_INDEXER_SPEED = 0.0;
     }
 
     public interface Swerve {
