@@ -25,6 +25,9 @@ public interface Settings {
     }
 
     public interface Superstructure {
+        boolean intakeShooterInverted = false;
+        boolean indexerInverted = false;
+
         public interface Intake_Shooter_Speeds {
             // states we have
             // intaking <

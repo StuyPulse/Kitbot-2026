@@ -13,7 +13,9 @@ public interface Ports {
         int DEBUGGER = 2;
     }
 
-    public interface Shooter {
-        int MOTOR = 20;
+    public interface Superstructure {
+        // TODO: Find real ports for ts
+        int INTAKE_SHOOTER_MOTOR = 20;
+        int INDEXER_MOTOR = 21;
     }
 }
