@@ -19,13 +19,22 @@ public interface Settings {
     double DT = 0.020;
     boolean DEBUG_MODE = true;
     CANBus CANIVORE = new CANBus("DEFAULT_NAME", "./logs/example.hoot");
+    String KRAKEN_NAME = "PLACEHOLDER";
+
 
     public interface EnabledSubsystems {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
     }
 
     public interface Superstructure {
-        
+        double SHOOTERINTAKE_STOP = 0;
+        double SHOOTERINTAKE_SHOOT = -1;
+        double SHOOTERINTAKE_OUTTAKE = -1;
+        double SHOOTERINTAKE_INTAKE = 1;
+        double INDEXER_STOP = 0;
+        double INDEXER_SHOOT = 1;
+        double INDEXER_OUTTAKE = 1; // to output from the ground intake again.
+        double INDEXER_INTAKE = 1;
     }
 
     public interface Swerve {
@@ -72,6 +81,7 @@ public interface Settings {
             public interface Targets {
             }
         }
+
     }
    
 
