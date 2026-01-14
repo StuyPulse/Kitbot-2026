@@ -20,7 +20,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.config.SparkMaxConfig;
 
 /*-
  * File containing all of the configurations that different motors require.
@@ -37,7 +36,6 @@ public interface Motors {
 
     public interface Superstructure {
         TalonFXConfig INTAKE_SHOOTER_MOTOR_CONFIG = new TalonFXConfig();
-        SparkMaxConfig INDEXER_MOTOR_CONFIG = new SparkMaxConfig();
     }
 
     public static class TalonFXConfig {
@@ -212,4 +210,5 @@ public interface Motors {
             return this;
         }
     }
+
 }
