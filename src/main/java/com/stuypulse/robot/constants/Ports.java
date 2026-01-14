@@ -12,4 +12,8 @@ public interface Ports {
         int OPERATOR = 1;
         int DEBUGGER = 2;
     }
+    public interface Superstructure{
+        int SHOOTERINTAKE_MOTOR = 3;
+        int INDEXER_MOTOR = 4;
+    }
 }
