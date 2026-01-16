@@ -13,7 +13,7 @@ import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import com.stuypulse.robot.subsystems.superstructure.Superstucture.java;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 
 public class RobotContainer {
 
@@ -22,7 +22,7 @@ public class RobotContainer {
     public final Gamepad operator = new AutoGamepad(Ports.Gamepad.OPERATOR);
     
     // Subsystem
-    private final Superstructure superstructure = new Superstructure.getInstance();
+    private final Superstructure superstructure = Superstructure.getInstance();
 
     // Autons
     private static SendableChooser<Command> autonChooser = new SendableChooser<>();
