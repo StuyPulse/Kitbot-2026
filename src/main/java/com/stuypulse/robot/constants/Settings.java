@@ -35,6 +35,7 @@ public interface Settings {
         double INDEXER_SHOOT = 1;
         double INDEXER_OUTTAKE = 1; // to output from the ground intake again.
         double INDEXER_INTAKE = 1;
+        boolean INDEXER_INVERTED = false;
     }
 
     public interface Swerve {

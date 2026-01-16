@@ -1,4 +1,4 @@
-package com.stuypulse.robot.subsystems.superstructure;
+      package com.stuypulse.robot.subsystems.superstructure;
 
 import com.stuypulse.robot.constants.Settings;
 
@@ -28,7 +28,7 @@ public class Superstructure extends SubsystemBase {
 
         private SuperstructureState(double shooterState, double indexerState){
             this.shooterState = shooterState;
-            this.indexerState = indexerState;
+            this.indexerState = indexerState;                            
         }
 
         public double getShooterState(){
