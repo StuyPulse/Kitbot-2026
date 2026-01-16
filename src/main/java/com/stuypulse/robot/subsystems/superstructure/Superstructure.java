@@ -1,5 +1,6 @@
 package com.stuypulse.robot.subsystems.superstructure;
 
+import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.constants.Settings;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -10,7 +11,8 @@ public class Superstructure extends SubsystemBase {
     public static final Superstructure instance;
 
     static {
-        instance = new SuperstructureImpl();
+        if (Robot.isReal()) instance = new SuperstructureImpl(); 
+        else instance = new SuperstructureSim();
     }
 
     public static Superstructure getInstance() {
@@ -40,10 +42,10 @@ public class Superstructure extends SubsystemBase {
             return this.indexerState;
         }
     }
-    
-    private SuperstructureState state; 
 
-    protected Superstructure(){
+    private SuperstructureState state;
+
+    protected Superstructure() {
         this.state = SuperstructureState.STOP;
     }
 
@@ -56,8 +58,7 @@ public class Superstructure extends SubsystemBase {
     }
 
     @Override
-    public void periodic(){
-    SmartDashboard.putString("Superstructure/State", getState().toString());
-
+    public void periodic() {
+        SmartDashboard.putString("Superstructure/State", getState().toString());
     }
 }
