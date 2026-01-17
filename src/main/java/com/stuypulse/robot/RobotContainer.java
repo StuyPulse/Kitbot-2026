@@ -6,7 +6,13 @@
 package com.stuypulse.robot;
 
 import com.stuypulse.robot.commands.auton.DoNothingAuton;
+import com.stuypulse.robot.commands.superstructure.SetShooting;
+import com.stuypulse.robot.commands.superstructure.SetState;
+import com.stuypulse.robot.commands.superstructure.SetIdle;
+import com.stuypulse.robot.commands.superstructure.SetIntake;
+import com.stuypulse.robot.commands.superstructure.SetOuttake;
 import com.stuypulse.robot.constants.Ports;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
 
@@ -18,7 +24,7 @@ public class RobotContainer {
 
     // Gamepads
     public final Gamepad driver = new AutoGamepad(Ports.Gamepad.DRIVER);
-    public final Gamepad operator = new AutoGamepad(Ports.Gamepad.OPERATOR);
+    // public final Gamepad operator = new AutoGamepad(Ports.Gamepad.OPERATOR);
     
     // Subsystem
 
@@ -43,7 +49,14 @@ public class RobotContainer {
     /*** BUTTONS ***/
     /***************/
 
-    private void configureButtonBindings() {}
+    private void configureButtonBindings() {
+        
+        driver.getRightBumper().onTrue(new SetOuttake()).onFalse(new SetIdle());
+        driver.getRightTriggerButton().onTrue(new SetShooting()).onFalse(new SetIdle());
+        driver.getLeftBumper().onTrue(new SetIntake()).onFalse(new SetIdle());
+        
+    }
+
 
     /**************/
     /*** AUTONS ***/

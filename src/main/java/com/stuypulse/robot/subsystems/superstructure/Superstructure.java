@@ -48,6 +48,7 @@ public abstract class Superstructure extends SubsystemBase {
     public void setState(SuperstructureState state) {
         this.state = state;
     }
+    
     public Superstructure() {
         this.state = SuperstructureState.IDLE;
     }

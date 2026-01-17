@@ -33,6 +33,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public interface Motors {
 
     /** Classes to store all of the values a motor needs */
+    public interface Superstructure {
+        TalonFXConfig MOTOR_CONFIG = new TalonFXConfig()
+        .withInvertedValue(InvertedValue.Clockwise_Positive);
+
+    }
+
+
 
     public static class TalonFXConfig {
         private final TalonFXConfiguration configuration = new TalonFXConfiguration();
