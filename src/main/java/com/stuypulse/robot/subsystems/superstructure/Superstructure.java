@@ -9,7 +9,7 @@ public class Superstructure extends SubsystemBase {
     public static final Superstructure instance;
 
     static {
-            instance = new SuperstructureImpl();
+        instance = new SuperstructureImpl();
     }
 
     public static Superstructure getInstance() {

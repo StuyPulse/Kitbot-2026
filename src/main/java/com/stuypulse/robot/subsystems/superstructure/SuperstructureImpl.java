@@ -1,6 +1,5 @@
 package com.stuypulse.robot.subsystems.superstructure;
  
-import javax.swing.text.StyledEditorKit.BoldAction;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -45,9 +44,6 @@ public class SuperstructureImpl extends Superstructure {
     @Override
     public void periodic() {
         setMotorsBasedOnState();
-
-        // TODO: Is this supposed to be here?
-        // idk hopefully
         shooterAtTargetVelocity = (Math.abs(IntakeShooterMotor.getVelocity().getValueAsDouble() - state.getIntakeShooterSpeed()) < Settings.Superstructure.Intake_Shooter_Speeds.SHOOT_TOLERANCE_RPM);
     }
 }
