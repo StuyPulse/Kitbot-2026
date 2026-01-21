@@ -30,11 +30,11 @@ public interface Settings {
         boolean indexerInverted = false;
 
         public interface Intake_Shooter {
-            double INTAKE_SPEED = 0.5;
+            double INTAKE_SPEED = 1;
             double OUTTAKE_SPEED = -0.5;
             double SHOOT_SPEED = 1;
             
-            double SHOOT_TOLERANCE_RPM = 50.0;
+            double SHOOT_TOLERANCE_RPM = 500.0; // TODO: Find reasonable tolerance
         }
 
         public interface Indexer {
