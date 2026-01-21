@@ -15,27 +15,27 @@ public interface Ports {
 
     public interface Swerve {
         public interface Drive {
-            int FRONT_LEFT = 11;
-            int BACK_LEFT = 13;
-            int BACK_RIGHT = 15;
-            int FRONT_RIGHT = 17;
+            int FRONT_LEFT = 17;
+            int BACK_LEFT = 15;
+            int BACK_RIGHT = 10;
+            int FRONT_RIGHT = 12;
         }
         public interface Turn {
-            int FRONT_LEFT = 10;
-            int BACK_LEFT = 12;
-            int BACK_RIGHT = 14;
-            int FRONT_RIGHT = 16;
+            int FRONT_LEFT = 16;
+            int BACK_LEFT = 14;
+            int BACK_RIGHT = 11;
+            int FRONT_RIGHT = 13;
         }
         public interface CANCoderIds {
-            int FRONT_LEFT = 1;
-            int BACK_LEFT = 2;
-            int BACK_RIGHT = 3;
-            int FRONT_RIGHT = 4;
+            int FRONT_LEFT = 4;
+            int BACK_LEFT = 3;
+            int BACK_RIGHT = 1;
+            int FRONT_RIGHT = 2;
         }
     }
 
     public interface Superstructure {
         int INTAKE_SHOOTER_MOTOR = 20;
-        int INDEXER_MOTOR = 21;
+        int INDEXER_MOTOR = 51;
     }
 }
