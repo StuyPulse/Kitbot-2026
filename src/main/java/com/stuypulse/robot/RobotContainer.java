@@ -28,7 +28,7 @@ public class RobotContainer {
     public final Gamepad operator = new AutoGamepad(Ports.Gamepad.OPERATOR);
     
     // Subsystems
-    public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
+    // public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
     public final Superstructure superstructure = Superstructure.getInstance();
 
     // Autons
@@ -37,7 +37,7 @@ public class RobotContainer {
     // Robot container
 
     public RobotContainer() {
-        swerve.configureAutoBuilder();
+        // swerve.configureAutoBuilder();
         configureDefaultCommands();
         configureButtonBindings();
         configureAutons();
@@ -48,7 +48,7 @@ public class RobotContainer {
     /****************/
 
     private void configureDefaultCommands() {
-        swerve.setDefaultCommand(new SwerveDriveDrive(driver));
+        // swerve.setDefaultCommand(new SwerveDriveDrive(driver));
     }
 
     /***************/

@@ -37,10 +37,10 @@ public interface Motors {
 
     public interface Superstructure {
         TalonFXConfig intakeShooterMotorConfig = new TalonFXConfig()
-            .withCurrentLimitAmps(40)
+            .withCurrentLimitAmps(80)
             .withRampRate(0.25)
             .withNeutralMode(NeutralModeValue.Brake)
-            .withInvertedValue(Settings.Superstructure.intakeShooterInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
+            .withInvertedValue(InvertedValue.Clockwise_Positive);
 
         
         SparkBaseConfig indexerMotorConfig = new SparkMaxConfig().inverted(Settings.Superstructure.indexerInverted).idleMode(IdleMode.kBrake);

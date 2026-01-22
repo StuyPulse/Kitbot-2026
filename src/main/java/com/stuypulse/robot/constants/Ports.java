@@ -15,14 +15,14 @@ public interface Ports {
 
     public interface Swerve {
         public interface Drive {
-            int FRONT_LEFT = 17;
+            int FRONT_LEFT = 22;
             int BACK_LEFT = 15;
-            int BACK_RIGHT = 10;
+            int BACK_RIGHT = 21;
             int FRONT_RIGHT = 12;
         }
         public interface Turn {
             int FRONT_LEFT = 16;
-            int BACK_LEFT = 14;
+            int BACK_LEFT = 29;
             int BACK_RIGHT = 11;
             int FRONT_RIGHT = 13;
         }
@@ -35,7 +35,7 @@ public interface Ports {
     }
 
     public interface Superstructure {
-        int INTAKE_SHOOTER_MOTOR = 20;
-        int INDEXER_MOTOR = 51;
+        int INTAKE_SHOOTER_MOTOR = 14;
+        int INDEXER_MOTOR = 2;
     }
 }

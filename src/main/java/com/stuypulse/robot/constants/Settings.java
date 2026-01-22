@@ -30,16 +30,16 @@ public interface Settings {
         boolean indexerInverted = false;
 
         public interface Intake_Shooter {
-            double INTAKE_SPEED = 1;
-            double OUTTAKE_SPEED = -0.5;
-            double SHOOT_SPEED = 1;
+            SmartNumber INTAKE_SPEED = new SmartNumber("SuperStructure/Settings/Intake-Shooter/Intake Speed", -0.5);
+            SmartNumber OUTTAKE_SPEED = new SmartNumber("SuperStructure/Settings/Intake-Shooter/Outtake Speed",  0.5);
+            SmartNumber SHOOT_SPEED = new SmartNumber( "SuperStructure/Settings/Intake-Shooter/Shoot Speed", -0.5);
             
             double SHOOT_TOLERANCE_RPM = 500.0; // TODO: Find reasonable tolerance
         }
 
         public interface Indexer {
-            double INTAKE_SPEED = 1.0;
-            double OUTTAKE_SPEED = -1.0;
+            SmartNumber INTAKE_SPEED = new SmartNumber("SuperStructure/Settings/Indexer/Intake Speed", -1.0);
+            SmartNumber OUTTAKE_SPEED = new SmartNumber("SuperStructure/Settings/Indexer/Outtake Speed", 1.0);
         }
     }
 
