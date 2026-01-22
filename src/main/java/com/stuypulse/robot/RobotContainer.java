@@ -11,6 +11,7 @@ import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
 import com.stuypulse.robot.commands.superstructure.SuperstructureStop;
 import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
+import com.stuypulse.robot.commands.swerve.SwerveResetRotation;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
@@ -28,7 +29,7 @@ public class RobotContainer {
     public final Gamepad operator = new AutoGamepad(Ports.Gamepad.OPERATOR);
     
     // Subsystems
-    // public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
+    public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
     public final Superstructure superstructure = Superstructure.getInstance();
 
     // Autons
@@ -37,7 +38,7 @@ public class RobotContainer {
     // Robot container
 
     public RobotContainer() {
-        // swerve.configureAutoBuilder();
+        swerve.configureAutoBuilder();
         configureDefaultCommands();
         configureButtonBindings();
         configureAutons();
@@ -48,7 +49,7 @@ public class RobotContainer {
     /****************/
 
     private void configureDefaultCommands() {
-        // swerve.setDefaultCommand(new SwerveDriveDrive(driver));
+        swerve.setDefaultCommand(new SwerveDriveDrive(driver));
     }
 
     /***************/
@@ -68,6 +69,8 @@ public class RobotContainer {
         driver.getRightBumper()
             .onTrue(new SuperstructureOuttake())
             .onFalse(new SuperstructureStop());
+        driver.getDPadUp()
+            .onTrue(new SwerveResetRotation());
 
     }
 

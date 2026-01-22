@@ -59,7 +59,7 @@ public class SwerveDriveDrive extends Command {
         swerve.setControl(swerve.getFieldCentricSwerveRequest()
             .withVelocityX(speed.get().x)
             .withVelocityY(speed.get().y)
-            .withRotationalRate(turn.getAsDouble())
+            .withRotationalRate(-turn.getAsDouble())
         );
     }
 }

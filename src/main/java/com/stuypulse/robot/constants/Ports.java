@@ -15,15 +15,15 @@ public interface Ports {
 
     public interface Swerve {
         public interface Drive {
-            int FRONT_LEFT = 22;
-            int BACK_LEFT = 15;
+            int FRONT_LEFT = 32;
+            int BACK_LEFT = 22;
             int BACK_RIGHT = 21;
-            int FRONT_RIGHT = 12;
+            int FRONT_RIGHT = 50;
         }
         public interface Turn {
-            int FRONT_LEFT = 16;
-            int BACK_LEFT = 29;
-            int BACK_RIGHT = 11;
+            int FRONT_LEFT = 42;
+            int BACK_LEFT = 11;
+            int BACK_RIGHT = 0;
             int FRONT_RIGHT = 13;
         }
         public interface CANCoderIds {
