@@ -1,0 +1,19 @@
+{
+  "NetworkTables": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Autonomous": "String Chooser",
+      "/SmartDashboard/PathPlanner": "Alerts"
+    },
+    "windows": {
+      "/SmartDashboard/Autonomous": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)"
+  }
+}
