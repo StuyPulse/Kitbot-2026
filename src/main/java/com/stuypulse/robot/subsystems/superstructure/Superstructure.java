@@ -3,6 +3,7 @@ package com.stuypulse.robot.subsystems.superstructure;
 import com.stuypulse.robot.constants.Settings;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.stuypulse.robot.util.ShooterInterpolation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class Superstructure extends SubsystemBase {
@@ -23,6 +24,7 @@ public abstract class Superstructure extends SubsystemBase {
         OUTTAKING(Settings.Superstructure.Intake_Shooter.OUTTAKE_SPEED, Settings.Superstructure.Indexer.OUTTAKE_SPEED),
         PREPARING(Settings.Superstructure.Intake_Shooter.SHOOT_SPEED, 0),
         SHOOTING(Settings.Superstructure.Intake_Shooter.SHOOT_SPEED, Settings.Superstructure.Indexer.OUTTAKE_SPEED),
+        FERRY(67, 0),
         STOP(0, 0);
 
         private Number main_wheels_speed;
@@ -34,6 +36,7 @@ public abstract class Superstructure extends SubsystemBase {
         }
 
         public double getMainWheelsSpeed() {
+
             return this.main_wheels_speed.doubleValue();
         }
 
