@@ -16,7 +16,9 @@ public class DoNothingAuton extends SequentialCommandGroup {
 
     public DoNothingAuton() {
         addCommands(
-                /** Do a whole lot of nothing */
+                /** Do a whole lot of nothing 
+                 * thank you thank you thank you thank you
+                */
                 );
     }
 }

@@ -6,13 +6,22 @@
 package com.stuypulse.robot;
 
 import com.stuypulse.robot.commands.auton.DoNothingAuton;
+import com.stuypulse.robot.commands.superstructure.SuperstructureIntake;
+import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
+import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
+import com.stuypulse.robot.commands.superstructure.SuperstructureStop;
+import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
+import com.stuypulse.robot.commands.swerve.SwerveResetRotation;
 import com.stuypulse.robot.constants.Ports;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 public class RobotContainer {
 
@@ -20,7 +29,9 @@ public class RobotContainer {
     public final Gamepad driver = new AutoGamepad(Ports.Gamepad.DRIVER);
     public final Gamepad operator = new AutoGamepad(Ports.Gamepad.OPERATOR);
     
-    // Subsystem
+    // Subsystems
+    public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
+    public final Superstructure superstructure = Superstructure.getInstance();
 
     // Autons
     private static SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -28,6 +39,7 @@ public class RobotContainer {
     // Robot container
 
     public RobotContainer() {
+        swerve.configureAutoBuilder();
         configureDefaultCommands();
         configureButtonBindings();
         configureAutons();
@@ -37,13 +49,31 @@ public class RobotContainer {
     /*** DEFAULTS ***/
     /****************/
 
-    private void configureDefaultCommands() {}
+    private void configureDefaultCommands() {
+        swerve.setDefaultCommand(new SwerveDriveDrive(driver));
+    }
 
     /***************/
     /*** BUTTONS ***/
     /***************/
 
-    private void configureButtonBindings() {}
+    private void configureButtonBindings() {
+
+        driver.getLeftTriggerButton()
+            .onTrue(new SuperstructureIntake())
+            .onFalse(new SuperstructureStop());
+
+        driver.getRightTriggerButton()
+            .onTrue(new SuperstructureShoot())
+            .onFalse(new SuperstructureStop());
+
+        driver.getRightBumper()
+            .onTrue(new SuperstructureOuttake())
+            .onFalse(new SuperstructureStop());
+        driver.getDPadUp()
+            .onTrue(new SwerveResetRotation());
+
+    }
 
     /**************/
     /*** AUTONS ***/
@@ -51,6 +81,11 @@ public class RobotContainer {
 
     public void configureAutons() {
         autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
+        autonChooser.addOption("Swerve Quasistatic Forward", swerve.sysIdQuasistatic(Direction.kForward));
+        autonChooser.addOption("Swerve Quasistatic Backward", swerve.sysIdQuasistatic(Direction.kReverse));
+
+        autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdQuasistatic(Direction.kForward));
+        autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdQuasistatic(Direction.kReverse));
 
         SmartDashboard.putData("Autonomous", autonChooser);
     }
