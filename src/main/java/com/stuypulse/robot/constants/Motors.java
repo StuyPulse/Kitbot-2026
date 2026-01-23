@@ -37,12 +37,12 @@ public interface Motors {
 
     public interface Superstructure {
         TalonFXConfig intakeShooterMotorConfig = new TalonFXConfig()
-            .withCurrentLimitAmps(80)
-            .withRampRate(0.25)
-            .withNeutralMode(NeutralModeValue.Brake)
-            .withPIDConstants(10.0, 0, 0.5, 0)
-            .withFFConstants(0.1, 0.2, 0, 0)
-            .withInvertedValue(InvertedValue.Clockwise_Positive);
+                .withCurrentLimitAmps(80)
+                .withRampRate(0.25)
+                .withNeutralMode(NeutralModeValue.Brake)
+                .withInvertedValue(InvertedValue.CounterClockwise_Positive) // setting one motor inverted and the other                                                // inverted
+                .withPIDConstants(Gains.Shooter.PID.kP, Gains.Shooter.PID.kI, Gains.Shooter.PID.kD, 0)
+                .withFFConstants(Gains.Shooter.FF.kS, Gains.Shooter.FF.kV, Gains.Shooter.FF.kA, 0);
 
         SparkBaseConfig indexerMotorConfig = new SparkMaxConfig().inverted(false).idleMode(IdleMode.kBrake);
     }
