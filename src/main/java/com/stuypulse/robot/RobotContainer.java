@@ -24,6 +24,7 @@ import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -70,6 +71,7 @@ public class RobotContainer {
         driver.getTopButton()
             .onTrue(new SuperstructureSetState(SuperstructureState.PREPARING)
                 .andThen(new WaitUntilAtTargetVelocity())
+                .andThen(new WaitCommand(1))
                 .andThen(new SuperstructureShoot()))
             .onFalse(new SuperstructureStop());
 
@@ -91,7 +93,7 @@ public class RobotContainer {
         autonChooser.addOption("Swerve Quasistatic Backward", swerve.sysIdQuasistatic(Direction.kReverse));
 
         autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdQuasistatic(Direction.kForward));
-        autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdQuasistatic(Direction.kReverse));
+        autonChooser.addOption("Swerve Dynamic Backward", swerve.sysIdQuasistatic(Direction.kReverse));
 
         SmartDashboard.putData("Autonomous", autonChooser);
     }

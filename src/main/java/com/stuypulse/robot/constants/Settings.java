@@ -26,7 +26,7 @@ public interface Settings {
     }
     public interface Superstructure {
         public interface Intake_Shooter {
-            double INTAKE_SPEED = -0.5;
+            double INTAKE_SPEED = 0.5;
             double OUTTAKE_SPEED = 0.5;
             double SHOOT_SPEED_RPM = 3000.0;
             
