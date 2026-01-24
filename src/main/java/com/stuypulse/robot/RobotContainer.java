@@ -13,6 +13,7 @@ import com.stuypulse.robot.commands.superstructure.SuperstructureSetState;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
 import com.stuypulse.robot.commands.superstructure.SuperstructureStop;
 import com.stuypulse.robot.commands.superstructure.WaitUntilAtTargetVelocity;
+import com.stuypulse.robot.commands.swerve.SwerveDriveAlignToHub;
 import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
 import com.stuypulse.robot.commands.swerve.SwerveResetRotation;
 import com.stuypulse.robot.constants.Ports;
@@ -68,6 +69,9 @@ public class RobotContainer {
         driver.getTopButton()
             .whileTrue(new SuperstructureShoot())
             .whileFalse(new SuperstructureIntake());
+
+        driver.getLeftButton()
+            .whileTrue(new SwerveDriveAlignToHub());
 
         // driver.getTopButton()
         //     .onTrue(new SuperstructureSetState(SuperstructureState.PREPARING)

@@ -9,10 +9,9 @@ import edu.wpi.first.math.util.Units;
 
 /** This interface stores information about each camera. */
 public interface Cameras {
-    
+
     public Camera[] LimelightCameras = new Camera[] {
-        //TODO: Set up camera pose
-        new Camera("limelight-turret", new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0))), Settings.EnabledSubsystems.LIMELIGHT_TURRET)
+        new Camera("limelight", new Pose3d(Units.inchesToMeters(6.5), Units.inchesToMeters(-11.308), Units.inchesToMeters(7.910137), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(35.6), Units.degreesToRadians(0))), Settings.EnabledSubsystems.LIMELIGHT ),
     };
 
     public static class Camera {

@@ -20,6 +20,8 @@ import com.stuypulse.robot.subsystems.swerve.TunerConstants.TunerSwerveDrivetrai
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
@@ -397,6 +399,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .withVelocityX(robotSpeeds.vxMetersPerSecond)
             .withVelocityY(robotSpeeds.vyMetersPerSecond)
             .withRotationalRate(robotSpeeds.omegaRadiansPerSecond));
+    }
+
+    public void drive(Vector2D velocity, double rotation) {
+        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            Robot.isBlue() ? velocity.y : -velocity.y, 
+            Robot.isBlue() ? -velocity.x : velocity.x,
+            -rotation,
+            getPose().getRotation());
+
+        Pose2d robotVel = new Pose2d(
+            Settings.DT * speeds.vxMetersPerSecond,
+            Settings.DT * speeds.vyMetersPerSecond,
+            Rotation2d.fromRadians(Settings.DT * speeds.omegaRadiansPerSecond));
+        Twist2d twistVel = new Pose2d().log(robotVel);
+
+        setChassisSpeeds(new ChassisSpeeds(
+            twistVel.dx / Settings.DT,
+            twistVel.dy / Settings.DT,
+            twistVel.dtheta / Settings.DT
+        ));
     }
 
     @Override
