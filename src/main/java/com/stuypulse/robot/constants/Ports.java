@@ -12,4 +12,11 @@ public interface Ports {
         int OPERATOR = 1;
         int DEBUGGER = 2;
     }
+    
+    //TODO: GET PORTS
+    public interface Turret {
+        int TURRET_MOTOR = 0;
+        int ENCODER_18t = 0;   
+        int ENCODER_17t = 0; 
+    }
 }

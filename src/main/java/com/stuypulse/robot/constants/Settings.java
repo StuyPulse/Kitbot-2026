@@ -8,7 +8,6 @@ package com.stuypulse.robot.constants;
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.path.PathConstraints;
 import com.stuypulse.stuylib.network.SmartBoolean;
-import com.stuypulse.stuylib.network.SmartNumber;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,10 +21,17 @@ public interface Settings {
 
     public interface EnabledSubsystems {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
+        SmartBoolean TURRET = new SmartBoolean("Enabled Subsystem/Turret Is Enabled", true);
     }
 
     public interface Superstructure {
         
+    }
+
+    public interface Turret {
+        Rotation2d MAX_VEL = new Rotation2d(Units.degreesToRadians(600.0));
+        Rotation2d MAX_ACCEL = new Rotation2d(Units.degreesToRadians(600.0));
+        double TOLERANCE_DEG = 2.0;
     }
 
     public interface Swerve {
