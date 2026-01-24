@@ -9,8 +9,11 @@ import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.path.PathConstraints;
 import com.stuypulse.stuylib.network.SmartBoolean;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 
 public interface Settings {
@@ -21,7 +24,8 @@ public interface Settings {
 
     public interface EnabledSubsystems {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
-        SmartBoolean TURRET = new SmartBoolean("Enabled Subsystem/Turret Is Enabled", true);
+        SmartBoolean TURRET = new SmartBoolean("Enabled Subsystems/Turret Is Enabled", true);
+        SmartBoolean LIMELIGHT_TURRET = new SmartBoolean("Enabled Subsystems/Turret Limelight Is Enabled", true);
     }
 
     public interface Superstructure {
@@ -80,5 +84,7 @@ public interface Settings {
         }
     }
    
-
+    public interface Vision {
+        Vector<N3> MIN_STDDEVS = VecBuilder.fill(0.3, 0.3, 5);
+    }
 }
