@@ -32,7 +32,7 @@ public class RobotContainer {
     // Gamepads
     public final Gamepad driver = new AutoGamepad(Ports.Gamepad.DRIVER);
     public final Gamepad operator = new AutoGamepad(Ports.Gamepad.OPERATOR);
-    
+
     // Subsystems
     public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
     public final Superstructure superstructure = Superstructure.getInstance();
@@ -67,32 +67,31 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         driver.getTopButton()
-            .whileTrue(new SuperstructureShoot())
-            .whileFalse(new SuperstructureIntake());
+                .whileTrue(new SuperstructureShoot())
+                .whileFalse(new SuperstructureIntake());
 
         // driver.getLeftButton()
-        //     .whileTrue(new SwerveDriveAlignToHub());
+        // .whileTrue(new SwerveDriveAlignToHub());
 
         // driver.getTopButton()
-        //     .onTrue(new SuperstructureSetState(SuperstructureState.PREPARING)
-        //         .andThen(new WaitUntilAtTargetVelocity())
-        //         .andThen(new WaitCommand(1))
-        //         .andThen(new SuperstructureShoot()))
-        //     .onFalse(new SuperstructureStop());
+        // .onTrue(new SuperstructureSetState(SuperstructureState.PREPARING)
+        // .andThen(new WaitUntilAtTargetVelocity())
+        // .andThen(new WaitCommand(1))
+        // .andThen(new SuperstructureShoot()))
+        // .onFalse(new SuperstructureStop());
 
         driver.getBottomButton()
-            .whileTrue(new SuperstructureOuttake())
-            .whileFalse(new SuperstructureIntake());
+                .whileTrue(new SuperstructureOuttake())
+                .whileFalse(new SuperstructureIntake());
 
         driver.getDPadUp()
-            .onTrue(new SwerveResetRotation());
+                .onTrue(new SwerveResetRotation());
 
         driver.getLeftButton().whileTrue(new SetTurretPointAtHub())
-            .onFalse(new SetTurretZero());
-
+                .onFalse(new SetTurretZero());
 
         driver.getRightButton().whileTrue(new SetTurretFerry())
-            .onFalse(new SetTurretZero());
+                .onFalse(new SetTurretZero());
     }
 
     /**************/
@@ -104,8 +103,8 @@ public class RobotContainer {
         autonChooser.addOption("Swerve Quasistatic Forward", swerve.sysIdQuasistatic(Direction.kForward));
         autonChooser.addOption("Swerve Quasistatic Backward", swerve.sysIdQuasistatic(Direction.kReverse));
 
-        autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdQuasistatic(Direction.kForward));
-        autonChooser.addOption("Swerve Dynamic Backward", swerve.sysIdQuasistatic(Direction.kReverse));
+        autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdDynamic(Direction.kForward));
+        autonChooser.addOption("Swerve Dynamic Backward", swerve.sysIdDynamic(Direction.kReverse));
 
         SmartDashboard.putData("Autonomous", autonChooser);
     }
