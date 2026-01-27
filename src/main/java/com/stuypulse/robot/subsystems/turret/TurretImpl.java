@@ -2,6 +2,7 @@ package com.stuypulse.robot.subsystems.turret;
 
 import java.util.Optional;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -13,8 +14,8 @@ import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
-import com.stuypulse.robot.util.HubUtil.FERRY_TARGET_POSITIONS;
 import com.stuypulse.robot.util.HubUtil;
+import com.stuypulse.robot.util.HubUtil.FERRY_TARGET_POSITIONS;
 import com.stuypulse.robot.util.SysId;
 import com.stuypulse.stuylib.math.Vector2D;
 
@@ -27,22 +28,25 @@ public class TurretImpl extends Turret {
 
     private CANcoder encoder1;
     private CANcoder encoder2;
+    private CANBus canbus;
     private boolean hasUsedAbsoluteEncoder;
+    private boolean exceededOneRotation;
     private FERRY_TARGET_POSITIONS targetPosition;
     private Optional<Double> voltageOverride;
 
     public TurretImpl() {
-        turretMotor = new TalonFX(Ports.Turret.TURRET_MOTOR, "swerve");
+        canbus = new CANBus("swerve");
+        turretMotor = new TalonFX(Ports.Turret.TURRET_MOTOR, canbus);
 
         Motors.Turret.MOTOR_CONFIG.configure(turretMotor);
 
-        encoder1 = new CANcoder(Ports.Turret.ENCODER_18t, "swerve");
+        encoder1 = new CANcoder(Ports.Turret.ENCODER_18t, canbus);
         encoder1.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
                 new MagnetSensorConfigs()
                         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
                         .withAbsoluteSensorDiscontinuityPoint(1)));
 
-        encoder2 = new CANcoder(Ports.Turret.ENCODER_17t, "swerve");
+        encoder2 = new CANcoder(Ports.Turret.ENCODER_17t, canbus);
         encoder2.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
                 new MagnetSensorConfigs()
                         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
@@ -66,7 +70,6 @@ public class TurretImpl extends Turret {
         double dotProduct = zeroVector.dot(robotToHub);
 
         Rotation2d targetAngle = Rotation2d.fromRadians(Math.atan2(crossProduct, dotProduct));
-
         return targetAngle;
     }
 
@@ -83,14 +86,19 @@ public class TurretImpl extends Turret {
         return angle;
     }
 
+    @Override
+    public boolean exceedsOneRotation() {
+        return this.exceededOneRotation;
+    }
+
     // confirm that the angle range is [0, 360)
     @Override
     public boolean atTargetAngle() {
-        return Math.abs(getTurretAngle().minus(getTargetAngle()).getDegrees() + 180.0) < Settings.Turret.TOLERANCE_DEG;
+        return Math.abs(getAngle().minus(getTargetAngle()).getDegrees() + 180.0) < Settings.Turret.TOLERANCE_DEG;
     }
 
     @Override
-    public Rotation2d getTurretAngle() {
+    public Rotation2d getAngle() {
         return Rotation2d.fromRotations(turretMotor.getPosition().getValueAsDouble());
     }
 
@@ -141,7 +149,7 @@ public class TurretImpl extends Turret {
                 6,
                 "Turret",
                 voltage -> setVoltageOverride(Optional.of(voltage)),
-                () -> getTurretAngle().getRotations(),
+                () -> getAngle().getRotations(),
                 () -> turretMotor.getVelocity().getValueAsDouble(),
                 () -> turretMotor.getMotorVoltage().getValueAsDouble(),
                 getInstance());
@@ -155,27 +163,54 @@ public class TurretImpl extends Turret {
     public void periodic() {
         super.periodic();
 
-        if (!hasUsedAbsoluteEncoder || getTurretAngle().getRotations() > 1.0 || getTurretAngle().getRotations() < 0.0) {
-            turretMotor.setPosition((getAbsoluteTurretAngle().getDegrees() % 360.0) / 360.0);
+        exceededOneRotation = (getAbsoluteTurretAngle().getDegrees() / 360) > 1;
+
+        if (!hasUsedAbsoluteEncoder) {
             hasUsedAbsoluteEncoder = true;
             System.out.println("Absolute Encoder Reset triggered");
         }
 
+        // max out at 2 rotations
+        // this needs to be adapted
+
         if (Settings.EnabledSubsystems.TURRET.get()) {
-            if (voltageOverride.isPresent()) {
-                turretMotor.setControl(new MotionMagicVoltage(getTargetAngle().getRotations()));
-            } else {
-                turretMotor.setVoltage(voltageOverride.orElse(0.0));
+            double targetInRotations = getTargetAngle().getRotations();
+            // calculate the motor-relative target angle
+            // find the smallest way to get to the target
+            // make the motor relative target (smallest way to get there + the current motor
+            // angle)
+            double differenceInRotations = targetInRotations - getAbsoluteTurretAngle().getRotations();
+
+            // 0.90, 0.31 = 0.69 when you could just go negative 0.41
+
+            // handle finding the shortest path here
+            if (differenceInRotations > 0.5) {
+                differenceInRotations -= 1.0;
+            } else if (differenceInRotations < -0.5) {
+                differenceInRotations += 1;
             }
-        } else {
-            turretMotor.setVoltage(0);
+
+            if (voltageOverride.isPresent()) {
+                turretMotor.setVoltage(voltageOverride.orElse(0.0));
+            } else if (!exceededOneRotation) { // less than 360 degrees
+                turretMotor.setControl(
+                        new MotionMagicVoltage(turretMotor.getPosition().getValueAsDouble() + differenceInRotations));
+                // go backwards / forwards by this new amount, representing how much rotation it
+                // takes to go from the current angle to the new target angle
+            } else {
+                turretMotor.setControl(new MotionMagicVoltage(
+                        (turretMotor.getPosition().getValueAsDouble() + differenceInRotations) - 1.0));
+                // go backwards / forwards by this new amount, representing how much rotation it
+                // takes to go from the current angle to the new target angle
+                // just wrap it back if you are already over 360
+            }
         }
 
         SmartDashboard.putNumber("Turret/Pos 17t", getEncoderPos17t().getDegrees());
         SmartDashboard.putNumber("Turret/Pos 18t", getEncoderPos18t().getDegrees());
         SmartDashboard.putNumber("Turret/Absolute Angle", getAbsoluteTurretAngle().getDegrees());
         SmartDashboard.putString("Turret/State", getTurretState().toString());
-        SmartDashboard.putNumber("Turret/Relative Encoder", getTurretAngle().getDegrees());
+        SmartDashboard.putNumber("Turret/Relative Encoder", getAngle().getDegrees());
 
         SmartDashboard.putNumber("Turret/Position", turretMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Turret/Voltage", turretMotor.getMotorVoltage().getValueAsDouble());
