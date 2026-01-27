@@ -5,7 +5,8 @@ import com.stuypulse.robot.constants.Settings;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class Superstructure extends SubsystemBase {
-    public static final Superstructure instance;
+
+    private static final Superstructure instance;
 
     static {
         instance = new SuperstructureImpl();
@@ -15,42 +16,64 @@ public abstract class Superstructure extends SubsystemBase {
         return instance;
     }
 
-    public enum SuperstructureState {
-        OUTTAKING(Settings.Superstructure.Intake_Shooter.OUTTAKE_SPEED, Settings.Superstructure.Indexer.OUTTAKE_SPEED),
-        INTAKING(Settings.Superstructure.Intake_Shooter.INTAKE_SPEED, Settings.Superstructure.Indexer.INTAKE_SPEED),
-        PREPARING(Settings.Superstructure.Intake_Shooter.SHOOT_SPEED_RPM, 0.0),
-        SHOOTING(Settings.Superstructure.Intake_Shooter.SHOOT_SPEED_RPM, Settings.Superstructure.Indexer.OUTTAKE_SPEED),
-        STOP(0.0, 0.0);
+    public enum MainWheelState {
+        OUTTAKING(-1.0),
+        INTAKING(1.0),
+        PREPARING(0.5),
+        SHOOTING(3.0),
+        STOP(0.0);
 
-        private double shooter_speed;
-        private double indexer_speed;
+        private final double shooterSpeed;
 
-        private SuperstructureState(double shooter_speed, double indexer_speed) {
-            this.shooter_speed = shooter_speed;
-            this.indexer_speed = indexer_speed;
+        private MainWheelState(double shooterSpeed) {
+            this.shooterSpeed = shooterSpeed;
         }
 
         public double getMainWheelsTargetSpeed() {
-            return this.shooter_speed;
+            return shooterSpeed;
+        }
+    }
+
+    public enum IndexerState {
+        OUTTAKING(-1.0),
+        INTAKING(1.0),
+        PREPARING(0.5),
+        SHOOTING(1.0),
+        STOP(0.0);
+
+        private final double indexerSpeed;
+
+        private IndexerState(double indexerSpeed) {
+            this.indexerSpeed = indexerSpeed;
         }
 
         public double getIndexerTargetSpeed() {
-            return this.indexer_speed;
+            return indexerSpeed;
         }
     }
 
-    private SuperstructureState state;
+    private MainWheelState mainWheelState;
+    private IndexerState indexerState;
 
-    protected Superstructure() {
-        this.state = SuperstructureState.INTAKING;
+    public Superstructure() {
+        mainWheelState = MainWheelState.STOP;
+        indexerState = IndexerState.STOP;
     }
 
-    public SuperstructureState getState() {
-        return state;
+    public void setMainWheelState(MainWheelState state) {
+        this.mainWheelState = state;
     }
 
-    public void setState(SuperstructureState state) {
-        this.state = state;
+    public MainWheelState getMainWheelState() {
+        return mainWheelState;
+    }
+
+    public void setIndexerState(IndexerState state) {
+        this.indexerState = state;
+    }
+
+    public IndexerState getIndexerState() {
+        return indexerState;
     }
 
     public abstract boolean atTargetVelocity();
