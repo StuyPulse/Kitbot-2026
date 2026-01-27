@@ -26,17 +26,17 @@ public class TurretImpl extends Turret {
     private Optional<Double> voltageOverride;
 
     public TurretImpl() {
-        turretMotor = new TalonFX(Ports.Turret.TURRET_MOTOR, "swerve");
+        turretMotor = new TalonFX(Ports.Turret.TURRET_MOTOR, Settings.CANIVORE);
 
         Motors.Turret.MOTOR_CONFIG.configure(turretMotor);
 
-        encoder1 = new CANcoder(Ports.Turret.ENCODER_18t, "swerve");
+        encoder1 = new CANcoder(Ports.Turret.ENCODER_18t, Settings.CANIVORE);
         encoder1.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
                 new MagnetSensorConfigs()
                         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
                         .withAbsoluteSensorDiscontinuityPoint(1)));
 
-        encoder2 = new CANcoder(Ports.Turret.ENCODER_17t, "swerve");
+        encoder2 = new CANcoder(Ports.Turret.ENCODER_17t, Settings.CANIVORE);
         encoder2.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
                 new MagnetSensorConfigs()
                         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)

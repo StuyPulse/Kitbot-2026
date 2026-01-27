@@ -14,9 +14,9 @@ public interface Ports {
     }
     //TODO: GET PORTS
     public interface Turret {
-        int TURRET_MOTOR = 0;
-        int ENCODER_18t = 0;   
-        int ENCODER_17t = 0; 
+        int TURRET_MOTOR = 19;
+        int ENCODER_18t = 21;   
+        int ENCODER_17t = 20; 
     }
     public interface Swerve {
         public interface Drive {
