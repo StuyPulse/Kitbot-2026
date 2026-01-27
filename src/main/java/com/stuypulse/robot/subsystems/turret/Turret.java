@@ -35,6 +35,8 @@ public abstract class Turret extends SubsystemBase {
         POINT_AT_HUB;
     }
 
+    public abstract boolean exceedsOneRotation();
+    
     public Rotation2d getTargetAngle() {
         return switch (getTurretState()) {
             case ZERO -> new Rotation2d(); 
@@ -51,7 +53,7 @@ public abstract class Turret extends SubsystemBase {
         return state;
     }
 
-    public abstract Rotation2d getTurretAngle();
+    public abstract Rotation2d getAngle();
 
     public abstract boolean atTargetAngle();
 
@@ -63,11 +65,11 @@ public abstract class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Turret/Angle (Deg)", getTurretAngle().getDegrees());
+        SmartDashboard.putNumber("Turret/Angle (Deg)", getAngle().getDegrees());
 
         if (Settings.DEBUG_MODE) {
             if (Settings.EnabledSubsystems.TURRET.get()) {
-                TurretVisualizer.getInstance().updateTurretAngle(getTurretAngle(), atTargetAngle());
+                TurretVisualizer.getInstance().updateTurretAngle(getAngle(), atTargetAngle());
             }
             else {
                 TurretVisualizer.getInstance().updateTurretAngle(new Rotation2d(), false);
