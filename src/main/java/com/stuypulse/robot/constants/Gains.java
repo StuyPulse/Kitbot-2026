@@ -30,10 +30,10 @@ public class Gains {
 
     public interface Swerve {
         public interface Drive {
-            double kS = 0.0;
-            double kV = 0.124;
-            double kA = 0.0;
-            double kP = 0.1;
+            double kS = 0.17608;
+            double kV = 0.11448;
+            double kA = 0.0059131;
+            double kP = 0.096506;
             double kI = 0.0;
             double kD = 0.0;
         }
