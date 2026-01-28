@@ -29,7 +29,7 @@ public interface Settings {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
         SmartBoolean TURRET = new SmartBoolean("Enabled Subsystems/Turret Is Enabled", true);
         SmartBoolean SUPERSTRUCTURE = new SmartBoolean("Enabled Subsystems/Superstructure Is Enabled", false);
-        SmartBoolean LIMELIGHT = new SmartBoolean("Enabled Subsystems/Limelight Is Enabled", false);
+        SmartBoolean LIMELIGHT = new SmartBoolean("Enabled Subsystems/Limelight Is Enabled", true);
     }
     public interface Superstructure {
         public interface Intake_Shooter {

@@ -1,5 +1,24 @@
 {
+  "NetworkTables": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Autonomous": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/Visualizers/Turret": "Mechanism2d"
+    },
+    "windows": {
+      "/SmartDashboard/Autonomous": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
   "NetworkTables Info": {
     "visible": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)"
   }
 }
