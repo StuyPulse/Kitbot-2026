@@ -29,7 +29,7 @@ public interface Settings {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
         SmartBoolean TURRET = new SmartBoolean("Enabled Subsystems/Turret Is Enabled", true);
         SmartBoolean SUPERSTRUCTURE = new SmartBoolean("Enabled Subsystems/Superstructure Is Enabled", false);
-        SmartBoolean LIMELIGHT = new SmartBoolean("Enabled Subsystems/Limelight Is Enabled", false);
+        SmartBoolean LIMELIGHT = new SmartBoolean("Enabled Subsystems/Limelight Is Enabled", true);
     }
     public interface Superstructure {
         public interface Intake_Shooter {
@@ -142,7 +142,8 @@ public interface Settings {
     }
    
     public interface Vision {
-        Vector<N3> MIN_STDDEVS = VecBuilder.fill(0.3, 0.3, 5);
+        Vector<N3> MT1_STDEVS = VecBuilder.fill(0.5, 0.5, 1.0);
+        Vector<N3> MT2_STDEVS = VecBuilder.fill(0.7, 0.7, 694694);
     }
 
     public interface Driver {

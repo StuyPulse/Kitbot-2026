@@ -10,6 +10,7 @@ import com.stuypulse.stuylib.network.SmartBoolean;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -39,9 +40,9 @@ public class LimelightVision extends SubsystemBase{
                 robotRelativePose.getX(), 
                 robotRelativePose.getY(), 
                 robotRelativePose.getZ(), 
-                robotRelativePose.getRotation().getX(), 
-                robotRelativePose.getRotation().getY(), 
-                robotRelativePose.getRotation().getZ()
+                Rotation2d.fromRadians(robotRelativePose.getRotation().getX()).getDegrees(), 
+                Rotation2d.fromRadians(robotRelativePose.getRotation().getY()).getDegrees(), 
+                Rotation2d.fromRadians(robotRelativePose.getRotation().getZ()).getDegrees()
             );
         }
 
@@ -107,7 +108,13 @@ public class LimelightVision extends SubsystemBase{
                     if (poseEstimate != null && poseEstimate.tagCount > 0) {
                         Pose2d robotPose = poseEstimate.pose;
                         double timestamp = poseEstimate.timestampSeconds;
-                        CommandSwerveDrivetrain.getInstance().addVisionMeasurement(robotPose, timestamp, Settings.Vision.MIN_STDDEVS.times(1 + poseEstimate.avgTagDist));
+                    
+                        //CommandSwerveDrivetrain.getInstance().addVisionMeasurement(robotPose, timestamp, Settings.Vision.MIN_STDDEVS.times(1 + poseEstimate.avgTagDist));
+                        CommandSwerveDrivetrain.getInstance().addVisionMeasurement(robotPose, timestamp, Settings.Vision.MT2_STDEVS);
+                        SmartDashboard.putNumber("Vision/Pose X Component", robotPose.getX());
+                        SmartDashboard.putNumber("Vision/Pose Y Component", robotPose.getY());
+                        SmartDashboard.putNumber("Vision/Pose Theta (Degrees)", robotPose.getRotation().getDegrees());
+
                         SmartDashboard.putBoolean("Vision/" + names[i] + " Has Data", true);
                     }
                     else {
