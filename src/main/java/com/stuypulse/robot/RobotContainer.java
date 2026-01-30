@@ -5,7 +5,10 @@
 
 package com.stuypulse.robot;
 
+import com.stuypulse.robot.commands.auton.Box;
 import com.stuypulse.robot.commands.auton.DoNothingAuton;
+import com.stuypulse.robot.commands.auton.StraightLine;
+import com.stuypulse.robot.commands.auton.TwoCycleBottom;
 import com.stuypulse.robot.commands.superstructure.SuperstructureIntake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
@@ -20,12 +23,14 @@ import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.subsystems.turret.Turret;
+import com.stuypulse.robot.util.PathUtil.AutonConfig;
 import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 public class RobotContainer {
@@ -68,11 +73,12 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         driver.getTopButton()
-                .whileTrue(new SuperstructureShoot())
+                .whileTrue(new SwerveDriveAlignToHub()
+                    .alongWith(new WaitCommand(0.5).andThen(new SuperstructureShoot())))
                 .whileFalse(new SuperstructureIntake());
 
-        driver.getLeftButton()
-            .whileTrue(new SwerveDriveAlignToHub());
+        // driver.getLeftButton()
+        //     .whileTrue(new SwerveDriveAlignToHub());
 
         // driver.getTopButton()
         // .onTrue(new SuperstructureSetState(SuperstructureState.PREPARING)
@@ -88,11 +94,11 @@ public class RobotContainer {
         driver.getDPadUp()
                 .onTrue(new SwerveResetRotation());
 
-        driver.getLeftButton().whileTrue(new SetTurretPointAtHub())
-                .onFalse(new SetTurretZero());
+        // driver.getLeftButton().whileTrue(new SetTurretPointAtHub())
+        //         .onFalse(new SetTurretZero());
 
-        driver.getRightButton().whileTrue(new SetTurretFerry())
-                .onFalse(new SetTurretZero());
+        // driver.getRightButton().whileTrue(new SetTurretFerry())
+        //         .onFalse(new SetTurretZero());
     }
 
     /**************/
@@ -100,6 +106,19 @@ public class RobotContainer {
     /**************/
 
     public void configureAutons() {
+
+        AutonConfig TWO_CYCLE_BOTTOM = new AutonConfig("2 Cycle Bottom", TwoCycleBottom::new,
+        "Bump Start To NZ", "NZ To Shoot", "To Shoot For Real", "Bump Start To NZ", "NZ To Shoot", "To Shoot For Real");
+        TWO_CYCLE_BOTTOM.register(autonChooser);
+
+        AutonConfig STRAIGHT_LINE = new AutonConfig("Straight Line", StraightLine::new, 
+            "Straight Line");
+        STRAIGHT_LINE.register(autonChooser);
+
+        AutonConfig BOX = new AutonConfig("Box", Box::new, 
+            "Box 1", "Box 2", "Box 3", "Box 4");
+        BOX.register(autonChooser);
+
         autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
         autonChooser.addOption("Swerve Quasistatic Forward", swerve.sysIdQuasistatic(Direction.kForward));
         autonChooser.addOption("Swerve Quasistatic Backward", swerve.sysIdQuasistatic(Direction.kReverse));

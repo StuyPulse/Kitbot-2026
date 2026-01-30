@@ -1,0 +1,77 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.4068446026097274,
+        "y": 3.0612930011862396
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.2454567022538554,
+        "y": 2.157520759193358
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.742799525504152,
+        "y": 2.5986476868327397
+      },
+      "prevControl": {
+        "x": 5.408054567022539,
+        "y": 2.630925266903914
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Kitbot Bottom NZ"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7017001545595077,
+      "rotationDegrees": -140.0
+    },
+    {
+      "waypointRelativePos": 0.7959814528593557,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.37275307473982505,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 400.0,
+        "maxAngularAcceleration": 900.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.75,
+    "maxAcceleration": 6.75,
+    "maxAngularVelocity": 400.0,
+    "maxAngularAcceleration": 900.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Kitbot",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -144.0276129507151
+  },
+  "useDefaultConstraints": true
+}

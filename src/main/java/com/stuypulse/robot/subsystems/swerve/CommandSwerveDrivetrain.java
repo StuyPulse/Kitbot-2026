@@ -1,5 +1,6 @@
-/************************ PROJECT KITBOT *************************/
-/* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
+
+/************************ PROJECT MARY *************************/
+/* Copyright (c) 2025 StuyPulse Robotics. All rights reserved. */
 /* Use of this source code is governed by an MIT-style license */
 /* that can be found in the repository LICENSE file.           */
 /***************************************************************/
@@ -19,9 +20,9 @@ import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.swerve.TunerConstants.TunerSwerveDrivetrain;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
@@ -176,7 +177,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     );
 
     /* The SysId routine to test */
-    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineModuleTranslation;
+    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineChassisTranslation;
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -395,10 +396,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     private void setChassisSpeeds(ChassisSpeeds robotSpeeds) {
-        setControl(new SwerveRequest.RobotCentric()
-            .withVelocityX(robotSpeeds.vxMetersPerSecond)
-            .withVelocityY(robotSpeeds.vyMetersPerSecond)
-            .withRotationalRate(robotSpeeds.omegaRadiansPerSecond));
+        setControl(new SwerveRequest.RobotCentric().withVelocityX(robotSpeeds.vxMetersPerSecond).withVelocityY(robotSpeeds.vyMetersPerSecond).withRotationalRate(robotSpeeds.omegaRadiansPerSecond));
+    }
+
+    public boolean isOnAllianceSide() {
+        return getPose().getX() <= Field.LENGTH / 2;
     }
 
     public void drive(Vector2D velocity, double rotation) {
@@ -419,7 +421,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             twistVel.dy / Settings.DT,
             twistVel.dtheta / Settings.DT
         ));
+        
     }
+
 
     @Override
     public void periodic() {
@@ -450,6 +454,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             SmartDashboard.putNumber("Swerve/Velocity Field Relative Y (m per s)", getFieldRelativeSpeeds().y);
     
             SmartDashboard.putNumber("Swerve/Angular Velocity (rad per s)", getChassisSpeeds().omegaRadiansPerSecond);
+
         }
     }
 }
