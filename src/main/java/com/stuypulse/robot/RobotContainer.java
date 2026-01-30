@@ -9,6 +9,7 @@ import com.stuypulse.robot.commands.auton.DoNothingAuton;
 import com.stuypulse.robot.commands.superstructure.SuperstructureIntake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
+import com.stuypulse.robot.commands.swerve.SwerveDriveAlignToHub;
 import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
 import com.stuypulse.robot.commands.swerve.SwerveResetRotation;
 import com.stuypulse.robot.commands.turret.SetTurretFerry;
@@ -70,8 +71,8 @@ public class RobotContainer {
                 .whileTrue(new SuperstructureShoot())
                 .whileFalse(new SuperstructureIntake());
 
-        // driver.getLeftButton()
-        // .whileTrue(new SwerveDriveAlignToHub());
+        driver.getLeftButton()
+            .whileTrue(new SwerveDriveAlignToHub());
 
         // driver.getTopButton()
         // .onTrue(new SuperstructureSetState(SuperstructureState.PREPARING)

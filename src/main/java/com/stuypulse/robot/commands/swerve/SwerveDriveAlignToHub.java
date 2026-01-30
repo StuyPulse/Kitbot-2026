@@ -80,16 +80,14 @@ public class SwerveDriveAlignToHub extends Command {
 
     @Override
     public void execute() {
-        swerve.drive(new Vector2D(
-            new Translation2d()), 
-            SLMath.clamp(angleVelocity.get() 
-                + controller.update(
-                Angle.fromRotation2d(getTargetAngle()), 
-                Angle.fromRotation2d(swerve.getPose().getRotation())),
-                -Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S,
-                Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S
-            )
-        );
+        swerve.drive(new Vector2D(new Translation2d()), SLMath.clamp(angleVelocity.get() 
+                                                        + controller.update(
+                                                            Angle.fromRotation2d(getTargetAngle()), 
+                                                            Angle.fromRotation2d(swerve.getPose().getRotation())),
+                                                        -Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S,
+                                                        Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S
+                                                        )
+                                                        );
     }
 
     @Override
