@@ -57,8 +57,8 @@ public class Gains {
             double akI = 0.0;
             double akD = 0.0;
 
-            PIDConstants XY = new PIDConstants(0.0, 0.0, 0.0);
-            PIDConstants THETA = new PIDConstants(0.0, 0.0, 0.0);
+            PIDConstants XY = new PIDConstants(3.5, 0, 0.2);
+            PIDConstants THETA = new PIDConstants(3.0, 0, 0.1);
         }
     }
 }

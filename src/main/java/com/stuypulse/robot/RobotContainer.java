@@ -122,15 +122,15 @@ public class RobotContainer {
             "Box 1", "Box 2", "Box 3", "Box 4");
         BOX.register(autonChooser);
 
-        try {
-            autonChooser.addOption("Depot HP Climb Mid", new PathPlannerAuto("Depot HP Climb Mid"));
-            autonChooser.addOption("Depot HP Climb Right", new PathPlannerAuto("Depot HP Climb Right"));
-            autonChooser.addOption("HP Depot Climb Left", new PathPlannerAuto("HP Depot Climb Left"));
-            autonChooser.addOption("Depot HP Climb Mid", new PathPlannerAuto("HP Depot Climb Mid"));
+        // try {
+        //     autonChooser.addOption("Depot HP Climb Mid", new PathPlannerAuto("Depot HP Climb Mid"));
+        //     autonChooser.addOption("Depot HP Climb Right", new PathPlannerAuto("Depot HP Climb Right"));
+        //     autonChooser.addOption("HP Depot Climb Left", new PathPlannerAuto("HP Depot Climb Left"));
+        //     autonChooser.addOption("Depot HP Climb Mid", new PathPlannerAuto("HP Depot Climb Mid"));
 
-        } catch (AutoBuilderException e) {
-            DriverStation.reportError("AutoBuilderException: " + e.getMessage(), e.getStackTrace());
-        }
+        // } catch (AutoBuilderException e) {
+        //     DriverStation.reportError("AutoBuilderException: " + e.getMessage(), e.getStackTrace());
+        // }
 
         autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
         autonChooser.addOption("Swerve Translation Quasistatic Forward", swerve.sysIdTranslationQuasistatic(Direction.kForward));
