@@ -5,6 +5,8 @@
 
 package com.stuypulse.robot;
 
+import com.pathplanner.lib.auto.AutoBuilderException;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.stuypulse.robot.commands.auton.Box;
 import com.stuypulse.robot.commands.auton.DoNothingAuton;
 import com.stuypulse.robot.commands.auton.StraightLine;
@@ -119,6 +121,15 @@ public class RobotContainer {
             "Box 1", "Box 2", "Box 3", "Box 4");
         BOX.register(autonChooser);
 
+        try {
+            autonChooser.addOption("Depot HP Climb Mid", new PathPlannerAuto("Depot HP Climb Mid"));
+            autonChooser.addOption("Depot HP Climb Right", new PathPlannerAuto("Depot HP Climb Right"));
+            autonChooser.addOption("HP Depot Climb Left", new PathPlannerAuto("HP Depot Climb Left"));
+            autonChooser.addOption("Depot HP Climb Mid", new PathPlannerAuto("HP Depot Climb Mid"));
+
+        } catch (AutoBuilderException e) {
+            System.out.println("AutoBuilderException: " + e.getMessage());
+        }
         autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
         autonChooser.addOption("Swerve Quasistatic Forward", swerve.sysIdQuasistatic(Direction.kForward));
         autonChooser.addOption("Swerve Quasistatic Backward", swerve.sysIdQuasistatic(Direction.kReverse));

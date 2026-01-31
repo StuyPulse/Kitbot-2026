@@ -2,13 +2,8 @@
   "robotWidth": 1.13,
   "robotLength": 0.826,
   "holonomicMode": true,
-  "pathFolders": [
-    "Kitbot",
-    "Tests"
-  ],
-  "autoFolders": [
-    "Tests"
-  ],
+  "pathFolders": [],
+  "autoFolders": [],
   "defaultMaxVel": 5.75,
   "defaultMaxAccel": 6.75,
   "defaultMaxAngVel": 400.0,
