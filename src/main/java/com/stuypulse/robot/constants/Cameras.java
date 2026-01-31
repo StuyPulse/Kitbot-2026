@@ -12,7 +12,7 @@ public interface Cameras {
 
     public Camera[] LimelightCameras = new Camera[] {
         //6.5, -11.3, 7.9
-        new Camera("limelight", new Pose3d(Units.inchesToMeters(-11.308),Units.inchesToMeters(6.5), Units.inchesToMeters(7.9), new Rotation3d(Units.degreesToRadians(180), Units.degreesToRadians(35.6), Units.degreesToRadians(180))), Settings.EnabledSubsystems.LIMELIGHT ),
+        new Camera("limelight", new Pose3d(Units.inchesToMeters(-11.308),Units.inchesToMeters(6.5), Units.inchesToMeters(7.9), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(35.6), Units.degreesToRadians(180))), Settings.EnabledSubsystems.LIMELIGHT ),
     };
 
     public static class Camera {

@@ -1,3 +1,5 @@
+
+
 /************************ PROJECT TURRET *************************/
 /* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
 /* Use of this source code is governed by an MIT-style license */
@@ -7,10 +9,36 @@
 package com.stuypulse.robot.util;
 
 import com.stuypulse.robot.Robot;
+import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Field.NamedTags;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 
 public interface HubUtil {
+
+    public final Pose2d blueHubCenter = new Pose2d(Units.inchesToMeters(158.60), Units.inchesToMeters(Field.WIDTH / 2.0), new Rotation2d());
+
+    public static Pose2d getAllianceHubPose() {
+        return (Robot.isBlue() ? blueHubCenter : Field.transformToOppositeAlliance(blueHubCenter));
+    }
+
+        public enum FERRY_TARGET_POSITIONS {
+
+        RIGHT_WALL(new Pose2d(1.0, 1.0, new Rotation2d())),
+        LEFT_WALL(new Pose2d());
+
+        private Pose2d targetPosition;
+
+        private FERRY_TARGET_POSITIONS(Pose2d targetPosition) {
+            this.targetPosition = targetPosition;
+        }
+
+        public Pose2d getFerryTargetPose() {
+            return Robot.isBlue() ? targetPosition : Field.transformToOppositeAlliance(targetPosition);
+        }
+
+    }
 
     public enum HubTag {
         FRONT_MID(NamedTags.BLUE_HUB_FRONT_SIDE_MID, NamedTags.RED_HUB_FRONT_SIDE_MID),

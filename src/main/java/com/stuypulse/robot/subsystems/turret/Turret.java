@@ -1,16 +1,9 @@
 package com.stuypulse.robot.subsystems.turret;
 
-import java.util.Vector;
-
 import com.stuypulse.robot.Robot;
-import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Settings;
-import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
-import com.stuypulse.robot.util.HubUtil;
 import com.stuypulse.robot.util.TurretVisualizer;
-import com.stuypulse.stuylib.math.Vector2D;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,9 +35,11 @@ public abstract class Turret extends SubsystemBase {
         POINT_AT_HUB;
     }
 
+    public abstract boolean exceedsOneRotation();
+    
     public Rotation2d getTargetAngle() {
         return switch (getTurretState()) {
-            case ZERO -> Robot.isBlue() ? new Rotation2d() : Rotation2d.fromDegrees(180.0); 
+            case ZERO -> new Rotation2d(); 
             case FERRYING -> getFerryAngle();
             case POINT_AT_HUB -> getPointAtHubAngle();
         };
@@ -58,63 +53,25 @@ public abstract class Turret extends SubsystemBase {
         return state;
     }
 
-    public boolean atTargetAngle() {
-        return Math.abs(getTurretAngle().minus(getTargetAngle()).getDegrees()) < Settings.Turret.TOLERANCE_DEG;
-    }
+    public abstract Rotation2d getAngle();
 
-    public Rotation2d getPointAtHubAngle() {
-        return getPointAtTargetAngle(Field.getAllianceHubPose());
-    }
+    public abstract boolean atTargetAngle();
 
-    public Rotation2d getFerryAngle() {
-        Pose2d robot = CommandSwerveDrivetrain.getInstance().getPose();
-        return getPointAtTargetAngle(Field.getFerryZonePose(robot.getTranslation()));
-    }
+    public abstract Rotation2d getPointAtHubAngle();
 
-    public abstract Rotation2d getTurretAngle();
+    public abstract Rotation2d getFerryAngle();
 
     public abstract SysIdRoutine getSysIdRoutine();
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Turret/Angle (Deg)", getTurretAngle().getDegrees());
-        SmartDashboard.putString("Turret/State", state.name());
-        SmartDashboard.putString("States/Turret", state.name());
-
         if (Settings.DEBUG_MODE) {
             if (Settings.EnabledSubsystems.TURRET.get()) {
-                TurretVisualizer.getInstance().updateTurretAngle(getTurretAngle(), atTargetAngle());
+                TurretVisualizer.getInstance().updateTurretAngle(getAngle(), atTargetAngle());
             }
             else {
                 TurretVisualizer.getInstance().updateTurretAngle(new Rotation2d(), false);
             }
         }
-    }
-
-    public Rotation2d getPointAtTargetAngle(Pose2d targetPose) {
-        Vector2D robot = new Vector2D(CommandSwerveDrivetrain.getInstance().getPose().getTranslation());
-        Vector2D target = new Vector2D(targetPose.getX(), targetPose.getY());
-        Vector2D robotToTarget = target.sub(robot).normalize();
-        Vector2D zeroVector = new Vector2D(1.0, 0.0); // Alliance-relative
-
-        // https://www.youtube.com/watch?v=_VuZZ9_58Wg
-        double crossProduct = zeroVector.x * robotToTarget.y - zeroVector.y * robotToTarget.x;
-        double dotProduct = zeroVector.dot(robotToTarget);
-        double angleRadians = Math.atan2(crossProduct, dotProduct);
-
-        if (!Robot.isBlue()) {
-            angleRadians += Math.PI; // Flip target angle for red alliance
-
-            while (angleRadians < 0) angleRadians += 2 * Math.PI;
-            while (angleRadians >= 2 * Math.PI) angleRadians -= 2 * Math.PI;
-        }
-
-        SmartDashboard.putNumber("Turret/Robot to Target Vector X", robotToTarget.x);
-        SmartDashboard.putNumber("Turret/Robot to Target Vector Y", robotToTarget.y);
-        SmartDashboard.putNumber("Turret/Target Pose X", targetPose.getX());
-        SmartDashboard.putNumber("Turret/Target Pose Y", targetPose.getY());
-
-        Rotation2d targetAngle = Rotation2d.fromRadians(angleRadians);
-        return targetAngle;
     }
 }

@@ -39,17 +39,17 @@ public class TurretSim extends Turret {
     private Optional<Double> voltageOverride;
 
     public TurretSim() {
-        LinearSystem<N2, N1, N2> linearSystem = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.628, 2.80);
+        LinearSystem<N2, N1, N2> linearSystem = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 1.0, 2.80);
 
         sim = new DCMotorSim(
             linearSystem, 
             DCMotor.getKrakenX60(1)
         );
-
+        
         LinearQuadraticRegulator<N2, N1, N2> lqr = new LinearQuadraticRegulator<N2, N1, N2>(
             linearSystem, 
-            VecBuilder.fill(0.0001, 1.0), 
-            VecBuilder.fill(1.0),
+            VecBuilder.fill(0.00001, 100), 
+            VecBuilder.fill(12),
             Settings.DT);
 
         KalmanFilter<N2, N1, N2> kalmanFilter = new KalmanFilter<>(
@@ -62,7 +62,7 @@ public class TurretSim extends Turret {
 
         controller = new LinearSystemLoop<>(linearSystem, lqr, kalmanFilter, 12.0, Settings.DT);
 
-        maxAngularVelRadiansPerSecond = Units.degreesToRadians(400.0);
+        maxAngularVelRadiansPerSecond = Units.degreesToRadians(200.0);
         maxAngularAccelRadiansPerSecondSquared = Units.degreesToRadians(400.0);
 
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(maxAngularVelRadiansPerSecond, maxAngularAccelRadiansPerSecondSquared);
@@ -74,7 +74,33 @@ public class TurretSim extends Turret {
     }
 
     @Override
-    public Rotation2d getTurretAngle() {
+    public Rotation2d getPointAtHubAngle() {
+        Vector2D robot = new Vector2D(CommandSwerveDrivetrain.getInstance().getPose().getTranslation());
+        Vector2D hub = new Vector2D(HubUtil.getAllianceHubPose().getTranslation());
+        Vector2D robotToHub = hub.sub(robot).normalize();
+        Vector2D zeroVector = new Vector2D(0.0, 1.0);
+
+        // https://www.youtube.com/watch?v=_VuZZ9_58Wg
+        double crossProduct = zeroVector.x * robotToHub.y - zeroVector.y * robotToHub.x;
+        double dotProduct = zeroVector.dot(robotToHub);
+
+        Rotation2d targetAngle = Rotation2d.fromRadians(Math.atan2(crossProduct, dotProduct));
+
+        return targetAngle;
+    }
+
+    @Override
+    public Rotation2d getFerryAngle() {
+        return new Rotation2d();
+    }
+
+    @Override
+    public boolean atTargetAngle() {
+        return Math.abs(getAngle().minus(getTargetAngle()).getDegrees()) < Settings.Turret.TOLERANCE_DEG;
+    }
+
+    @Override
+    public Rotation2d getAngle() {
         return Rotation2d.fromRadians(sim.getAngularPositionRad());
     }
 
@@ -95,8 +121,7 @@ public class TurretSim extends Turret {
         SmartDashboard.putNumber("Turret/Setpoint (deg)", Units.radiansToDegrees(setpoint.position));
         SmartDashboard.putNumber("Turret/Target (deg)", Units.radiansToDegrees(getTargetAngle().getRadians()));
         SmartDashboard.putBoolean("Turret/At Target", atTargetAngle());
-        SmartDashboard.putNumber("Turret/Error: abs(turret - target) (deg)", Math.abs(getTurretAngle().minus(getTargetAngle()).getDegrees()));
-        SmartDashboard.putNumber("Turret/Voltage (volts)", controller.getU(0));
+        SmartDashboard.putNumber("Turret/Error: abs(turret - target) (deg)", Math.abs(getAngle().minus(getTargetAngle()).getDegrees()));
 
         controller.setNextR(VecBuilder.fill(setpoint.position, 0.0)); // try setpoint.velocity as second arg later
         controller.correct(VecBuilder.fill(sim.getAngularPositionRad(), sim.getAngularVelocityRadPerSec()));
@@ -125,9 +150,15 @@ public class TurretSim extends Turret {
                 6,
                 "Turret",
                 voltage -> setVoltageOverride(Optional.of(voltage)),
-                () -> getTurretAngle().getRotations(),
+                () -> getAngle().getRotations(),
                 () -> sim.getAngularVelocityRadPerSec(),
                 () -> sim.getInputVoltage(),
                 getInstance());
+    }
+
+    @Override
+    public boolean exceedsOneRotation() {
+      return false;
+      // added so this will compile
     }
 }
