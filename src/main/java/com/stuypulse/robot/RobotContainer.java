@@ -29,6 +29,7 @@ import com.stuypulse.robot.util.PathUtil.AutonConfig;
 import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -128,14 +129,19 @@ public class RobotContainer {
             autonChooser.addOption("Depot HP Climb Mid", new PathPlannerAuto("HP Depot Climb Mid"));
 
         } catch (AutoBuilderException e) {
-            System.out.println("AutoBuilderException: " + e.getMessage());
+            DriverStation.reportError("AutoBuilderException: " + e.getMessage(), e.getStackTrace());
         }
-        autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
-        autonChooser.addOption("Swerve Quasistatic Forward", swerve.sysIdQuasistatic(Direction.kForward));
-        autonChooser.addOption("Swerve Quasistatic Backward", swerve.sysIdQuasistatic(Direction.kReverse));
 
-        autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdDynamic(Direction.kForward));
-        autonChooser.addOption("Swerve Dynamic Backward", swerve.sysIdDynamic(Direction.kReverse));
+        autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
+        autonChooser.addOption("Swerve Translation Quasistatic Forward", swerve.sysIdTranslationQuasistatic(Direction.kForward));
+        autonChooser.addOption("Swerve Translation Quasistatic Backward", swerve.sysIdTranslationQuasistatic(Direction.kReverse));
+        autonChooser.addOption("Swerve Translation Dynamic Forward", swerve.sysIdTranslationDynamic(Direction.kForward));
+        autonChooser.addOption("Swerve Translation Dynamic Backward", swerve.sysIdTranslationDynamic(Direction.kReverse));
+
+        autonChooser.addOption("Swerve Rotation Dynamic Forward", swerve.sysidDynamicRotation(Direction.kForward));
+        autonChooser.addOption("Swerve Rotation Dynamic Forward", swerve.sysidDynamicRotation(Direction.kReverse));
+        autonChooser.addOption("Swerve Rotation Quasistatic Forward", swerve.sysidQuasistaticRotation(Direction.kForward));
+        autonChooser.addOption("Swerve Rotation Quasistatic Forward", swerve.sysidQuasistaticRotation(Direction.kReverse));
 
         SmartDashboard.putData("Autonomous", autonChooser);
     }
