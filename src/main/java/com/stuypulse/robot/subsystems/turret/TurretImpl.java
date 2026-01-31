@@ -94,7 +94,7 @@ public class TurretImpl extends Turret {
         double crossProduct = zeroVector.x * robotToTarget.y - zeroVector.y * robotToTarget.x;
         double dotProduct = zeroVector.dot(robotToTarget);
 
-        Rotation2d targetAngle = Rotation2d.fromRadians(Math.atan2(crossProduct, dotProduct));
+        Rotation2d targetAngle = Rotation2d.fromRadians(-Math.atan2(crossProduct, dotProduct));
         return targetAngle;
 
         // return robotToTarget.getTranslation2d().getAngle();
