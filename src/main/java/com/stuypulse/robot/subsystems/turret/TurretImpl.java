@@ -21,6 +21,7 @@ import com.stuypulse.robot.util.HubUtil.FERRY_TARGET_POSITIONS;
 import com.stuypulse.robot.util.SysId;
 import com.stuypulse.stuylib.math.Vector2D;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -39,23 +40,24 @@ public class TurretImpl extends Turret {
     public TurretImpl() {
         CANBus canbus = Settings.CANIVORE; 
         turretMotor = new TalonFX(Ports.Turret.TURRET_MOTOR, canbus);
+        turretMotor.setPosition(0.0);
 
         Motors.Turret.MOTOR_CONFIG.configure(turretMotor);
 
-        encoder1 = new CANcoder(Ports.Turret.ENCODER_18t, canbus);
-        encoder1.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
-                new MagnetSensorConfigs()
-                        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-                        .withMagnetOffset(-167/360.0)
-                        .withAbsoluteSensorDiscontinuityPoint(1)));
+        // encoder1 = new CANcoder(Ports.Turret.ENCODER_18t, canbus);
+        // encoder1.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
+        //         new MagnetSensorConfigs()
+        //                 .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+        //                 .withMagnetOffset(-167/360.0)
+        //                 .withAbsoluteSensorDiscontinuityPoint(1)));
 
-        encoder2 = new CANcoder(Ports.Turret.ENCODER_17t, canbus);
-        encoder2.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
-                new MagnetSensorConfigs()
-                        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-                        .withMagnetOffset(
-                        160/360.0)
-                        .withAbsoluteSensorDiscontinuityPoint(1)));
+        // encoder2 = new CANcoder(Ports.Turret.ENCODER_17t, canbus);
+        // encoder2.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
+        //         new MagnetSensorConfigs()
+        //                 .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+        //                 .withMagnetOffset(
+        //                 160/360.0)
+        //                 .withAbsoluteSensorDiscontinuityPoint(1)));
 
         hasUsedAbsoluteEncoder = false;
         voltageOverride = Optional.empty();
@@ -63,19 +65,39 @@ public class TurretImpl extends Turret {
         // just default to this ?
     }
 
-    @Override
+
     public Rotation2d getPointAtHubAngle() {
-        Vector2D robot = new Vector2D(CommandSwerveDrivetrain.getInstance().getPose().getTranslation());
+        Pose2d robotPose = CommandSwerveDrivetrain.getInstance().getPose();
         Vector2D hub = new Vector2D(HubUtil.getAllianceHubPose().getTranslation());
-        Vector2D robotToHub = hub.sub(robot).normalize();
-        Vector2D zeroVector = new Vector2D(0.0, 1.0);
+        Vector2D robot = new Vector2D(robotPose.getTranslation());
+
+        Vector2D target = new Vector2D(hub.x, hub.y);
+        Vector2D robotToTarget = target.sub(robot);
+        Vector2D zeroVector = new Vector2D(robotPose.getRotation().getCos(), robotPose.getRotation().getSin());
+
+        SmartDashboard.putNumber("Turret/Robot to Hub X", robotToTarget.x);
+        SmartDashboard.putNumber("Turret/Robot to Hub Y", robotToTarget.y);
+
+        SmartDashboard.putNumber("Turret/Zero Vector X", zeroVector.x);
+        SmartDashboard.putNumber("Turret/Zero Vector Y", zeroVector.y);
+
+        SmartDashboard.putNumber("Turret/Hub Pose X", hub.x);
+        SmartDashboard.putNumber("Turret/Hub Pose Y", hub.y);
+
+        SmartDashboard.putNumber("Turret/Robot Pose X", robotPose.getX());
+        SmartDashboard.putNumber("Turret/Robot Pose Y", robotPose.getY());
+
+        // need to normalize this when we do the cross product with the unit vector so cos theta is not scaled! 
+        // Vector2D zeroVector = new Vector2D(0.0, 1.0);
 
         // https://www.youtube.com/watch?v=_VuZZ9_58Wg
-        double crossProduct = zeroVector.x * robotToHub.y - zeroVector.y * robotToHub.x;
-        double dotProduct = zeroVector.dot(robotToHub);
+        double crossProduct = zeroVector.x * robotToTarget.y - zeroVector.y * robotToTarget.x;
+        double dotProduct = zeroVector.dot(robotToTarget);
 
         Rotation2d targetAngle = Rotation2d.fromRadians(Math.atan2(crossProduct, dotProduct));
         return targetAngle;
+
+        // return robotToTarget.getTranslation2d().getAngle();
     }
 
     @Override
@@ -108,47 +130,17 @@ public class TurretImpl extends Turret {
         return Rotation2d.fromRotations(turretMotor.getPosition().getValueAsDouble());
     }
 
-    private Rotation2d getEncoderPos18t() {
-        return Rotation2d.fromRotations((encoder1.getAbsolutePosition().getValueAsDouble())).minus(Settings.Turret.EIGHTEEN_TEETH_GEAR_OFFSET);
-        // need to apply offsets here
-    }
+    // private Rotation2d getEncoderPos18t() {
+    //     return Rotation2d.fromRotations((encoder1.getAbsolutePosition().getValueAsDouble())).minus(Settings.Turret.EIGHTEEN_TEETH_GEAR_OFFSET);
+    //     // need to apply offsets here
+    // }
 
-    private Rotation2d getEncoderPos17t() {
-        return Rotation2d.fromRotations((encoder2.getAbsolutePosition().getValueAsDouble())).minus(Settings.Turret.SEVENTEETH_TEETH_GEAR_OFFSET);  
-        // need to apply offsets here
-    }
+    // private Rotation2d getEncoderPos17t() {
+    //     return Rotation2d.fromRotations((encoder2.getAbsolutePosition().getValueAsDouble())).minus(Settings.Turret.SEVENTEETH_TEETH_GEAR_OFFSET);  
+    //     // need to apply offsets here
+    // }
 
-    public Rotation2d getAbsoluteTurretAngle() {
-        long gcdaandb[] = { 0, -1, 1 };
 
-        Rotation2d encoder17tPosition = getEncoderPos17t();
-        double numberOfGearTeethRotated17 = (encoder17tPosition.getRotations()
-                * (double) Constants.Turret.encoderTeeth17);
-
-        Rotation2d encoder18tPosition = getEncoderPos18t();
-        double numberOfGearTeethRotated18 = (encoder18tPosition.getRotations()
-                * (double) Constants.Turret.encoderTeeth18);
-
-        double crt_Partial17 = numberOfGearTeethRotated17 * gcdaandb[2] * Constants.Turret.encoderTeeth18;
-        double crt_Partial18 = numberOfGearTeethRotated18 * gcdaandb[1] * Constants.Turret.encoderTeeth17;
-
-        // Java's % operator is not actually the same as the modulo operator
-        double crt_pos = (crt_Partial17 + crt_Partial18)
-                % (Constants.Turret.encoderTeeth17 * Constants.Turret.encoderTeeth18);
-
-        crt_pos = (crt_pos < 0) ? (crt_pos + Constants.Turret.encoderTeeth17 * Constants.Turret.encoderTeeth18)
-                : crt_pos;
-
-        double turretAngle = (crt_pos / (double) Constants.Turret.bigGearTeeth) * 360;
-
-        SmartDashboard.putNumber("Turret/CRT partial17", crt_Partial17);
-        SmartDashboard.putNumber("Turret/CRT partial18", crt_Partial18);
-        SmartDashboard.putNumber("Turret/CRT teeth17", numberOfGearTeethRotated17);
-        SmartDashboard.putNumber("Turret/CRT teeth18", numberOfGearTeethRotated18);
-        SmartDashboard.putNumber("Turret/CRT crt_pos", crt_pos);
-
-        return Rotation2d.fromDegrees(turretAngle);
-    }
 
     @Override
     public SysIdRoutine getSysIdRoutine() {
@@ -171,61 +163,20 @@ public class TurretImpl extends Turret {
     public void periodic() {
         super.periodic();
 
-        exceededOneRotation = (getAbsoluteTurretAngle().getDegrees() / 360) > 1;
-
-        if (!hasUsedAbsoluteEncoder) {
-            hasUsedAbsoluteEncoder = true;
-            turretMotor.setPosition((getAbsoluteTurretAngle().getDegrees() - 650.0)/360.0, 0);
-            System.out.println("Absolute Encoder Reset triggered");
+        if (!Settings.EnabledSubsystems.TURRET.get() || getTurretState() == TurretState.STOP) {
+            turretMotor.setVoltage(0);
+        } else {
+            turretMotor.setControl(new PositionVoltage(getTargetAngle().getRotations()));
         }
-
-        // max out at 2 rotations
-        // this needs to be adapted
-
-        if (Settings.EnabledSubsystems.TURRET.get()) {
-            double targetInRotations = getTargetAngle().getRotations();
-            // calculate the motor-relative target angle
-            // find the smallest way to get to the target
-            // make the motor relative target (smallest way to get there + the current motor
-            // angle)
-            double differenceInRotations = targetInRotations - getAbsoluteTurretAngle().getRotations();
-
-            // 0.90, 0.31 = 0.69 when you could just go negative 0.41
-
-            // handle finding the shortest path here
-            if (differenceInRotations > 0.5) {
-                differenceInRotations -= 1.0;
-            } else if (differenceInRotations < -0.5) {
-                differenceInRotations += 1;
-            }
-
-            SmartDashboard.putNumber("Turret/Diffrence in Rotation", differenceInRotations);
-            SmartDashboard.putNumber("Turret/Calculated Target Angle (Relative Encoder)", turretMotor.getPosition().getValueAsDouble() + differenceInRotations);
-            if (voltageOverride.isPresent()) {
-                turretMotor.setVoltage(voltageOverride.orElse(0.0));
-            } else if (!exceededOneRotation) { // less than 360 degrees
-                turretMotor.setControl(
-                        new PositionVoltage(turretMotor.getPosition().getValueAsDouble() + differenceInRotations));
-                // go backwards / forwards by this new amount, representing how much rotation it
-                // takes to go from the current angle to the new target angle
-            } else {
-                turretMotor.setControl(new PositionVoltage(
-                        (turretMotor.getPosition().getValueAsDouble() + differenceInRotations) - 1.0));
-            
-                // go backwards / forwards by this new amount, representing how much rotation it
-                // takes to go from the current angle to the new target angle
-                // just wrap it back if you are already over 360
-            }
-        }
-
-        SmartDashboard.putNumber("Turret/Pos 17t", getEncoderPos17t().getDegrees());
-        SmartDashboard.putNumber("Turret/Pos 18t", getEncoderPos18t().getDegrees());
-        SmartDashboard.putNumber("Turret/Absolute Angle", getAbsoluteTurretAngle().getDegrees());
+        
+        // SmartDashboard.putNumber("Turret/Pos 18t", getEncoderPos18t().getDegrees());
+        // SmartDashboard.putNumber("Turret/Absolute Angle", getAbsoluteTurretAngle().getDegrees());
         SmartDashboard.putString("Turret/State", getTurretState().toString());
         SmartDashboard.putNumber("Turret/Relative Encoder", getAngle().getDegrees());
         SmartDashboard.putBoolean("Turret/Exceeded Rotation", exceededOneRotation);
         SmartDashboard.putNumber("Turret/Position", turretMotor.getPosition().getValueAsDouble() * 360);
         SmartDashboard.putNumber("Turret/Voltage", turretMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Turret/Target Angle", getTargetAngle().getDegrees());
+        SmartDashboard.putNumber("Turret/Get Hub Target Angke", getPointAtHubAngle().getDegrees());
     }
 }

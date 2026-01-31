@@ -1,5 +1,6 @@
 
 
+
 /************************ PROJECT TURRET *************************/
 /* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
 /* Use of this source code is governed by an MIT-style license */
@@ -17,10 +18,11 @@ import edu.wpi.first.math.util.Units;
 
 public interface HubUtil {
 
-    public final Pose2d blueHubCenter = new Pose2d(Units.inchesToMeters(158.60), Units.inchesToMeters(Field.WIDTH / 2.0), new Rotation2d());
+    public final Pose2d hubCenter = new Pose2d(Units.inchesToMeters(158.60), Field.WIDTH/2.0, new Rotation2d());
 
     public static Pose2d getAllianceHubPose() {
-        return (Robot.isBlue() ? blueHubCenter : Field.transformToOppositeAlliance(blueHubCenter));
+        // return (Robot.isBlue() ? blueHubCenter : Field.transformToOppositeAlliance(blueHubCenter));
+        return hubCenter;
     }
 
         public enum FERRY_TARGET_POSITIONS {
