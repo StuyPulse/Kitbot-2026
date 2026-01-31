@@ -1,5 +1,57 @@
 {
+  "NetworkTables": {
+    "transitory": {
+      "CameraPublisher": {
+        "limelight": {
+          "open": true
+        },
+        "open": true
+      },
+      "SmartDashboard": {
+        "Vision": {
+          "open": true
+        },
+        "open": true
+      },
+      "limelight": {
+        "double[]##v_/limelight/botpose_orb_wpiblue": {
+          "open": true
+        },
+        "double[]##v_/limelight/botpose_orb_wpired": {
+          "open": true
+        }
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Autonomous": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/Visualizers/Turret": "Mechanism2d"
+    },
+    "windows": {
+      "/SmartDashboard/Autonomous": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field": {
+        "bottom": 1914,
+        "height": 8.069275856018066,
+        "left": 245,
+        "right": 3942,
+        "top": 118,
+        "width": 16.54119300842285,
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
   "NetworkTables Info": {
     "visible": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)"
   }
 }

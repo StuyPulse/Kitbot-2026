@@ -22,9 +22,11 @@ import com.stuypulse.robot.commands.turret.SetTurretPointAtHub;
 import com.stuypulse.robot.commands.turret.SetTurretZero;
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Ports;
+import com.stuypulse.robot.constants.Settings.Vision;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.subsystems.turret.Turret;
+import com.stuypulse.robot.subsystems.vision.LimelightVision;
 import com.stuypulse.robot.util.PathUtil.AutonConfig;
 import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
@@ -45,7 +47,8 @@ public class RobotContainer {
     // Subsystems
     public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
     public final Superstructure superstructure = Superstructure.getInstance();
-    public final Turret turret = Turret.getInstance();
+    // public final Turret turret = Turret.getInstance();
+    public final LimelightVision vision = LimelightVision.getInstance();
 
     // Autons
     private static SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -139,9 +142,9 @@ public class RobotContainer {
         autonChooser.addOption("Swerve Translation Dynamic Backward", swerve.sysIdTranslationDynamic(Direction.kReverse));
 
         autonChooser.addOption("Swerve Rotation Dynamic Forward", swerve.sysidDynamicRotation(Direction.kForward));
-        autonChooser.addOption("Swerve Rotation Dynamic Forward", swerve.sysidDynamicRotation(Direction.kReverse));
+        autonChooser.addOption("Swerve Rotation Dynamic Backward", swerve.sysidDynamicRotation(Direction.kReverse));
         autonChooser.addOption("Swerve Rotation Quasistatic Forward", swerve.sysidQuasistaticRotation(Direction.kForward));
-        autonChooser.addOption("Swerve Rotation Quasistatic Forward", swerve.sysidQuasistaticRotation(Direction.kReverse));
+        autonChooser.addOption("Swerve Rotation Quasistatic Backward", swerve.sysidQuasistaticRotation(Direction.kReverse));
 
         SmartDashboard.putData("Autonomous", autonChooser);
     }
