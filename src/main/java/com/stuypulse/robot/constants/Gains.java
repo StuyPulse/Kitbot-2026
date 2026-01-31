@@ -8,9 +8,9 @@ public class Gains {
         double kV = 0.2;
         double kA = 0.01;
 
-        double kP = 1.0;
+        double kP = 50.0;
         double kI = 0.0;
-        double kD = 0.05;
+        double kD = 0.25;
     }
 
     public interface Shooter {

@@ -32,7 +32,8 @@ public abstract class Turret extends SubsystemBase {
     public enum TurretState {
         ZERO,
         FERRYING,
-        POINT_AT_HUB;
+        POINT_AT_HUB,
+        STOP;
     }
 
     public abstract boolean exceedsOneRotation();
@@ -42,6 +43,7 @@ public abstract class Turret extends SubsystemBase {
             case ZERO -> new Rotation2d(); 
             case FERRYING -> getFerryAngle();
             case POINT_AT_HUB -> getPointAtHubAngle();
+            case STOP -> getAngle();
         };
     }
 
@@ -65,6 +67,8 @@ public abstract class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putString("Turret/State", getTurretState().name());
+        
         if (Settings.DEBUG_MODE) {
             if (Settings.EnabledSubsystems.TURRET.get()) {
                 TurretVisualizer.getInstance().updateTurretAngle(getAngle(), atTargetAngle());
