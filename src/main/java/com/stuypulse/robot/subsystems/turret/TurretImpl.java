@@ -16,8 +16,6 @@ import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
-import com.stuypulse.robot.util.HubUtil;
-import com.stuypulse.robot.util.HubUtil.FERRY_TARGET_POSITIONS;
 import com.stuypulse.robot.util.SysId;
 import com.stuypulse.stuylib.math.Vector2D;
 
@@ -34,7 +32,6 @@ public class TurretImpl extends Turret {
     private CANBus canbus;
     private boolean hasUsedAbsoluteEncoder;
     private boolean exceededOneRotation;
-   // private FERRY_TARGET_POSITIONS targetPosition;
     private Optional<Double> voltageOverride;
 
     public TurretImpl() {
@@ -63,55 +60,6 @@ public class TurretImpl extends Turret {
         voltageOverride = Optional.empty();
         //targetPosition = FERRY_TARGET_POSITIONS.LEFT_WALL;
         // just default to this ?
-    }
-
-
-    public Rotation2d getPointAtHubAngle() {
-        Pose2d robotPose = CommandSwerveDrivetrain.getInstance().getPose();
-        Vector2D hub = new Vector2D(HubUtil.getAllianceHubPose().getTranslation());
-        Vector2D robot = new Vector2D(robotPose.getTranslation());
-
-        Vector2D target = new Vector2D(hub.x, hub.y);
-        Vector2D robotToTarget = target.sub(robot);
-        Vector2D zeroVector = new Vector2D(robotPose.getRotation().getCos(), robotPose.getRotation().getSin());
-
-        SmartDashboard.putNumber("Turret/Robot to Hub X", robotToTarget.x);
-        SmartDashboard.putNumber("Turret/Robot to Hub Y", robotToTarget.y);
-
-        SmartDashboard.putNumber("Turret/Zero Vector X", zeroVector.x);
-        SmartDashboard.putNumber("Turret/Zero Vector Y", zeroVector.y);
-
-        SmartDashboard.putNumber("Turret/Hub Pose X", hub.x);
-        SmartDashboard.putNumber("Turret/Hub Pose Y", hub.y);
-
-        SmartDashboard.putNumber("Turret/Robot Pose X", robotPose.getX());
-        SmartDashboard.putNumber("Turret/Robot Pose Y", robotPose.getY());
-
-        // need to normalize this when we do the cross product with the unit vector so cos theta is not scaled! 
-        // Vector2D zeroVector = new Vector2D(0.0, 1.0);
-
-        // https://www.youtube.com/watch?v=_VuZZ9_58Wg
-        double crossProduct = zeroVector.x * robotToTarget.y - zeroVector.y * robotToTarget.x;
-        double dotProduct = zeroVector.dot(robotToTarget);
-
-        Rotation2d targetAngle = Rotation2d.fromRadians(-Math.atan2(crossProduct, dotProduct));
-        return targetAngle;
-
-        // return robotToTarget.getTranslation2d().getAngle();
-    }
-
-    @Override
-    public Rotation2d getFerryAngle() {
-        // Vector2D robot = new Vector2D(CommandSwerveDrivetrain.getInstance().getPose().getTranslation());
-        // Vector2D robotToHub = robot
-        //         .sub(new Vector2D(targetPosition.getFerryTargetPose().getTranslation())).normalize();
-        // Vector2D zeroVector = new Vector2D(0.0, 1.0);
-        // // define this as a constant somewhere?
-
-        // Rotation2d angle = Rotation2d
-        //         .fromDegrees(Math.acos(robotToHub.dot(zeroVector) / robotToHub.magnitude() * zeroVector.magnitude()));
-        // return angle;
-        return new Rotation2d();
     }
 
     @Override
@@ -145,14 +93,14 @@ public class TurretImpl extends Turret {
     @Override
     public SysIdRoutine getSysIdRoutine() {
         return SysId.getRoutine(
-                2,
-                6,
-                "Turret",
-                voltage -> setVoltageOverride(Optional.of(voltage)),
-                () -> getAngle().getRotations(),
-                () -> turretMotor.getVelocity().getValueAsDouble(),
-                () -> turretMotor.getMotorVoltage().getValueAsDouble(),
-                getInstance());
+            2,
+            6,
+            "Turret",
+            voltage -> setVoltageOverride(Optional.of(voltage)),
+            () -> getAngle().getRotations(),
+            () -> turretMotor.getVelocity().getValueAsDouble(),
+            () -> turretMotor.getMotorVoltage().getValueAsDouble(),
+            getInstance());
     }
 
     private void setVoltageOverride(Optional<Double> volts) {
@@ -171,7 +119,6 @@ public class TurretImpl extends Turret {
         
         // SmartDashboard.putNumber("Turret/Pos 18t", getEncoderPos18t().getDegrees());
         // SmartDashboard.putNumber("Turret/Absolute Angle", getAbsoluteTurretAngle().getDegrees());
-        SmartDashboard.putString("Turret/State", getTurretState().toString());
         SmartDashboard.putNumber("Turret/Relative Encoder", getAngle().getDegrees());
         SmartDashboard.putBoolean("Turret/Exceeded Rotation", exceededOneRotation);
         SmartDashboard.putNumber("Turret/Position", turretMotor.getPosition().getValueAsDouble() * 360);
