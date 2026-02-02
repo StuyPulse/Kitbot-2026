@@ -2,9 +2,9 @@ package com.stuypulse.robot.subsystems.turret;
 
 import java.util.Optional;
 
+import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
-import com.stuypulse.robot.util.HubUtil;
 import com.stuypulse.robot.util.SysId;
 import com.stuypulse.stuylib.math.Vector2D;
 import edu.wpi.first.math.numbers.N1;
@@ -71,27 +71,6 @@ public class TurretSim extends Turret {
         setpoint = new TrapezoidProfile.State();
 
         voltageOverride = Optional.empty();
-    }
-
-    @Override
-    public Rotation2d getPointAtHubAngle() {
-        Vector2D robot = new Vector2D(CommandSwerveDrivetrain.getInstance().getPose().getTranslation());
-        Vector2D hub = new Vector2D(HubUtil.getAllianceHubPose().getTranslation());
-        Vector2D robotToHub = hub.sub(robot).normalize();
-        Vector2D zeroVector = new Vector2D(0.0, 1.0);
-
-        // https://www.youtube.com/watch?v=_VuZZ9_58Wg
-        double crossProduct = zeroVector.x * robotToHub.y - zeroVector.y * robotToHub.x;
-        double dotProduct = zeroVector.dot(robotToHub);
-
-        Rotation2d targetAngle = Rotation2d.fromRadians(Math.atan2(crossProduct, dotProduct));
-
-        return targetAngle;
-    }
-
-    @Override
-    public Rotation2d getFerryAngle() {
-        return new Rotation2d();
     }
 
     @Override

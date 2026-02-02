@@ -88,8 +88,6 @@ public class TurretImpl extends Turret {
     //     // need to apply offsets here
     // }
 
-
-
     @Override
     public SysIdRoutine getSysIdRoutine() {
         return SysId.getRoutine(

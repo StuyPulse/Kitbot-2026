@@ -1,6 +1,7 @@
 package com.stuypulse.robot.subsystems.turret;
 
 import com.stuypulse.robot.Robot;
+import com.stuypulse.robot.constants.Constants;
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
@@ -9,6 +10,7 @@ import com.stuypulse.stuylib.math.Vector2D;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -94,18 +96,20 @@ public abstract class Turret extends SubsystemBase {
 
     public Rotation2d getPointAtTargetAngle(Pose2d targetPose) {
         Pose2d robotPose = CommandSwerveDrivetrain.getInstance().getPose();
+        Translation2d robotToTurret = Constants.Turret.robotToTurret.getTranslation();
         Vector2D robot = new Vector2D(robotPose.getTranslation());
 
         Vector2D target = new Vector2D(targetPose.getX(), targetPose.getY());
         Vector2D robotToTarget = target.sub(robot);
+        Vector2D turretToTarget = robotToTarget.add(new Vector2D(robotToTurret));
         Vector2D zeroVector = new Vector2D(robotPose.getRotation().getCos(), robotPose.getRotation().getSin());
 
         // https://www.youtube.com/watch?v=_VuZZ9_58Wg
         double crossProduct = zeroVector.x * robotToTarget.y - zeroVector.y * robotToTarget.x;
         double dotProduct = zeroVector.dot(robotToTarget);
 
-        SmartDashboard.putNumber("Turret/Robot to Target Vector X", robotToTarget.x);
-        SmartDashboard.putNumber("Turret/Robot to Target Vector Y", robotToTarget.y);
+        SmartDashboard.putNumber("Turret/Turret to Target Vector X", robotToTarget.x);
+        SmartDashboard.putNumber("Turret/Turret to Target Vector Y", robotToTarget.y);
         SmartDashboard.putNumber("Turret/Target Pose X", targetPose.getX());
         SmartDashboard.putNumber("Turret/Target Pose Y", targetPose.getY());
         SmartDashboard.putNumber("Turret/Zero Vector X", zeroVector.x);

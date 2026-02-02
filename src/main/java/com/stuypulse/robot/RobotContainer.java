@@ -69,9 +69,9 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
 
-        driver.getTopButton()
-            .whileTrue(new SuperstructureShoot())
-            .whileFalse(new SuperstructureIntake());
+        // driver.getTopButton()
+        //     .whileTrue(new SuperstructureShoot())
+        //     .whileFalse(new SuperstructureIntake());
 
         driver.getTopButton()
             .whileTrue(new SetTurretPointAtHub())
