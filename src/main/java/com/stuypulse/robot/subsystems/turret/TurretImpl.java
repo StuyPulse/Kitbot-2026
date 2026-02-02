@@ -35,30 +35,32 @@ public class TurretImpl extends Turret {
     private Optional<Double> voltageOverride;
 
     public TurretImpl() {
-        CANBus canbus = Settings.CANIVORE; 
+        CANBus canbus = Settings.CANIVORE;
         turretMotor = new TalonFX(Ports.Turret.TURRET_MOTOR, canbus);
         turretMotor.setPosition(0.0);
 
         Motors.Turret.MOTOR_CONFIG.configure(turretMotor);
 
         // encoder1 = new CANcoder(Ports.Turret.ENCODER_18t, canbus);
-        // encoder1.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
-        //         new MagnetSensorConfigs()
-        //                 .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-        //                 .withMagnetOffset(-167/360.0)
-        //                 .withAbsoluteSensorDiscontinuityPoint(1)));
+        // encoder1.getConfigurator().apply(new
+        // CANcoderConfiguration().withMagnetSensor(
+        // new MagnetSensorConfigs()
+        // .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+        // .withMagnetOffset(-167/360.0)
+        // .withAbsoluteSensorDiscontinuityPoint(1)));
 
         // encoder2 = new CANcoder(Ports.Turret.ENCODER_17t, canbus);
-        // encoder2.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(
-        //         new MagnetSensorConfigs()
-        //                 .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-        //                 .withMagnetOffset(
-        //                 160/360.0)
-        //                 .withAbsoluteSensorDiscontinuityPoint(1)));
+        // encoder2.getConfigurator().apply(new
+        // CANcoderConfiguration().withMagnetSensor(
+        // new MagnetSensorConfigs()
+        // .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+        // .withMagnetOffset(
+        // 160/360.0)
+        // .withAbsoluteSensorDiscontinuityPoint(1)));
 
         hasUsedAbsoluteEncoder = false;
         voltageOverride = Optional.empty();
-        //targetPosition = FERRY_TARGET_POSITIONS.LEFT_WALL;
+        // targetPosition = FERRY_TARGET_POSITIONS.LEFT_WALL;
         // just default to this ?
     }
 
@@ -79,26 +81,28 @@ public class TurretImpl extends Turret {
     }
 
     // private Rotation2d getEncoderPos18t() {
-    //     return Rotation2d.fromRotations((encoder1.getAbsolutePosition().getValueAsDouble())).minus(Settings.Turret.EIGHTEEN_TEETH_GEAR_OFFSET);
-    //     // need to apply offsets here
+    // return
+    // Rotation2d.fromRotations((encoder1.getAbsolutePosition().getValueAsDouble())).minus(Settings.Turret.EIGHTEEN_TEETH_GEAR_OFFSET);
+    // // need to apply offsets here
     // }
 
     // private Rotation2d getEncoderPos17t() {
-    //     return Rotation2d.fromRotations((encoder2.getAbsolutePosition().getValueAsDouble())).minus(Settings.Turret.SEVENTEETH_TEETH_GEAR_OFFSET);  
-    //     // need to apply offsets here
+    // return
+    // Rotation2d.fromRotations((encoder2.getAbsolutePosition().getValueAsDouble())).minus(Settings.Turret.SEVENTEETH_TEETH_GEAR_OFFSET);
+    // // need to apply offsets here
     // }
 
     @Override
     public SysIdRoutine getSysIdRoutine() {
         return SysId.getRoutine(
-            2,
-            6,
-            "Turret",
-            voltage -> setVoltageOverride(Optional.of(voltage)),
-            () -> getAngle().getRotations(),
-            () -> turretMotor.getVelocity().getValueAsDouble(),
-            () -> turretMotor.getMotorVoltage().getValueAsDouble(),
-            getInstance());
+                2,
+                6,
+                "Turret",
+                voltage -> setVoltageOverride(Optional.of(voltage)),
+                () -> getAngle().getRotations(),
+                () -> turretMotor.getVelocity().getValueAsDouble(),
+                () -> turretMotor.getMotorVoltage().getValueAsDouble(),
+                getInstance());
     }
 
     private void setVoltageOverride(Optional<Double> volts) {
@@ -112,11 +116,21 @@ public class TurretImpl extends Turret {
         if (!Settings.EnabledSubsystems.TURRET.get() || getTurretState() == TurretState.STOP) {
             turretMotor.setVoltage(0);
         } else {
+
+            if (getTargetAngle().getRotations() > 1.0) {
+                turretMotor.setControl(new PositionVoltage(getTargetAngle().getRotations() - 1.0));
+            }
+
+            if (getTargetAngle().getRotations() < -1.0) {
+                turretMotor.setControl(new PositionVoltage(getTargetAngle().getRotations() + 1.0));
+            }
+
             turretMotor.setControl(new PositionVoltage(getTargetAngle().getRotations()));
         }
-        
+
         // SmartDashboard.putNumber("Turret/Pos 18t", getEncoderPos18t().getDegrees());
-        // SmartDashboard.putNumber("Turret/Absolute Angle", getAbsoluteTurretAngle().getDegrees());
+        // SmartDashboard.putNumber("Turret/Absolute Angle",
+        // getAbsoluteTurretAngle().getDegrees());
         SmartDashboard.putNumber("Turret/Relative Encoder", getAngle().getDegrees());
         SmartDashboard.putBoolean("Turret/Exceeded Rotation", exceededOneRotation);
         SmartDashboard.putNumber("Turret/Position", turretMotor.getPosition().getValueAsDouble() * 360);
