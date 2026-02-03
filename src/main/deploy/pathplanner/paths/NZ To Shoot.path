@@ -64,7 +64,7 @@
     "rotation": -45.0
   },
   "reversed": false,
-  "folder": "Kitbot",
+  "folder": "New Folder",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

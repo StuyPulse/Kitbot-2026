@@ -1,6 +1,7 @@
 package com.stuypulse.robot.commands.auton;
 
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.stuypulse.robot.commands.superstructure.SuperstructureIntake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
 import com.stuypulse.robot.commands.swerve.SwerveDriveAlignToHub;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
@@ -16,7 +17,8 @@ public class TwoCycleBottom extends SequentialCommandGroup {
 
             // Shoot Preloads
             new SwerveDriveAlignToHub(),
-            new SuperstructureShoot(),
+            new SuperstructureShoot().alongWith(new WaitCommand(5))
+                .andThen(new SuperstructureIntake()),
 
             // Collect Fuel (1)
             CommandSwerveDrivetrain.getInstance().followPathCommand(paths[0]),
@@ -26,7 +28,8 @@ public class TwoCycleBottom extends SequentialCommandGroup {
 
             // Shoot Fuel (1)
             new SwerveDriveAlignToHub(),
-            new SuperstructureShoot(),
+            new SuperstructureShoot().alongWith(new WaitCommand(7.5))
+                .andThen(new SuperstructureIntake()),
 
             // Collect Fuel (2)
             CommandSwerveDrivetrain.getInstance().followPathCommand(paths[3]),
