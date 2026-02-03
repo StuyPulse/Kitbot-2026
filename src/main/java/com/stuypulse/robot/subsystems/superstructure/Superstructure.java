@@ -17,6 +17,7 @@ public abstract class Superstructure extends SubsystemBase {
     }
 
     public enum SuperstructureState {
+        //TODO: implamentation of interpolation for these states
         OUTTAKING(Settings.Superstructure.Intake_Shooter.OUTTAKE_SPEED, Settings.Superstructure.Indexer.OUTTAKE_SPEED),
         INTAKING(Settings.Superstructure.Intake_Shooter.INTAKE_SPEED, Settings.Superstructure.Indexer.INTAKE_SPEED),
         PREPARING(Settings.Superstructure.Intake_Shooter.SHOOT_SPEED_RPM, 0.0),
@@ -55,6 +56,7 @@ public abstract class Superstructure extends SubsystemBase {
     }
 
     public abstract boolean atTargetVelocity();
+    public abstract double getIntakeShooterMotorRPM();
 
     @Override
     public void periodic() {

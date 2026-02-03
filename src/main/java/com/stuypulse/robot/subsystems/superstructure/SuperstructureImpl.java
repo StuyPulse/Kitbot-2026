@@ -10,15 +10,22 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.Gains.Swerve;
+import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
+import com.stuypulse.robot.util.InterpolationUtil;
 
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SuperstructureImpl extends Superstructure {
     
     private final TalonFX intakeShooterMotor;
     private final SparkMax indexMotor;
+    private final CommandSwerveDrivetrain swerve;
     
     public SuperstructureImpl() {
+
+        swerve = CommandSwerveDrivetrain.getInstance();
         intakeShooterMotor = new TalonFX(Ports.Superstructure.INTAKE_SHOOTER_MOTOR, "Swerve Drive Drive");
         Motors.Superstructure.intakeShooterMotorConfig.configure(intakeShooterMotor);  
         
@@ -34,8 +41,15 @@ public class SuperstructureImpl extends Superstructure {
         return Math.abs(shooterVel - targetVel) < Settings.Superstructure.Intake_Shooter.SHOOT_TOLERANCE_RPM;
     }
 
+    @Override
+    public double getIntakeShooterMotorRPM() {
+        return intakeShooterMotor.getVelocity().getValueAsDouble() * 60.0;
+    }
+
     private void setMotorsBasedOnState() {
-        if (getState() == SuperstructureState.SHOOTING || getState() == SuperstructureState.PREPARING) {
+        if (getState() == SuperstructureState.SHOOTING) {
+            intakeShooterMotor.setControl(new VelocityVoltage(InterpolationUtil.getRpmfromdistance(swerve.getDistanceFromHub()) / 60.0));
+        } if (getState() == SuperstructureState.PREPARING) {
             intakeShooterMotor.setControl(new VelocityVoltage(getState().getMainWheelsTargetSpeed() / 60.0));
         } else {
             intakeShooterMotor.setControl(new DutyCycleOut(getState().getMainWheelsTargetSpeed()));

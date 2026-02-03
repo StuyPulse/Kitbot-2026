@@ -16,6 +16,7 @@ import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
 import com.stuypulse.robot.commands.swerve.SwerveDriveAlignToHub;
 import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
+import com.stuypulse.robot.commands.swerve.SwerveDriveMovmentAlignToHub;
 import com.stuypulse.robot.commands.swerve.SwerveResetRotation;
 import com.stuypulse.robot.commands.turret.SetTurretFerry;
 import com.stuypulse.robot.commands.turret.SetTurretPointAtHub;
@@ -75,8 +76,8 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
 
-        driver.getTopButton()
-                .whileTrue(new SwerveDriveAlignToHub()
+        driver.getRightTriggerButton()
+                .whileTrue(new SwerveDriveMovmentAlignToHub(driver)
                     .alongWith(new WaitCommand(0.5).andThen(new SuperstructureShoot())))
                 .whileFalse(new SuperstructureIntake());
 
@@ -102,6 +103,8 @@ public class RobotContainer {
 
         // driver.getRightButton().whileTrue(new SetTurretFerry())
         //         .onFalse(new SetTurretZero());
+        driver.getRightTriggerButton()
+            .whileTrue(new SwerveDriveMovmentAlignToHub(driver));
     }
 
     /**************/

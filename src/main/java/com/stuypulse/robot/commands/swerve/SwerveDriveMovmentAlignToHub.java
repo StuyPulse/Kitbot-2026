@@ -17,6 +17,7 @@ import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.util.ShotCalculator;
 import com.stuypulse.stuylib.control.angle.AngleController;
 import com.stuypulse.stuylib.control.angle.feedback.AnglePIDController;
+import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
 import com.stuypulse.stuylib.math.Angle;
 import com.stuypulse.stuylib.math.SLMath;
@@ -34,34 +35,31 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class SwerveDriveMovmentAlignToHub extends Command {
 
     private final CommandSwerveDrivetrain swerve;
-    private final SwerveRequest.FieldCentric drive;
     private final Superstructure superstructure;
-    private final AutoGamepad gamepad;
+    private final Gamepad gamepad;
     private ChassisSpeeds prevfieldRelRobotSpeeds;
     private ChassisSpeeds fieldRelRobotSpeeds;
     private VStream speed;
+    private FieldObject2d virtualHub;
 
     private final AngleController controller;
     private final IStream angleVelocity;
 
-    public SwerveDriveMovmentAlignToHub(AutoGamepad gamepad) {
+    public SwerveDriveMovmentAlignToHub(Gamepad gamepad) {
         this.gamepad = gamepad;
         superstructure = Superstructure.getInstance();
         prevfieldRelRobotSpeeds = new ChassisSpeeds();
         fieldRelRobotSpeeds = new ChassisSpeeds();
         swerve = CommandSwerveDrivetrain.getInstance();
 
-        drive = new SwerveRequest.FieldCentric()
-                .withDeadband(Settings.Swerve.Constraints.MAX_VELOCITY_M_PER_S * Settings.Driver.Drive.DEADBAND.get())
-                .withRotationalDeadband(
-                        Settings.Swerve.Constraints.MAX_ANGULAR_ACCEL_RAD_PER_S * Settings.Driver.Turn.DEADBAND.get())
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        virtualHub = Field.FIELD2D.getObject("virtual hub");
 
         controller = new AnglePIDController(Gains.Swerve.Motion.THETA.kP, Gains.Swerve.Motion.THETA.kI,
                 Gains.Swerve.Motion.THETA.kD)
@@ -104,6 +102,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
                                 : new Pose3d(Field.transformToOppositeAlliance(Field.hubCenter)),
                         prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01)
                 .estimateTargetPose().getTranslation().toTranslation2d();
+        virtualHub.setPose(new Pose2d(speakerPose, new Rotation2d()));
         return currentPose.getTranslation().minus(speakerPose).getAngle();
     }
 

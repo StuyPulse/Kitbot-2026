@@ -44,6 +44,18 @@ public interface Settings {
             double INTAKE_SPEED = -1.0;
             double OUTTAKE_SPEED = 1.0;
         }
+
+        public interface interpolation {
+            double[][] interpoationValues = {
+                // Distance X RPM
+                {0.0, 0.0},
+                {0.0, 0.0},
+                {0.0, 0.0},
+                {0.0, 0.0},
+                {0.0, 0.0}
+            };
+            
+        }
     }
 
     public interface Turret {
