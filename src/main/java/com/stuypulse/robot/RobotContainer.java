@@ -14,6 +14,7 @@ import com.stuypulse.robot.commands.auton.TwoCycleBottom;
 import com.stuypulse.robot.commands.superstructure.SuperstructureIntake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
+import com.stuypulse.robot.commands.superstructure.SuperstructureTesting;
 import com.stuypulse.robot.commands.swerve.SwerveDriveAlignToHub;
 import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
 import com.stuypulse.robot.commands.swerve.SwerveDriveMovmentAlignToHub;
@@ -29,6 +30,7 @@ import com.stuypulse.robot.subsystems.turret.Turret;
 import com.stuypulse.robot.util.PathUtil.AutonConfig;
 import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
+import com.stuypulse.robot.subsystems.vision.LimelightVision;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -46,7 +48,8 @@ public class RobotContainer {
     // Subsystems
     public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
     public final Superstructure superstructure = Superstructure.getInstance();
-    public final Turret turret = Turret.getInstance();
+    public final LimelightVision vision = LimelightVision.getInstance();
+    // public final Turret turret = Turret.getInstance();
 
     // Autons
     private static SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -78,7 +81,7 @@ public class RobotContainer {
 
         driver.getRightTriggerButton()
                 .whileTrue(new SwerveDriveMovmentAlignToHub(driver)
-                    .alongWith(new WaitCommand(0.5).andThen(new SuperstructureShoot())))
+                    .alongWith(new SuperstructureShoot()))
                 .whileFalse(new SuperstructureIntake());
 
         // driver.getLeftButton()
@@ -103,8 +106,8 @@ public class RobotContainer {
 
         // driver.getRightButton().whileTrue(new SetTurretFerry())
         //         .onFalse(new SetTurretZero());
-        driver.getRightTriggerButton()
-            .whileTrue(new SwerveDriveMovmentAlignToHub(driver));
+        driver.getDPadDown()
+            .onTrue(new SuperstructureTesting());
     }
 
     /**************/

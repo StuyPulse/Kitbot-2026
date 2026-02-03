@@ -100,11 +100,10 @@ public final class ShotCalculator {
                 targetPose.getRotation());
 
             
-            // SmartDashboard.putNumber("hdsr/targetPose x", targetPose.getX());
-            // SmartDashboard.putNumber("hdsr/targetPose y", targetPose.getY());
-
-            // SmartDashboard.putNumber("hdsr/effectiveTargetPose x", effectiveTarget.getX());
-            // SmartDashboard.putNumber("hdsr/effectiveTargetPose y", effectiveTarget.getY());
+            SmartDashboard.putNumber("hdsr/targetPose x", targetPose.getX());
+            SmartDashboard.putNumber("hdsr/targetPose y", targetPose.getY());
+            SmartDashboard.putNumber("hdsr/effectiveTargetPose x", effectiveTarget.getX());
+            SmartDashboard.putNumber("hdsr/effectiveTargetPose y", effectiveTarget.getY());
 
             ShotSolution newSol = solveBallisticWithSpeed(
                 shooterPose,

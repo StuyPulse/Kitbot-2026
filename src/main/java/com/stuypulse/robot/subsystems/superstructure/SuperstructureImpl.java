@@ -13,6 +13,7 @@ import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.constants.Gains.Swerve;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.util.InterpolationUtil;
+import com.stuypulse.stuylib.network.SmartNumber;
 
 import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,9 +23,11 @@ public class SuperstructureImpl extends Superstructure {
     private final TalonFX intakeShooterMotor;
     private final SparkMax indexMotor;
     private final CommandSwerveDrivetrain swerve;
+    private SmartNumber shooterRpm;
     
     public SuperstructureImpl() {
 
+        shooterRpm = new SmartNumber("SuperStructure/Settings/Testing RPM", 0.0);
         swerve = CommandSwerveDrivetrain.getInstance();
         intakeShooterMotor = new TalonFX(Ports.Superstructure.INTAKE_SHOOTER_MOTOR, "Swerve Drive Drive");
         Motors.Superstructure.intakeShooterMotorConfig.configure(intakeShooterMotor);  
@@ -49,9 +52,12 @@ public class SuperstructureImpl extends Superstructure {
     private void setMotorsBasedOnState() {
         if (getState() == SuperstructureState.SHOOTING) {
             intakeShooterMotor.setControl(new VelocityVoltage(InterpolationUtil.getRpmfromdistance(swerve.getDistanceFromHub()) / 60.0));
-        } if (getState() == SuperstructureState.PREPARING) {
+        } else if (getState() == SuperstructureState.PREPARING) {
             intakeShooterMotor.setControl(new VelocityVoltage(getState().getMainWheelsTargetSpeed() / 60.0));
-        } else {
+        } else if (getState() == SuperstructureState.TESTING) {
+            intakeShooterMotor.setControl(new VelocityVoltage(shooterRpm.getAsDouble() / 60.0));
+        }
+        else {
             intakeShooterMotor.setControl(new DutyCycleOut(getState().getMainWheelsTargetSpeed()));
         }
 
@@ -70,7 +76,7 @@ public class SuperstructureImpl extends Superstructure {
         SmartDashboard.putString("SuperStructure/State", getState().toString());
         SmartDashboard.putNumber("SuperStructure/Main Wheels Target Speed", getState().getMainWheelsTargetSpeed());
         SmartDashboard.putNumber("SuperStructure/Indexer Target Speed", getState().getIndexerTargetSpeed());
-
+        SmartDashboard.putNumber("SuperStructure/DistanceFromGoal", swerve.getDistanceFromHub());
         SmartDashboard.putNumber("SuperStructure/Main Wheels Current Speed (RPM)", intakeShooterMotor.getVelocity().getValueAsDouble() * 60.0);
         SmartDashboard.putNumber("SuperStructure/Indexer Applied DutyCycle", indexMotor.getAppliedOutput());
     }
