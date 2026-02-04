@@ -95,7 +95,7 @@ public final class ShotCalculator {
 
             effectiveTarget = new Pose3d(
                 targetPose.getX() - dx,
-                targetPose.getY() - dy,
+                targetPose.getY() + dy,
                 targetPose.getZ(),
                 targetPose.getRotation());
 
