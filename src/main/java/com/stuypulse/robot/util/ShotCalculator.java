@@ -4,6 +4,7 @@
 package com.stuypulse.robot.util;
 
 import com.stuypulse.robot.Robot;
+import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Settings;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -94,8 +95,8 @@ public final class ShotCalculator {
             + 0.5 * ayMetersPerSecondSquared * t * t;
 
             effectiveTarget = new Pose3d(
-                targetPose.getX() - dx,
-                targetPose.getY() + dy,
+                targetPose.getX(), //- dx,
+                targetPose.getY(), //- dy,
                 targetPose.getZ(),
                 targetPose.getRotation());
 
@@ -133,6 +134,6 @@ public final class ShotCalculator {
         return new AlignAngleSolution(
             sol.launchPitchAngle(),
             Rotation2d.fromRadians(yaw),
-            effectiveTarget);
+            Field.transformToOppositeAlliance(effectiveTarget));
     }
 }

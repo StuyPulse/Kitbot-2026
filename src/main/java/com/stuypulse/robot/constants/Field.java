@@ -33,6 +33,7 @@ public interface Field {
     public final Pose2d hubCenter = new Pose2d(Units.inchesToMeters(182.11), WIDTH / 2.0, new Rotation2d());
 
     public static Pose2d getAllianceHubPose() {
+        // return (Robot.isBlue()) ? hubCenter : transformToOppositeAlliance(hubCenter);
         return hubCenter;
     }
 

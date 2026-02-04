@@ -80,7 +80,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         driver.getTopButton()
-                .whileTrue(new SwerveDriveAlignToHub()
+                .whileTrue(new SwerveDriveMovmentAlignToHub(driver)
                     .alongWith(new SuperstructureShoot()))
                 .whileFalse(new SuperstructureIntake());
 

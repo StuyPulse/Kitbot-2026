@@ -1,6 +1,7 @@
 package com.stuypulse.robot.commands.swerve;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.fasterxml.jackson.core.util.BufferRecycler.Gettable;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.stuypulse.robot.Robot;
@@ -48,6 +49,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     private ChassisSpeeds fieldRelRobotSpeeds;
     private VStream speed;
     private FieldObject2d fieldVirtualHub;
+    private FieldObject2d hub;
     private Pose2d virtualhub;
     private Pose2d currentPose;
 
@@ -64,12 +66,13 @@ public class SwerveDriveMovmentAlignToHub extends Command {
         currentPose = swerve.getPose();
 
         fieldVirtualHub = Field.FIELD2D.getObject("virtual hub");
+        hub = Field.FIELD2D.getObject("Hub");
 
         controller = new AnglePIDController(Gains.Swerve.Motion.THETA.kP, Gains.Swerve.Motion.THETA.kI,
                 Gains.Swerve.Motion.THETA.kD)
                 .setOutputFilter(x -> -x);
         
-                AngleVelocity derivative = new AngleVelocity();
+        AngleVelocity derivative = new AngleVelocity();
 
         angleVelocity = IStream.create(() -> derivative.get(Angle.fromRotation2d(getTargetAngle())))
             .filtered(
@@ -101,8 +104,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
                 currentPose.getRotation());
         Translation2d speakerPose = ShotCalculator
                 .solveShootOnTheFly(new Pose3d(currentPose),
-                        (Robot.isBlue()) ? new Pose3d(Field.hubCenter)
-                                : new Pose3d(Field.transformToOppositeAlliance(Field.hubCenter)),
+                        new Pose3d(Field.getAllianceHubPose()),
                         prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01)
                 .estimateTargetPose().getTranslation().toTranslation2d();
         fieldVirtualHub.setPose(new Pose2d(speakerPose, new Rotation2d()));
@@ -130,26 +132,27 @@ public class SwerveDriveMovmentAlignToHub extends Command {
 
     @Override
     public void execute() {
+        hub.setPose(Field.getAllianceHubPose());
+        // currentPose = Robot.isBlue() ? swerve.getPose() : Field.transformToOppositeAlliance(swerve.getPose());
         currentPose = swerve.getPose();
         prevfieldRelRobotSpeeds = fieldRelRobotSpeeds;
         fieldRelRobotSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(swerve.getChassisSpeeds(),
                 currentPose.getRotation());
         virtualhub = ShotCalculator
                 .solveShootOnTheFly(new Pose3d(currentPose),
-                        (Robot.isBlue()) ? new Pose3d(Field.hubCenter)
-                                : new Pose3d(Field.transformToOppositeAlliance(Field.hubCenter)),
+                        new Pose3d(Field.getAllianceHubPose()),
                         prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01)
                 .estimateTargetPose().toPose2d();
         fieldVirtualHub.setPose(virtualhub);
-        Rotation2d targetangle = currentPose.getTranslation().minus(virtualhub.getTranslation()).getAngle(); 
-        controller.update(Angle.fromRotation2d(getTargetAngle()), Angle.fromRotation2d(swerve.getPose().getRotation()));
+        Rotation2d targetangle = currentPose.getTranslation().minus(Field.getAllianceHubPose().getTranslation()).getAngle(); 
+        controller.update(Angle.fromRotation2d(targetangle), Angle.fromRotation2d(swerve.getPose().getRotation()));
         SmartDashboard.putNumber("Swerve/Movment Align/ angle", targetangle.getDegrees());
-
+        
         swerve.drive(
             speed.get(),
             SLMath.clamp(angleVelocity.get() 
                 + controller.update(
-                    Angle.fromRotation2d(targetangle), 
+                    Angle.fromRotation2d(getTargetAngle()), 
                     Angle.fromRotation2d(currentPose.getRotation())),
                 -Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S,
                 Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S
