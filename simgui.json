@@ -34,6 +34,12 @@
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
+        "Swerve": {
+          "Movment Align": {
+            "open": true
+          },
+          "open": true
+        },
         "Turret": {
           "open": true
         },

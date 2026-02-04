@@ -50,9 +50,10 @@ public interface Settings {
                 // Distance X RPM
                 {0.5, 2600.0},
                 {1.0, 2800.0},
-                {0.0, 0.0},
-                {0.0, 0.0},
-                {0.0, 0.0}
+                {1.5, 2500.0},
+                {2.0, 2850.0},
+                {2.5, 3070.0},
+                {3.0, 3300.0}
             };
             
         }
@@ -113,7 +114,7 @@ public interface Settings {
         public interface Constraints {    
             double MAX_VELOCITY_M_PER_S = 4.3;
             double MAX_ACCEL_M_PER_S_SQUARED = 15.0;
-            double MAX_ANGULAR_VEL_RAD_PER_S = Units.degreesToRadians(400);
+            double MAX_ANGULAR_VEL_RAD_PER_S = Units.degreesToRadians(720);
             double MAX_ANGULAR_ACCEL_RAD_PER_S = Units.degreesToRadians(900);
     
             PathConstraints DEFAULT_CONSTRAINTS =
