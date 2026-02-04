@@ -109,6 +109,8 @@ public class TurretImpl extends Turret {
         voltageOverride = volts;
     }
 
+    double targetTemp = 0.0;
+
     @Override
     public void periodic() {
         super.periodic();
@@ -116,16 +118,18 @@ public class TurretImpl extends Turret {
         if (!Settings.EnabledSubsystems.TURRET.get() || getTurretState() == TurretState.STOP) {
             turretMotor.setVoltage(0);
         } else {
-
-            if (getTargetAngle().getRotations() > 1.0) {
-                turretMotor.setControl(new PositionVoltage(getTargetAngle().getRotations() - 1.0));
+            targetTemp += .001;
+            if (targetTemp > 1.0) {
+                turretMotor.setControl(new PositionVoltage(targetTemp - 1.0));
+                targetTemp -= 1;
             }
 
-            if (getTargetAngle().getRotations() < -1.0) {
-                turretMotor.setControl(new PositionVoltage(getTargetAngle().getRotations() + 1.0));
+            if (targetTemp < -1.0) {
+                turretMotor.setControl(new PositionVoltage(targetTemp + 1.0));
+                targetTemp += 1;              
             }
 
-            turretMotor.setControl(new PositionVoltage(getTargetAngle().getRotations()));
+            turretMotor.setControl(new PositionVoltage(targetTemp));
         }
 
         // SmartDashboard.putNumber("Turret/Pos 18t", getEncoderPos18t().getDegrees());
