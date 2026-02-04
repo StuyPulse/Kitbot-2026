@@ -67,7 +67,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
 
         AngleVelocity derivative = new AngleVelocity();
 
-        angleVelocity = IStream.create(() -> derivative.get(Angle.fromRotation2d(getTargetAngle())))
+        angleVelocity = IStream.create(() -> controller.getOutput())
                 .filtered(
                         new LowPassFilter(Assist.ANGLE_DERIV_RC),
                         // make angleVelocity contribute less once distance is less than REDUCED_FF_DIST
@@ -127,6 +127,8 @@ public class SwerveDriveMovmentAlignToHub extends Command {
 
     @Override
     public void execute() {
+        controller.update(Angle.fromRotation2d(getTargetAngle()), Angle.fromRotation2d(swerve.getPose().getRotation()));
+        SmartDashboard.putNumber("Swerve/Movment Align/ angle", getAngleError());
         swerve.setControl(swerve.getFieldCentricSwerveRequest()
             .withVelocityX(speed.get().x)
             .withVelocityY(speed.get().y)
