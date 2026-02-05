@@ -102,15 +102,15 @@ public class LimelightVision extends SubsystemBase{
                     );
 
                     PoseEstimate poseEstimate = Robot.isBlue() 
-                        ? LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName)
-                        : LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(limelightName);
+                        ? LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName)
+                        : LimelightHelpers.getBotPoseEstimate_wpiRed(limelightName);
                     
                     if (poseEstimate != null && poseEstimate.tagCount > 0) {
                         Pose2d robotPose = poseEstimate.pose;
                         double timestamp = poseEstimate.timestampSeconds;
                     
                         //CommandSwerveDrivetrain.getInstance().addVisionMeasurement(robotPose, timestamp, Settings.Vision.MIN_STDDEVS.times(1 + poseEstimate.avgTagDist));
-                        CommandSwerveDrivetrain.getInstance().addVisionMeasurement(robotPose, timestamp, Settings.Vision.MT2_STDEVS);
+                        CommandSwerveDrivetrain.getInstance().addVisionMeasurement(robotPose, timestamp, Settings.Vision.MT1_STDEVS);
                         SmartDashboard.putNumber("Vision/Pose X Component", robotPose.getX());
                         SmartDashboard.putNumber("Vision/Pose Y Component", robotPose.getY());
                         SmartDashboard.putNumber("Vision/Pose Theta (Degrees)", robotPose.getRotation().getDegrees());

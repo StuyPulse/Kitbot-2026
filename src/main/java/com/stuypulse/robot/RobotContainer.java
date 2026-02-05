@@ -14,6 +14,7 @@ import com.stuypulse.robot.commands.auton.TwoCycleBottom;
 import com.stuypulse.robot.commands.superstructure.SuperstructureIntake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
+import com.stuypulse.robot.commands.superstructure.SuperstructureStop;
 import com.stuypulse.robot.commands.superstructure.SuperstructureTesting;
 import com.stuypulse.robot.commands.swerve.SwerveDriveAlignToHub;
 import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
@@ -80,9 +81,9 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         driver.getTopButton()
-                .whileTrue(new SwerveDriveMovmentAlignToHub(driver)
-                    .alongWith(new SuperstructureShoot()))
-                .whileFalse(new SuperstructureIntake());
+                .whileTrue(new SwerveDriveMovmentAlignToHub(driver))
+                    // .alongWith(new SuperstructureShoot()))
+                .whileFalse(new SuperstructureStop());
 
         // driver.getLeftButton()
         //     .whileTrue(new SwerveDriveAlignToHub());
@@ -94,9 +95,12 @@ public class RobotContainer {
         // .andThen(new SuperstructureShoot()))
         // .onFalse(new SuperstructureStop());
 
+        driver.getRightBumper()
+            .onTrue(new SuperstructureStop());
+
         driver.getBottomButton()
-                .whileTrue(new SuperstructureOuttake());
-                // .whileFalse(new SuperstructureIntake());
+                .whileTrue(new SuperstructureOuttake());    
+                // .whileFalse(new SuperstructureStop());
 
         driver.getDPadUp()
                 .onTrue(new SwerveResetRotation());

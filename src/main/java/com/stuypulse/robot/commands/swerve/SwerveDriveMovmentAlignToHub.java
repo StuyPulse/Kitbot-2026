@@ -15,6 +15,7 @@ import com.stuypulse.robot.constants.Settings.Swerve.Alignment;
 import com.stuypulse.robot.constants.Settings.Swerve.Assist;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
+import com.stuypulse.robot.util.InterpolationUtil;
 import com.stuypulse.robot.util.ShotCalculator;
 import com.stuypulse.stuylib.control.angle.AngleController;
 import com.stuypulse.stuylib.control.angle.feedback.AnglePIDController;
@@ -132,18 +133,20 @@ public class SwerveDriveMovmentAlignToHub extends Command {
 
     @Override
     public void execute() {
-        hub.setPose(Field.getAllianceHubPose());
+        hub.setPose(Field.transformToOppositeAlliance(Field.getAllianceHubPose()));
         // currentPose = Robot.isBlue() ? swerve.getPose() : Field.transformToOppositeAlliance(swerve.getPose());
         currentPose = swerve.getPose();
         prevfieldRelRobotSpeeds = fieldRelRobotSpeeds;
         fieldRelRobotSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(swerve.getChassisSpeeds(),
                 currentPose.getRotation());
+        SmartDashboard.putString("Swerve/Movment Align/prev field relative Robot Speeds", prevfieldRelRobotSpeeds.toString());
+        SmartDashboard.putString("Swerve/Movment Align/field relative Robot Speeds", fieldRelRobotSpeeds.toString());
         virtualhub = ShotCalculator
                 .solveShootOnTheFly(new Pose3d(currentPose),
                         new Pose3d(Field.getAllianceHubPose()),
-                        prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01)
+                        prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, InterpolationUtil.getRpmfromdistance(getDistanceToTarget()) / 60.0, 5, 0.01)
                 .estimateTargetPose().toPose2d();
-        // virtualhub = Field.transformToOppositeAlliance(virtualhub); -> for testing in sim
+        virtualhub = Field.transformToOppositeAlliance(virtualhub); 
         fieldVirtualHub.setPose(virtualhub);
         Rotation2d targetangle = currentPose.getTranslation().minus(Field.getAllianceHubPose().getTranslation()).getAngle(); 
         controller.update(Angle.fromRotation2d(targetangle), Angle.fromRotation2d(swerve.getPose().getRotation()));
