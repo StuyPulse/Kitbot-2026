@@ -351,7 +351,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public double getDistanceFromHub() {
-        Translation2d hubTranslation = (!Robot.isBlue()) ? Field.getAllianceHubPose().getTranslation() : Field.transformToOppositeAlliance(Field.getAllianceHubPose()).getTranslation();
+        Translation2d hubTranslation = Field.getAllianceHubPose().getTranslation();
         return getPose().getTranslation().getDistance(hubTranslation);
     }
 

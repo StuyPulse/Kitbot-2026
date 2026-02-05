@@ -23,7 +23,8 @@ public abstract class Superstructure extends SubsystemBase {
         PREPARING(Settings.Superstructure.Intake_Shooter.SHOOT_SPEED_RPM, 0.0),
         SHOOTING(Settings.Superstructure.Intake_Shooter.SHOOT_SPEED_RPM, Settings.Superstructure.Indexer.OUTTAKE_SPEED),
         TESTING(0.0, 1.0),
-        STOP(0.0, 0.0);
+        STOP(0.0, 0.0),
+        INTERPOLATION(0.0, Settings.Superstructure.Indexer.OUTTAKE_SPEED);
 
         private double shooter_speed;
         private double indexer_speed;

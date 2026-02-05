@@ -46,7 +46,7 @@ public interface Settings {
         }
 
         public interface interpolation {
-            double[][] interpoationValues = {
+            double[][] interpolationValues = {
                 // Distance X RPM
                 {0.5, 2600.0},
                 {1.0, 2800.0},

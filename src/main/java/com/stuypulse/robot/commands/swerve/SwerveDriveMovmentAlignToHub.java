@@ -127,7 +127,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     }
 
     private Vector2D getDriverInputAsVelocity() {
-        return new Vector2D(gamepad.getLeftStick().x, -gamepad.getLeftStick().y);
+        return new Vector2D(gamepad.getLeftStick().x, gamepad.getLeftStick().y);
     }
 
     @Override
