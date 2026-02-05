@@ -143,6 +143,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
                         new Pose3d(Field.getAllianceHubPose()),
                         prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01)
                 .estimateTargetPose().toPose2d();
+        // virtualhub = Field.transformToOppositeAlliance(virtualhub); -> for testing in sim
         fieldVirtualHub.setPose(virtualhub);
         Rotation2d targetangle = currentPose.getTranslation().minus(Field.getAllianceHubPose().getTranslation()).getAngle(); 
         controller.update(Angle.fromRotation2d(targetangle), Angle.fromRotation2d(swerve.getPose().getRotation()));

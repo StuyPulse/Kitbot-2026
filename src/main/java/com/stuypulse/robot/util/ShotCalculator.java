@@ -94,9 +94,9 @@ public final class ShotCalculator {
             double dy = fieldRelRobotVelocity.vyMetersPerSecond * t
             + 0.5 * ayMetersPerSecondSquared * t * t;
 
-            effectiveTarget = new Pose3d(
-                targetPose.getX(), //- dx,
-                targetPose.getY(), //- dy,
+                 effectiveTarget = new Pose3d(
+                targetPose.getX() - dx,
+                targetPose.getY() - dy,
                 targetPose.getZ(),
                 targetPose.getRotation());
 
@@ -134,6 +134,6 @@ public final class ShotCalculator {
         return new AlignAngleSolution(
             sol.launchPitchAngle(),
             Rotation2d.fromRadians(yaw),
-            Field.transformToOppositeAlliance(effectiveTarget));
+            effectiveTarget);
     }
 }
