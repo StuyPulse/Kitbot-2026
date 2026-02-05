@@ -64,7 +64,7 @@ public class TurretImpl extends Turret {
         // just default to this ?
     }
 
-    @Override
+    // @Override
     public boolean exceedsOneRotation() {
         return this.exceededOneRotation;
     }
@@ -118,13 +118,13 @@ public class TurretImpl extends Turret {
         if (!Settings.EnabledSubsystems.TURRET.get() || getTurretState() == TurretState.STOP) {
             turretMotor.setVoltage(0);
         } else {
-            targetTemp += .001;
-            if (targetTemp > 1.0) {
+            targetTemp -= .01;
+            if (targetTemp > 1.0 + 1.0/6.0) {
                 turretMotor.setControl(new PositionVoltage(targetTemp - 1.0));
                 targetTemp -= 1;
             }
 
-            if (targetTemp < -1.0) {
+            if (targetTemp < -1.0 - 1.0/6.0) {
                 turretMotor.setControl(new PositionVoltage(targetTemp + 1.0));
                 targetTemp += 1;              
             }

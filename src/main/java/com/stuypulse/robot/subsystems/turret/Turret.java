@@ -74,15 +74,14 @@ public abstract class Turret extends SubsystemBase {
 
     public abstract Rotation2d getAngle();
 
-    public abstract boolean exceedsOneRotation();
+    // public abstract boolean exceedsOneRotation();
 
     public abstract SysIdRoutine getSysIdRoutine();
     
 
     @Override
     public void periodic() {
-        SmartDashboard.putString("Turret/State", getTurretState().name());
-        SmartDashboard.putString("States/Turret", getTurretState().name());
+        SmartDashboard.putString("Turret/State", getTurretState().name());;
         
         if (Settings.DEBUG_MODE) {
             if (Settings.EnabledSubsystems.TURRET.get()) {
@@ -101,7 +100,7 @@ public abstract class Turret extends SubsystemBase {
 
         Vector2D target = new Vector2D(targetPose.getX(), targetPose.getY());
         Vector2D robotToTarget = target.sub(robot);
-        Vector2D turretToTarget = robotToTarget.add(new Vector2D(robotToTurret));
+        Vector2D turretToTarget = robotToTarget.add(new Vector2D(robotToTurret));                   
         Vector2D zeroVector = new Vector2D(robotPose.getRotation().getCos(), robotPose.getRotation().getSin());
 
         // https://www.youtube.com/watch?v=_VuZZ9_58Wg

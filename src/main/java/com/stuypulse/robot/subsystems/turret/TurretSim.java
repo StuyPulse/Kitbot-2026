@@ -135,9 +135,8 @@ public class TurretSim extends Turret {
                 getInstance());
     }
 
-    @Override
+    // @Override
     public boolean exceedsOneRotation() {
       return false;
-      // added so this will compile
     }
 }
