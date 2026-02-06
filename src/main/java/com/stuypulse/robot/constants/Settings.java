@@ -55,6 +55,10 @@ public interface Settings {
                 {2.5, 3070.0},
                 {3.0, 3300.0}
             };
+            double MAX_SHOOT_DISTANCE = 0.0;
+        }
+        public interface ShootOnMove {
+            public SmartNumber Virtualgoalsensitivity = new SmartNumber("Swerve/Movment Align/Settings/Virtual goal sensitivity", 1.0);
             
         }
     }

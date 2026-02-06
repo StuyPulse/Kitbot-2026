@@ -94,11 +94,14 @@ public final class ShotCalculator {
             double dy = fieldRelRobotVelocity.vyMetersPerSecond * t
             + 0.5 * ayMetersPerSecondSquared * t * t;
 
-                 effectiveTarget = new Pose3d(
+            effectiveTarget = new Pose3d(
+                // Math.pow(targetPose.getX() - dx, Settings.Superstructure.ShootOnMove.Virtualgoalsensitivity.getAsDouble()),
+                // Math.pow(targetPose.getY() - dx, Settings.Superstructure.ShootOnMove.Virtualgoalsensitivity.getAsDouble()),
                 targetPose.getX() - dx,
                 targetPose.getY() - dy,
                 targetPose.getZ(),
-                targetPose.getRotation());
+                targetPose.getRotation())
+                .times(Settings.Superstructure.ShootOnMove.Virtualgoalsensitivity.getAsDouble());
 
             
             SmartDashboard.putNumber("hdsr/targetPose x", targetPose.getX());

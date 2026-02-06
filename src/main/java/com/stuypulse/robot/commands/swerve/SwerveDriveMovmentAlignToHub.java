@@ -10,6 +10,7 @@ import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Gains;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.constants.Settings.Driver.Drive;
+import com.stuypulse.robot.constants.Settings.Superstructure.interpolation;
 import com.stuypulse.robot.constants.Settings.Swerve;
 import com.stuypulse.robot.constants.Settings.Swerve.Alignment;
 import com.stuypulse.robot.constants.Settings.Swerve.Assist;
@@ -113,7 +114,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     }
 
     private double getDistanceToTarget() {
-        Translation2d currentPose = CommandSwerveDrivetrain.getInstance().getPose().getTranslation();
+        Translation2d currentPose = swerve.getPose().getTranslation();
         Translation2d speakerPose = Field.getAllianceHubPose().getTranslation();
         return currentPose.getDistance(speakerPose);
     }
@@ -128,12 +129,13 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     }
 
     private Vector2D getDriverInputAsVelocity() {
-        return new Vector2D(gamepad.getLeftStick().x, gamepad.getLeftStick().y);
+        return new Vector2D(-gamepad.getLeftStick().x, -gamepad.getLeftStick().y);
     }
 
     @Override
     public void execute() {
-        hub.setPose(Field.transformToOppositeAlliance(Field.getAllianceHubPose()));
+        hub.setPose(Field.getAllianceHubPose());
+        // hub.setPose(Field.getAllianceHubPose());
         // currentPose = Robot.isBlue() ? swerve.getPose() : Field.transformToOppositeAlliance(swerve.getPose());
         currentPose = swerve.getPose();
         prevfieldRelRobotSpeeds = fieldRelRobotSpeeds;

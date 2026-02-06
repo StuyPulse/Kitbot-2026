@@ -81,9 +81,9 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         driver.getTopButton()
-                .whileTrue(new SwerveDriveMovmentAlignToHub(driver))
-                    // .alongWith(new SuperstructureShoot()))
-                .whileFalse(new SuperstructureStop());
+                .whileTrue(new SwerveDriveMovmentAlignToHub(driver)
+                    .alongWith(new SuperstructureShoot()));
+                // .whileFalse(new SuperstructureStop());
 
         // driver.getLeftButton()
         //     .whileTrue(new SwerveDriveAlignToHub());
@@ -110,6 +110,7 @@ public class RobotContainer {
 
         // driver.getRightButton().whileTrue(new SetTurretFerry())
         //         .onFalse(new SetTurretZero());
+        
         driver.getDPadDown()
             .onTrue(new SuperstructureTesting());
     }
