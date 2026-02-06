@@ -109,7 +109,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
                         new Pose3d(Field.getAllianceHubPose()),
                         prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01)
                 .estimateTargetPose().getTranslation().toTranslation2d();
-        fieldVirtualHub.setPose(new Pose2d(speakerPose, new Rotation2d()));
+        // fieldVirtualHub.setPose(new Pose2d(speakerPose, new Rotation2d()));s
         return currentPose.getTranslation().minus(speakerPose).getAngle();
     }
 
@@ -134,8 +134,8 @@ public class SwerveDriveMovmentAlignToHub extends Command {
 
     @Override
     public void execute() {
-        hub.setPose(Field.getAllianceHubPose());
-        // hub.setPose(Field.getAllianceHubPose());
+        // hub.setPose(Robot.isBlue() ? Field.getAllianceHubPose() : Field.transformToOppositeAlliance(Field.getAllianceHubPose()));
+        hub.setPose(Field.transformToOppositeAlliance(Field.getAllianceHubPose()));
         // currentPose = Robot.isBlue() ? swerve.getPose() : Field.transformToOppositeAlliance(swerve.getPose());
         currentPose = swerve.getPose();
         prevfieldRelRobotSpeeds = fieldRelRobotSpeeds;
@@ -148,8 +148,8 @@ public class SwerveDriveMovmentAlignToHub extends Command {
                         new Pose3d(Field.getAllianceHubPose()),
                         prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, InterpolationUtil.getRpmfromdistance(getDistanceToTarget()) / 60.0, 5, 0.01)
                 .estimateTargetPose().toPose2d();
-        virtualhub = Field.transformToOppositeAlliance(virtualhub); 
-        fieldVirtualHub.setPose(virtualhub);
+        // virtualhub = Field.transformToOppositeAlliance(virtualhub); 
+        fieldVirtualHub.setPose(Robot.isBlue() ? virtualhub : Field.transformToOppositeAlliance(virtualhub));
         Rotation2d targetangle = currentPose.getTranslation().minus(Field.getAllianceHubPose().getTranslation()).getAngle(); 
         controller.update(Angle.fromRotation2d(targetangle), Angle.fromRotation2d(swerve.getPose().getRotation()));
         SmartDashboard.putNumber("Swerve/Movment Align/ angle", targetangle.getDegrees());
