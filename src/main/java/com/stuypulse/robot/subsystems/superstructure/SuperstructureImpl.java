@@ -10,12 +10,9 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.constants.Settings;
-import com.stuypulse.robot.constants.Gains.Swerve;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.util.InterpolationUtil;
-import com.stuypulse.stuylib.network.SmartNumber;
 
-import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SuperstructureImpl extends Superstructure {
@@ -23,11 +20,9 @@ public class SuperstructureImpl extends Superstructure {
     private final TalonFX intakeShooterMotor;
     private final SparkMax indexMotor;
     private final CommandSwerveDrivetrain swerve;
-    private SmartNumber shooterRpm;
     
     public SuperstructureImpl() {
 
-        shooterRpm = new SmartNumber("SuperStructure/Settings/Testing RPM", 0.0);
         swerve = CommandSwerveDrivetrain.getInstance();
         intakeShooterMotor = new TalonFX(Ports.Superstructure.INTAKE_SHOOTER_MOTOR, "Swerve Drive Drive");
         Motors.Superstructure.intakeShooterMotorConfig.configure(intakeShooterMotor);  
@@ -50,20 +45,18 @@ public class SuperstructureImpl extends Superstructure {
     }
 
     private void setMotorsBasedOnState() {
+        SuperstructureState state = getState(); 
         switch (getState()) {
             case SHOOTING:
                 intakeShooterMotor.setControl(new VelocityVoltage(InterpolationUtil.getRpmfromdistance(swerve.getDistanceFromHub()) / 60.0));
                 break;
             case PREPARING:
-                intakeShooterMotor.setControl(new VelocityVoltage(getState().getMainWheelsTargetSpeed() / 60.0));
-                break;
-            case TESTING:
-                intakeShooterMotor.setControl(new VelocityVoltage(shooterRpm.getAsDouble() / 60.0));
+                intakeShooterMotor.setControl(new VelocityVoltage(state.getMainWheelsTargetSpeed() / 60.0));
                 break;
             case INTERPOLATION:
                 intakeShooterMotor.setControl(new VelocityVoltage(InterpolationUtil.getRpmfromdistance(swerve.getDistanceFromHub())));
             default:
-                intakeShooterMotor.setControl(new DutyCycleOut(getState().getMainWheelsTargetSpeed()));
+                intakeShooterMotor.setControl(new DutyCycleOut(state.getMainWheelsTargetSpeed()));
                 break;
         }
         
@@ -84,9 +77,11 @@ public class SuperstructureImpl extends Superstructure {
         SmartDashboard.putString("SuperStructure/State", getState().toString());
         SmartDashboard.putNumber("SuperStructure/Main Wheels Target Speed", getState().getMainWheelsTargetSpeed());
         SmartDashboard.putNumber("SuperStructure/Indexer Target Speed", getState().getIndexerTargetSpeed());
-        SmartDashboard.putNumber("SuperStructure/DistanceFromGoal", swerve.getDistanceFromHub());
         SmartDashboard.putNumber("SuperStructure/Main Wheels Current Speed (RPM)", intakeShooterMotor.getVelocity().getValueAsDouble() * 60.0);
-        SmartDashboard.putNumber("SuperStructure/Indexer Applied DutyCycle", indexMotor.getAppliedOutput());
-        SmartDashboard.putNumber("SuperStructure/Interpolated RPM", InterpolationUtil.getRpmfromdistance(swerve.getDistanceFromHub()));
+        if (Settings.DEBUG_MODE) {
+            SmartDashboard.putNumber("SuperStructure/DistanceFromGoal", swerve.getDistanceFromHub());
+            SmartDashboard.putNumber("SuperStructure/Indexer Applied DutyCycle", indexMotor.getAppliedOutput());
+            SmartDashboard.putNumber("SuperStructure/Interpolated RPM", InterpolationUtil.getRpmfromdistance(swerve.getDistanceFromHub()));
+        }
     }
 }

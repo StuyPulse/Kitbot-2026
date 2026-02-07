@@ -3,8 +3,6 @@
 
 package com.stuypulse.robot.util;
 
-import com.stuypulse.robot.Robot;
-import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Settings;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -88,26 +86,24 @@ public final class ShotCalculator {
             double axMetersPerSecondSquared = (fieldRelRobotVelocity.vxMetersPerSecond - prevFieldRelRobotVelocity.vxMetersPerSecond) / Settings.DT;
             double ayMetersPerSecondSquared = (fieldRelRobotVelocity.vyMetersPerSecond - prevFieldRelRobotVelocity.vyMetersPerSecond) / Settings.DT;
 
-            double dx = fieldRelRobotVelocity.vxMetersPerSecond * t
-            + 0.5 * axMetersPerSecondSquared * t * t;
+            double dx = (fieldRelRobotVelocity.vxMetersPerSecond * t
+            + 0.5 * axMetersPerSecondSquared * t * t) * Settings.Superstructure.ShootOnMove.poseMultiplier.getAsDouble();
 
-            double dy = fieldRelRobotVelocity.vyMetersPerSecond * t
-            + 0.5 * ayMetersPerSecondSquared * t * t;
+            double dy = (fieldRelRobotVelocity.vyMetersPerSecond * t
+            + 0.5 * ayMetersPerSecondSquared * t * t ) * Settings.Superstructure.ShootOnMove.poseMultiplier.getAsDouble();
 
             effectiveTarget = new Pose3d(
-                // Math.pow(targetPose.getX() - dx, Settings.Superstructure.ShootOnMove.Virtualgoalsensitivity.getAsDouble()),
-                // Math.pow(targetPose.getY() - dx, Settings.Superstructure.ShootOnMove.Virtualgoalsensitivity.getAsDouble()),
                 targetPose.getX() - dx,
                 targetPose.getY() - dy,
                 targetPose.getZ(),
-                targetPose.getRotation())
-                .times(Settings.Superstructure.ShootOnMove.Virtualgoalsensitivity.getAsDouble());
+                targetPose.getRotation());
 
-            
-            SmartDashboard.putNumber("hdsr/targetPose x", targetPose.getX());
-            SmartDashboard.putNumber("hdsr/targetPose y", targetPose.getY());
-            SmartDashboard.putNumber("hdsr/effectiveTargetPose x", effectiveTarget.getX());
-            SmartDashboard.putNumber("hdsr/effectiveTargetPose y", effectiveTarget.getY());
+            if (Settings.DEBUG_MODE) {
+                SmartDashboard.putNumber("hdsr/targetPose x", targetPose.getX());
+                SmartDashboard.putNumber("hdsr/targetPose y", targetPose.getY());
+                SmartDashboard.putNumber("hdsr/effectiveTargetPose x", effectiveTarget.getX());
+                SmartDashboard.putNumber("hdsr/effectiveTargetPose y", effectiveTarget.getY());
+            }
 
             ShotSolution newSol = solveBallisticWithSpeed(
                 shooterPose,

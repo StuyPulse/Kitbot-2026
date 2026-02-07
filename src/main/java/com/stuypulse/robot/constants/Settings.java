@@ -6,9 +6,7 @@
 package com.stuypulse.robot.constants;
 
 import com.ctre.phoenix6.CANBus;
-import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
-import com.stuypulse.robot.Robot;
 import com.stuypulse.stuylib.network.SmartBoolean;
 import com.stuypulse.stuylib.network.SmartNumber;
 
@@ -55,10 +53,10 @@ public interface Settings {
                 {2.5, 3070.0},
                 {3.0, 3300.0}
             };
-            double MAX_SHOOT_DISTANCE = 0.0;
+            double MAX_SHOOT_DISTANCE = 3.0;
         }
         public interface ShootOnMove {
-            public SmartNumber Virtualgoalsensitivity = new SmartNumber("Swerve/Movment Align/Settings/Virtual goal sensitivity", 1.0);
+            public SmartNumber poseMultiplier = new SmartNumber("Swerve/Movment Align/Settings/pose Multiplier", 1.0); //TODO: remove Smartnumber
             
         }
     }
