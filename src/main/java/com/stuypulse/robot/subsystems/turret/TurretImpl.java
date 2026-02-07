@@ -132,6 +132,9 @@ public class TurretImpl extends Turret {
             turretMotor.setControl(new PositionVoltage(targetTemp));
         }
 
+        double actualTarget = getAngle().getRotations() +
+                            getAngle().getRotations() % 1 - targetTemp; //account for disabling continuous wrapping
+
         // SmartDashboard.putNumber("Turret/Pos 18t", getEncoderPos18t().getDegrees());
         // SmartDashboard.putNumber("Turret/Absolute Angle",
         // getAbsoluteTurretAngle().getDegrees());
