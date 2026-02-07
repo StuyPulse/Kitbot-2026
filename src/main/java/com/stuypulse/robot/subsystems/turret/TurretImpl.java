@@ -18,6 +18,7 @@ import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.util.SysId;
 import com.stuypulse.stuylib.math.Vector2D;
+import com.stuypulse.stuylib.network.SmartNumber;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -120,7 +121,7 @@ public class TurretImpl extends Turret {
         return delta < 0 ? delta + 360 : delta - 360;
     }
 
-    double targetTemp = 0.0;
+    SmartNumber targetTemp = new SmartNumber("Turret/Target Testing Val", 0);
 
     @Override
     public void periodic() {
@@ -129,22 +130,13 @@ public class TurretImpl extends Turret {
         if (!Settings.EnabledSubsystems.TURRET.get() || getTurretState() == TurretState.STOP) {
             turretMotor.setVoltage(0);
         } else {
-            targetTemp -= .01;
-            if (targetTemp > 1.0 + 1.0/6.0) {
-                turretMotor.setControl(new PositionVoltage(targetTemp - 1.0));
-                targetTemp -= 1;
-            }
+            double actualTarget = getAngle().getDegrees() + wrappingMath(targetTemp.get(), turretMotor.getPosition().getValueAsDouble()*360);
 
-            if (targetTemp < -1.0 - 1.0/6.0) {
-                turretMotor.setControl(new PositionVoltage(targetTemp + 1.0));
-                targetTemp += 1;              
-            }
-
-            turretMotor.setControl(new PositionVoltage(targetTemp));
+            turretMotor.setControl(new PositionVoltage(actualTarget / 360.0));
         }
 
-        double actualTarget = getAngle().getRotations() +
-                            getAngle().getRotations() % 1 - targetTemp; //account for disabling continuous wrapping
+        // double actualTarget = getAngle().getRotations() +
+        //                     getAngle().getRotations() % 1 - targetTemp; //account for disabling continuous wrapping
 
         // SmartDashboard.putNumber("Turret/Pos 18t", getEncoderPos18t().getDegrees());
         // SmartDashboard.putNumber("Turret/Absolute Angle",
