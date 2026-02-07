@@ -17,12 +17,10 @@ public abstract class Superstructure extends SubsystemBase {
     }
 
     public enum SuperstructureState {
-        //TODO: implamentation of interpolation for these states
         OUTTAKING(Settings.Superstructure.Intake_Shooter.OUTTAKE_SPEED, Settings.Superstructure.Indexer.OUTTAKE_SPEED),
         INTAKING(Settings.Superstructure.Intake_Shooter.INTAKE_SPEED, Settings.Superstructure.Indexer.INTAKE_SPEED),
         PREPARING(Settings.Superstructure.Intake_Shooter.SHOOT_SPEED_RPM, 0.0),
         SHOOTING(Settings.Superstructure.Intake_Shooter.SHOOT_SPEED_RPM, Settings.Superstructure.Indexer.OUTTAKE_SPEED),
-        TESTING(0.0, 1.0),
         STOP(0.0, 0.0),
         INTERPOLATION(0.0, Settings.Superstructure.Indexer.OUTTAKE_SPEED);
 
