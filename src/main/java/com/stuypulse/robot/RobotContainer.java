@@ -9,6 +9,7 @@ import com.stuypulse.robot.commands.auton.Box;
 import com.stuypulse.robot.commands.auton.DoNothingAuton;
 import com.stuypulse.robot.commands.auton.StraightLine;
 import com.stuypulse.robot.commands.auton.TwoCycleBottom;
+import com.stuypulse.robot.commands.superstructure.SuperstructureInterpolate;
 import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
 import com.stuypulse.robot.commands.superstructure.SuperstructureStop;
@@ -73,6 +74,9 @@ public class RobotContainer {
                 .whileTrue(new SwerveDriveMovmentAlignToHub(driver)
                     .alongWith(new SuperstructureShoot()));
                 // .whileFalse(new SuperstructureStop());
+
+        driver.getRightTriggerButton()
+            .whileTrue(new SuperstructureShoot());
 
         // driver.getLeftButton()
         //     .whileTrue(new SwerveDriveAlignToHub());

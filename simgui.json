@@ -34,8 +34,20 @@
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
+        "Field": {
+          "double[]##v_/SmartDashboard/Field/Expected Pose": {
+            "open": true
+          },
+          "double[]##v_/SmartDashboard/Field/Robot": {
+            "open": true
+          },
+          "open": true
+        },
         "Swerve": {
           "Movment Align": {
+            "Settings": {
+              "open": true
+            },
             "open": true
           },
           "open": true

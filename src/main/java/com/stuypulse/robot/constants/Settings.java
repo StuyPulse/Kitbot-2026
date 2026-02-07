@@ -57,7 +57,7 @@ public interface Settings {
         }
         public interface ShootOnMove {
             public SmartNumber poseMultiplier = new SmartNumber("Swerve/Movment Align/Settings/pose Multiplier", 1.0); //TODO: remove Smartnumber
-            
+            public SmartNumber PHASE_DELAY = new SmartNumber("Swerve/Movment Align/Settings/phase delay", 0.03);
         }
     }
 

@@ -46,20 +46,19 @@ public class SuperstructureImpl extends Superstructure {
 
     private void setMotorsBasedOnState() {
         SuperstructureState state = getState(); 
-        switch (getState()) {
+        switch (state) {
             case SHOOTING:
-                intakeShooterMotor.setControl(new VelocityVoltage(InterpolationUtil.getRpmfromdistance(swerve.getDistanceFromHub()) / 60.0));
+                intakeShooterMotor.setControl(new VelocityVoltage(InterpolationUtil.getRpmfromdistance(swerve.getExpectedHubDistance()) / 60.0));
                 break;
             case PREPARING:
                 intakeShooterMotor.setControl(new VelocityVoltage(state.getMainWheelsTargetSpeed() / 60.0));
                 break;
             case INTERPOLATION:
-                intakeShooterMotor.setControl(new VelocityVoltage(InterpolationUtil.getRpmfromdistance(swerve.getDistanceFromHub())));
+                intakeShooterMotor.setControl(new VelocityVoltage(InterpolationUtil.getRpmfromdistance(swerve.getExpectedHubDistance())));
             default:
                 intakeShooterMotor.setControl(new DutyCycleOut(state.getMainWheelsTargetSpeed()));
                 break;
         }
-        
         if (atTargetVelocity()) {
             indexMotor.set(getState().getIndexerTargetSpeed());
         }
@@ -81,7 +80,7 @@ public class SuperstructureImpl extends Superstructure {
         if (Settings.DEBUG_MODE) {
             SmartDashboard.putNumber("SuperStructure/DistanceFromGoal", swerve.getDistanceFromHub());
             SmartDashboard.putNumber("SuperStructure/Indexer Applied DutyCycle", indexMotor.getAppliedOutput());
-            SmartDashboard.putNumber("SuperStructure/Interpolated RPM", InterpolationUtil.getRpmfromdistance(swerve.getDistanceFromHub()));
+            SmartDashboard.putNumber("SuperStructure/Interpolated RPM", InterpolationUtil.getRpmfromdistance(swerve.getExpectedHubDistance()));
         }
     }
 }

@@ -47,7 +47,7 @@ public class Gains {
         }
         public interface Motion {
             PIDConstants XY = new PIDConstants(2.0, 0, 0.25);
-            PIDConstants THETA = new PIDConstants(2.0, 0, 0.0);
+            PIDConstants THETA = new PIDConstants(5.0, 0, 0.0);
         }
         public interface Alignment {
             double kP = 0.0;
@@ -58,7 +58,7 @@ public class Gains {
             double akD = 0.0;
 
             PIDConstants XY = new PIDConstants(3.5, 0, 0.2);
-            PIDConstants THETA = new PIDConstants(3.0, 0, 0.1);
+            PIDConstants THETA = new PIDConstants(1.0, 0.0, 0.0);
         }
     }
 }

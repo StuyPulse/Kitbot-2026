@@ -1,5 +1,6 @@
 package com.stuypulse.robot.commands.swerve;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Gains;
@@ -76,7 +77,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
                 new LowPassFilter(Assist.ANGLE_DERIV_RC),
                 // make angleVelocity contribute less once distance is less than REDUCED_FF_DIST
                 // so that angular velocity doesn't oscillate
-                x -> x * Math.min(1, getDistanceToTarget() / Assist.REDUCED_FF_DIST),
+                x -> x * Math.min(1, getDistanceToTarget(getSolution().estimateTargetPose().getTranslation().toTranslation2d()) / Assist.REDUCED_FF_DIST),
                 // new RateLimit(Settings.Swerve.MAX_ANGULAR_ACCEL),
                 x -> SLMath.clamp(x, -Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S, Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S),
                 x -> -x
@@ -95,7 +96,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
         addRequirements(swerve);
     }
 
-    private AlignAngleSolution getSolution() {
+    public AlignAngleSolution getSolution() {
          // hub.setPose(Robot.isBlue() ? Field.getAllianceHubPose() : Field.transformToOppositeAlliance(Field.getAllianceHubPose()));
         hub.setPose(Field.transformToOppositeAlliance(Field.getAllianceHubPose()));
         // currentPose = Robot.isBlue() ? swerve.getPose() : Field.transformToOppositeAlliance(swerve.getPose());
@@ -108,16 +109,15 @@ public class SwerveDriveMovmentAlignToHub extends Command {
         virtualhub = ShotCalculator
                 .solveShootOnTheFly(new Pose3d(currentPose),
                         Field.getAllianceHubPose3d(),
-                        swerve.getPigeon2().getAccelerationX().getValueAsDouble(), swerve.getPigeon2().getAccelerationY().getValueAsDouble(), fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01);
+                        swerve.getPigeon2().getAccelerationX().getValueAsDouble(), swerve.getPigeon2().getAccelerationY().getValueAsDouble(), fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 3, 0.1);
         // virtualhub = Field.transformToOppositeAlliance(virtualhub); 
         fieldVirtualHub.setPose(Robot.isBlue() ? virtualhub.estimateTargetPose().toPose2d() : Field.transformToOppositeAlliance(virtualhub.estimateTargetPose().toPose2d()));
         return virtualhub;
     }
 
-    private double getDistanceToTarget() {
+    private double getDistanceToTarget(Translation2d target) {
         Translation2d currentPose = swerve.getPose().getTranslation();
-        Translation2d speakerPose = Field.getAllianceHubPose().getTranslation();
-        return currentPose.getDistance(speakerPose);
+        return currentPose.getDistance(target);
     }
 
     protected double getAngleError() {
@@ -135,14 +135,15 @@ public class SwerveDriveMovmentAlignToHub extends Command {
 
     @Override
     public void execute() {
-
+        AlignAngleSolution solution = getSolution();
+        swerve.setExpectedHubPose(solution.estimateTargetPose().toPose2d());
         Rotation2d targetangle = getSolution().requiredYaw().plus(Rotation2d.k180deg);
         if (Settings.DEBUG_MODE) {
             SmartDashboard.putNumber("Swerve/Movment Align/Target angle", targetangle.getDegrees());
             SmartDashboard.putNumber("Swerve/Movment Align/Controller Error", getAngleError());
-            SmartDashboard.putNumber("Swerve/Movment Align/Distance to Target", getDistanceToTarget());
+            SmartDashboard.putNumber("Swerve/Movment Align/Distance to Target", getDistanceToTarget(solution.estimateTargetPose().toPose2d().getTranslation()));
         }
-        // if (getDistanceToTarget() < Settings.Superstructure.interpolation.MAX_SHOOT_DISTANCE) {
+        if (getDistanceToTarget(solution.estimateTargetPose().toPose2d().getTranslation()) < Settings.Superstructure.interpolation.MAX_SHOOT_DISTANCE) {
             swerve.drive(
                 speed.get(),
                 SLMath.clamp(angleVelocity.get() 
@@ -153,7 +154,9 @@ public class SwerveDriveMovmentAlignToHub extends Command {
                     Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S
                 )
             );
-        // }
+        } else {
+            swerve.drive(new Vector2D(new Translation2d()), 0);
+        }
     }
 
     @Override

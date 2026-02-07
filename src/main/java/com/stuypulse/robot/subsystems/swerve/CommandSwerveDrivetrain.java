@@ -10,6 +10,9 @@ package com.stuypulse.robot.subsystems.swerve;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.lang.management.ThreadInfo;
+import java.time.chrono.ThaiBuddhistChronology;
+
 import com.stuypulse.stuylib.math.Angle;
 import com.stuypulse.stuylib.math.Vector2D;
 
@@ -348,6 +351,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Pose2d getPose() {
         return getState().Pose;
+    }
+
+    private Pose2d expectedHubPose;
+
+    public void setExpectedHubPose(Pose2d newPose) {
+        this.expectedHubPose = newPose;
+    }
+    
+    public Pose2d getExpectedHubPose() {
+        return (this.expectedHubPose != null) ? this.expectedHubPose : new Pose2d();
+    }
+
+    public double getExpectedHubDistance() {
+        return (this.expectedHubPose != null) ? getPose().getTranslation().getDistance(this.expectedHubPose.getTranslation()) : 16.0;
     }
 
     public double getDistanceFromHub() {

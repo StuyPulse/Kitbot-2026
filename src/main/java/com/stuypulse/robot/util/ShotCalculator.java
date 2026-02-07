@@ -3,12 +3,19 @@
 
 package com.stuypulse.robot.util;
 
-import com.stuypulse.robot.constants.Settings;
 
+import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.Gains.Swerve;
+import com.stuypulse.robot.Robot;
+import com.stuypulse.robot.constants.Field;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class ShotCalculator {
@@ -85,7 +92,24 @@ public final class ShotCalculator {
         double t = sol.flightTimeSeconds();
         
         Pose3d effectiveTarget = targetPose;
+
+        shooterPose = shooterPose.exp(
+            new Twist3d(
+                fieldRelRobotVelocity.vxMetersPerSecond * Settings.Superstructure.ShootOnMove.PHASE_DELAY.getAsDouble(),
+                fieldRelRobotVelocity.vyMetersPerSecond * Settings.Superstructure.ShootOnMove.PHASE_DELAY.getAsDouble(),
+                0,
+                0,
+                0,
+                0
+            )
+        );
+
+        FieldObject2d expPose = Field.FIELD2D.getObject("Expected Pose");
+        expPose.setPose((Robot.isBlue()) ? shooterPose.toPose2d() : Field.transformToOppositeAlliance(shooterPose).toPose2d());
+
         Translation3d s = shooterPose.getTranslation();
+
+            
             
         for (int i = 0; i < maxIterations; i++) {
 
