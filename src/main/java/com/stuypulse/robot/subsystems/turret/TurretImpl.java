@@ -109,6 +109,17 @@ public class TurretImpl extends Turret {
         voltageOverride = volts;
     }
 
+    private double wrappingMath(double target, double current) {
+        double delta = (target - current) % 360;
+
+        if(delta > 180.0) delta -= 360;
+        else if(delta < -180) delta += 360;
+
+        if(Math.abs(current + delta) < Constants.Turret.RANGE) return delta;
+
+        return delta < 0 ? delta + 360 : delta - 360;
+    }
+
     double targetTemp = 0.0;
 
     @Override
