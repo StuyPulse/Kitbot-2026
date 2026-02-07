@@ -87,7 +87,7 @@ public class TunerConstants {
     private static final boolean kInvertLeftSide = false;
     private static final boolean kInvertRightSide = true;
 
-    private static final int kPigeonId = 5;
+    private static final int kPigeonId = 0;
 
     // These are only used for simulation
     private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);
@@ -160,7 +160,7 @@ public class TunerConstants {
 
     // Back Right
     private static final int kBackRightDriveMotorId = 21;
-    private static final int kBackRightSteerMotorId = 0;
+    private static final int kBackRightSteerMotorId = 5;
     private static final int kBackRightEncoderId = 1;
     private static final Angle kBackRightEncoderOffset = Rotations.of(0.17822265625);
     private static final boolean kBackRightSteerMotorInverted = true;
