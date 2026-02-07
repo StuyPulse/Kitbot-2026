@@ -107,7 +107,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
         SmartDashboard.putString("Swerve/Movment Align/field relative Robot Speeds", fieldRelRobotSpeeds.toString());
         virtualhub = ShotCalculator
                 .solveShootOnTheFly(new Pose3d(currentPose),
-                        new Pose3d(Field.getAllianceHubPose()),
+                        Field.getAllianceHubPose3d(),
                         prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01);
         // virtualhub = Field.transformToOppositeAlliance(virtualhub); 
         fieldVirtualHub.setPose(Robot.isBlue() ? virtualhub.estimateTargetPose().toPose2d() : Field.transformToOppositeAlliance(virtualhub.estimateTargetPose().toPose2d()));

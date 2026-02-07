@@ -36,6 +36,10 @@ public interface Field {
         return hubCenter;
     }
 
+    public static Pose3d getAllianceHubPose3d() {
+        return new Pose3d(hubCenter.getX(), hubCenter.getY(), Units.inchesToMeters(72), Rotation3d.kZero);
+    }
+
     // 1.0 meters from driverstation wall and field wall
     public final Pose2d leftFerryZone = new Pose2d(1.0, WIDTH - 1.0, new Rotation2d());
     public final Pose2d rightFerryZone = new Pose2d(1.0, 1.0, new Rotation2d());
