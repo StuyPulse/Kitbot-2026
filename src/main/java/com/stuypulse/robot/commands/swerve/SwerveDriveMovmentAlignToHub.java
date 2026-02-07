@@ -108,7 +108,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
         virtualhub = ShotCalculator
                 .solveShootOnTheFly(new Pose3d(currentPose),
                         Field.getAllianceHubPose3d(),
-                        prevfieldRelRobotSpeeds, fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01);
+                        swerve.getPigeon2().getAccelerationX().getValueAsDouble(), swerve.getPigeon2().getAccelerationY().getValueAsDouble(), fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 5, 0.01);
         // virtualhub = Field.transformToOppositeAlliance(virtualhub); 
         fieldVirtualHub.setPose(Robot.isBlue() ? virtualhub.estimateTargetPose().toPose2d() : Field.transformToOppositeAlliance(virtualhub.estimateTargetPose().toPose2d()));
         return virtualhub;

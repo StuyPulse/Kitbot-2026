@@ -69,7 +69,8 @@ public final class ShotCalculator {
     public static AlignAngleSolution solveShootOnTheFly(
         Pose3d shooterPose,
         Pose3d targetPose,
-        ChassisSpeeds prevFieldRelRobotVelocity,
+        double axMetersPerSecondSquared,
+        double ayMetersPerSecondSquared,
         ChassisSpeeds fieldRelRobotVelocity,
         double targetSpeedRps,
         int maxIterations,
@@ -88,8 +89,8 @@ public final class ShotCalculator {
             
         for (int i = 0; i < maxIterations; i++) {
 
-            double axMetersPerSecondSquared = (fieldRelRobotVelocity.vxMetersPerSecond - prevFieldRelRobotVelocity.vxMetersPerSecond) / DT;
-            double ayMetersPerSecondSquared = (fieldRelRobotVelocity.vyMetersPerSecond - prevFieldRelRobotVelocity.vyMetersPerSecond) / DT;
+            // double axMetersPerSecondSquared =(fieldRelRobotVelocity.vxMetersPerSecond - prevFieldRelRobotVelocity.vxMetersPerSecond) / DT;
+            // double ayMetersPerSecondSquared = (fieldRelRobotVelocity.vyMetersPerSecond - prevFieldRelRobotVelocity.vyMetersPerSecond) / DT;
 
             double dx = (fieldRelRobotVelocity.vxMetersPerSecond * t
             + 0.5 * axMetersPerSecondSquared * t * t) * Settings.Superstructure.ShootOnMove.poseMultiplier.getAsDouble();
