@@ -8,10 +8,12 @@ package com.stuypulse.robot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.stuypulse.robot.util.ShotCalculator;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -20,6 +22,7 @@ public class Robot extends TimedRobot {
     private RobotContainer robot;
     private Command auto;
     private static Alliance alliance;
+    private static Timer timer;
 
     public static boolean isBlue() {
         return alliance == Alliance.Blue;
@@ -33,7 +36,9 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         robot = new RobotContainer();
         
-
+        
+        timer = new Timer();
+        timer.start();
         DataLogManager.start();
         SignalLogger.start();
 
@@ -44,7 +49,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-
+        ShotCalculator.setDT(timer.get());
+        timer.reset();
         if (DriverStation.getAlliance().isPresent()) {
             alliance = DriverStation.getAlliance().get();
         }

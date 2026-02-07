@@ -18,8 +18,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 
 public interface Settings {
-
     double DT = 0.020;
+
     boolean DEBUG_MODE = true;
     CANBus CANIVORE = new CANBus("Swerve Drive Drive", "./logs/example.hoot");
 

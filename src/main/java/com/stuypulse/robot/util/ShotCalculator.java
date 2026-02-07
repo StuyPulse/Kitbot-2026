@@ -13,6 +13,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class ShotCalculator {
     public static final double g = 9.81; // gravity is not a number
+    private static double DT;
+
+    public static void setDT(double dt) {
+        DT = dt;
+    }
 
     public record ShotSolution(
         Rotation2d launchPitchAngle,
@@ -83,8 +88,8 @@ public final class ShotCalculator {
             
         for (int i = 0; i < maxIterations; i++) {
 
-            double axMetersPerSecondSquared = (fieldRelRobotVelocity.vxMetersPerSecond - prevFieldRelRobotVelocity.vxMetersPerSecond) / Settings.DT;
-            double ayMetersPerSecondSquared = (fieldRelRobotVelocity.vyMetersPerSecond - prevFieldRelRobotVelocity.vyMetersPerSecond) / Settings.DT;
+            double axMetersPerSecondSquared = (fieldRelRobotVelocity.vxMetersPerSecond - prevFieldRelRobotVelocity.vxMetersPerSecond) / DT;
+            double ayMetersPerSecondSquared = (fieldRelRobotVelocity.vyMetersPerSecond - prevFieldRelRobotVelocity.vyMetersPerSecond) / DT;
 
             double dx = (fieldRelRobotVelocity.vxMetersPerSecond * t
             + 0.5 * axMetersPerSecondSquared * t * t) * Settings.Superstructure.ShootOnMove.poseMultiplier.getAsDouble();
@@ -103,6 +108,7 @@ public final class ShotCalculator {
                 SmartDashboard.putNumber("hdsr/targetPose y", targetPose.getY());
                 SmartDashboard.putNumber("hdsr/effectiveTargetPose x", effectiveTarget.getX());
                 SmartDashboard.putNumber("hdsr/effectiveTargetPose y", effectiveTarget.getY());
+                SmartDashboard.putNumber("hdsr/DT", DT);
             }
 
             ShotSolution newSol = solveBallisticWithSpeed(
