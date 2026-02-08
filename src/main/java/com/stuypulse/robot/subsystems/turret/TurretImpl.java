@@ -20,7 +20,6 @@ import com.stuypulse.robot.util.SysId;
 import com.stuypulse.stuylib.math.Vector2D;
 import com.stuypulse.stuylib.network.SmartNumber;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -28,17 +27,14 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 public class TurretImpl extends Turret {
     private TalonFX turretMotor;
 
-    private CANcoder encoder1;
-    private CANcoder encoder2;
-    private CANBus canbus;
-    private boolean hasUsedAbsoluteEncoder;
-    private boolean exceededOneRotation;
+    // private CANcoder encoder1;
+    // private CANcoder encoder2;
     private Optional<Double> voltageOverride;
 
     public TurretImpl() {
         CANBus canbus = Settings.CANIVORE;
         turretMotor = new TalonFX(Ports.Turret.TURRET_MOTOR, canbus);
-        turretMotor.setPosition(0.0);
+        turretMotor.setPosition(0.0); //TODO: encoderless only
 
         Motors.Turret.MOTOR_CONFIG.configure(turretMotor);
 
@@ -59,15 +55,9 @@ public class TurretImpl extends Turret {
         // 160/360.0)
         // .withAbsoluteSensorDiscontinuityPoint(1)));
 
-        hasUsedAbsoluteEncoder = false;
         voltageOverride = Optional.empty();
         // targetPosition = FERRY_TARGET_POSITIONS.LEFT_WALL;
         // just default to this ?
-    }
-
-    // @Override
-    public boolean exceedsOneRotation() {
-        return this.exceededOneRotation;
     }
 
     // confirm that the angle range is [0, 360)
@@ -117,11 +107,9 @@ public class TurretImpl extends Turret {
         else if(delta < -180) delta += 360;
 
         if(Math.abs(current + delta) < Constants.Turret.RANGE) return delta;
-
+        
         return delta < 0 ? delta + 360 : delta - 360;
     }
-
-    SmartNumber targetTemp = new SmartNumber("Turret/Target Testing Val", 0);
 
     @Override
     public void periodic() {
@@ -130,19 +118,14 @@ public class TurretImpl extends Turret {
         if (!Settings.EnabledSubsystems.TURRET.get() || getTurretState() == TurretState.STOP) {
             turretMotor.setVoltage(0);
         } else {
-            double actualTarget = getAngle().getDegrees() + wrappingMath(targetTemp.get(), turretMotor.getPosition().getValueAsDouble()*360);
+            double actualTargetDeg = getAngle().getDegrees() + wrappingMath(targetTemp.get(), turretMotor.getPosition().getValueAsDouble()*360);
 
-            turretMotor.setControl(new PositionVoltage(actualTarget / 360.0));
+            turretMotor.setControl(new PositionVoltage(actualTargetDeg / 360.0));
         }
 
-        // double actualTarget = getAngle().getRotations() +
-        //                     getAngle().getRotations() % 1 - targetTemp; //account for disabling continuous wrapping
-
         // SmartDashboard.putNumber("Turret/Pos 18t", getEncoderPos18t().getDegrees());
-        // SmartDashboard.putNumber("Turret/Absolute Angle",
-        // getAbsoluteTurretAngle().getDegrees());
+        // SmartDashboard.putNumber("Turret/Absolute Angle", getAbsoluteTurretAngle().getDegrees());
         SmartDashboard.putNumber("Turret/Relative Encoder", getAngle().getDegrees());
-        SmartDashboard.putBoolean("Turret/Exceeded Rotation", exceededOneRotation);
         SmartDashboard.putNumber("Turret/Position", turretMotor.getPosition().getValueAsDouble() * 360);
         SmartDashboard.putNumber("Turret/Voltage", turretMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Turret/Target Angle", getTargetAngle().getDegrees());
