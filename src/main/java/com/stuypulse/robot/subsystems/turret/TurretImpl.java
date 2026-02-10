@@ -115,10 +115,10 @@ public class TurretImpl extends Turret {
     public void periodic() {
         super.periodic();
 
-        if (!Settings.EnabledSubsystems.TURRET.get() || getTurretState() == TurretState.STOP) {
+        if (!Settings.EnabledSubsystems.TURRET.get() || getState() == TurretState.IDLE) {
             turretMotor.setVoltage(0);
         } else {
-            double actualTargetDeg = getAngle().getDegrees() + wrappingMath(targetTemp.get(), turretMotor.getPosition().getValueAsDouble()*360);
+            double actualTargetDeg = getAngle().getDegrees() + wrappingMath(getTargetAngle().getDegrees(), turretMotor.getPosition().getValueAsDouble()*360);
 
             turretMotor.setControl(new PositionVoltage(actualTargetDeg / 360.0));
         }
@@ -129,6 +129,6 @@ public class TurretImpl extends Turret {
         SmartDashboard.putNumber("Turret/Position", turretMotor.getPosition().getValueAsDouble() * 360);
         SmartDashboard.putNumber("Turret/Voltage", turretMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Turret/Target Angle", getTargetAngle().getDegrees());
-        SmartDashboard.putNumber("Turret/Get Hub Target Angke", getPointAtHubAngle().getDegrees());
+        SmartDashboard.putNumber("Turret/Get Hub Target Angle", getScoringAngle().getDegrees());
     }
 }

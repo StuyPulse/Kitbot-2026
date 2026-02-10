@@ -2,11 +2,8 @@ package com.stuypulse.robot.subsystems.turret;
 
 import java.util.Optional;
 
-import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Settings;
-import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.util.SysId;
-import com.stuypulse.stuylib.math.Vector2D;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
@@ -20,13 +17,13 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class TurretSim extends Turret {
 
-    private DCMotorSim sim;
+    private LinearSystemSim<N2, N1, N2> sim;
     private final LinearSystemLoop<N2, N1, N2> controller;
 
     private TrapezoidProfile profile;
@@ -41,10 +38,7 @@ public class TurretSim extends Turret {
     public TurretSim() {
         LinearSystem<N2, N1, N2> linearSystem = LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 1.0, 2.80);
 
-        sim = new DCMotorSim(
-            linearSystem, 
-            DCMotor.getKrakenX60(1)
-        );
+        sim = new LinearSystemSim<>(linearSystem);
         
         LinearQuadraticRegulator<N2, N1, N2> lqr = new LinearQuadraticRegulator<N2, N1, N2>(
             linearSystem, 
@@ -74,13 +68,12 @@ public class TurretSim extends Turret {
     }
 
     @Override
-    public boolean atTargetAngle() {
-        return Math.abs(getAngle().minus(getTargetAngle()).getDegrees()) < Settings.Turret.TOLERANCE_DEG;
+    public Rotation2d getAngle() {
+        return Rotation2d.fromRadians(sim.getOutput(0));
     }
 
-    @Override
-    public Rotation2d getAngle() {
-        return Rotation2d.fromRadians(sim.getAngularPositionRad());
+    private double getAngularVelocityRadPerSec() {
+        return sim.getOutput(1);
     }
 
     private void setVoltageOverride(Optional<Double> volts) {
@@ -94,32 +87,32 @@ public class TurretSim extends Turret {
         goal = new TrapezoidProfile.State(getTargetAngle().getRadians(), 0.0);
         setpoint = profile.calculate(Settings.DT, setpoint, goal);
 
-        SmartDashboard.putNumber("Turret/Constraints/Max vel (deg per s)", Units.radiansToDegrees(maxAngularVelRadiansPerSecond));
-        SmartDashboard.putNumber("Turret/Constraints/Max accel (deg per s per s)", Units.radiansToDegrees(maxAngularAccelRadiansPerSecondSquared));
+        SmartDashboard.putNumber("Turret/Constraints/Max Vel (deg per s)", Units.radiansToDegrees(maxAngularVelRadiansPerSecond));
+        SmartDashboard.putNumber("Turret/Constraints/Max Accel (deg per s per s)", Units.radiansToDegrees(maxAngularAccelRadiansPerSecondSquared));
 
         SmartDashboard.putNumber("Turret/Setpoint (deg)", Units.radiansToDegrees(setpoint.position));
         SmartDashboard.putNumber("Turret/Target (deg)", Units.radiansToDegrees(getTargetAngle().getRadians()));
         SmartDashboard.putBoolean("Turret/At Target", atTargetAngle());
         SmartDashboard.putNumber("Turret/Error: abs(turret - target) (deg)", Math.abs(getAngle().minus(getTargetAngle()).getDegrees()));
 
+        SmartDashboard.putNumber("Turret/Current Angle (deg)", sim.getOutput(0));
+
         controller.setNextR(VecBuilder.fill(setpoint.position, 0.0)); // try setpoint.velocity as second arg later
-        controller.correct(VecBuilder.fill(sim.getAngularPositionRad(), sim.getAngularVelocityRadPerSec()));
+        controller.correct(VecBuilder.fill(sim.getOutput(0), sim.getOutput(1)));
         controller.predict(Settings.DT);
 
         if (Settings.EnabledSubsystems.TURRET.get()) {
             if (voltageOverride.isPresent()) {
-                sim.setInputVoltage(voltageOverride.get());
+                sim.setInput(voltageOverride.get());
             } else {
-                sim.setInputVoltage(controller.getU(0));
+                sim.setInput(controller.getU(0));
             }
         } else {
-            sim.setInputVoltage(0);
+            sim.setInput(0);
         }
 
         sim.update(Settings.DT);
     }
-
-
 
     /* USELESS, DON'T DELETE */
     @Override
@@ -130,13 +123,8 @@ public class TurretSim extends Turret {
                 "Turret",
                 voltage -> setVoltageOverride(Optional.of(voltage)),
                 () -> getAngle().getRotations(),
-                () -> sim.getAngularVelocityRadPerSec(),
-                () -> sim.getInputVoltage(),
+                () -> getAngularVelocityRadPerSec(),
+                () -> sim.getInput(0),
                 getInstance());
-    }
-
-    // @Override
-    public boolean exceedsOneRotation() {
-      return false;
     }
 }

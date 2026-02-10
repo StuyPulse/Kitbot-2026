@@ -11,10 +11,9 @@ import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
 import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
 import com.stuypulse.robot.commands.swerve.SwerveResetRotation;
-import com.stuypulse.robot.commands.turret.SetTurretFerry;
-import com.stuypulse.robot.commands.turret.SetTurretPointAtHub;
-import com.stuypulse.robot.commands.turret.SetTurretStop;
-import com.stuypulse.robot.commands.turret.SetTurretZero;
+import com.stuypulse.robot.commands.turret.TurretFerry;
+import com.stuypulse.robot.commands.turret.TurretIdle;
+import com.stuypulse.robot.commands.turret.TurretShoot;
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
@@ -74,8 +73,8 @@ public class RobotContainer {
         //     .whileFalse(new SuperstructureIntake());
 
         driver.getTopButton()
-            .whileTrue(new SetTurretPointAtHub())
-            .whileFalse(new SetTurretStop());
+            .whileTrue(new TurretShoot())
+            .whileFalse(new TurretIdle());
 
         // driver.getLeftButton()
         // .whileTrue(new SwerveDriveAlignToHub());
@@ -94,11 +93,11 @@ public class RobotContainer {
         driver.getDPadUp()
                 .onTrue(new SwerveResetRotation());
 
-        driver.getLeftButton().whileTrue(new SetTurretPointAtHub())
-                .onFalse(new SetTurretZero());
+        driver.getLeftButton().whileTrue(new TurretShoot())
+                .onFalse(new TurretIdle());
 
-        driver.getRightButton().whileTrue(new SetTurretFerry())
-                .onFalse(new SetTurretZero());
+        driver.getRightButton().whileTrue(new TurretFerry())
+                .onFalse(new TurretIdle());
     }
 
     /**************/
