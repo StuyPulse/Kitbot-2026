@@ -45,7 +45,7 @@ public interface Motors {
         .withMotionProfile(Settings.Turret.MAX_VEL.getRotations(), Settings.Turret.MAX_ACCEL.getRotations())
         .withSensorToMechanismRatio(2.80) // seems to be off by a bit
         .withInvertedValue(InvertedValue.Clockwise_Positive)
-        .withContinuousWrap(true);
+        .withContinuousWrap(false);
     }
 
     public interface Superstructure {

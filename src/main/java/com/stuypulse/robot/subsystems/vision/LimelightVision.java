@@ -101,6 +101,10 @@ public class LimelightVision extends SubsystemBase{
                         0
                     );
 
+                    // PoseEstimate poseEstimate = Robot.isBlue() 
+                    //     ? LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName)
+                    //     : LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(limelightName);
+
                     PoseEstimate poseEstimate = Robot.isBlue() 
                         ? LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName)
                         : LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(limelightName);

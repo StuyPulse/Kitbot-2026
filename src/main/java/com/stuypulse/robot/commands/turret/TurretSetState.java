@@ -5,17 +5,20 @@ import com.stuypulse.robot.subsystems.turret.Turret.TurretState;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-public class SetTurretState extends InstantCommand {
+public class TurretSetState extends InstantCommand {
+     
     private final Turret turret;
-    private final TurretState targetState;
-    
-    public SetTurretState(TurretState targetState) {
-        turret = Turret.getInstance();
-        this.targetState = targetState;
+    private final TurretState state;
+
+    public TurretSetState(TurretState state) {
+        this.turret = Turret.getInstance();
+        this.state = state;
+
+        addRequirements(turret);
     }
 
     @Override
     public void initialize() {
-        turret.setTurretState(targetState);
+        turret.setState(state);
     }
 }

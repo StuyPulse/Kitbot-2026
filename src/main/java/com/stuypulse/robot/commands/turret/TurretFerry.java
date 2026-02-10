@@ -2,8 +2,8 @@ package com.stuypulse.robot.commands.turret;
 
 import com.stuypulse.robot.subsystems.turret.Turret.TurretState;
 
-public class SetTurretFerry extends SetTurretState {
-    public SetTurretFerry() {
+public class TurretFerry extends TurretSetState {
+    public TurretFerry() {
         super(TurretState.FERRYING);
     }
 }
