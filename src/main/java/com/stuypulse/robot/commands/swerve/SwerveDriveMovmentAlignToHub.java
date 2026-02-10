@@ -20,12 +20,14 @@ import com.stuypulse.stuylib.math.Angle;
 import com.stuypulse.stuylib.math.SLMath;
 import com.stuypulse.stuylib.math.Vector2D;
 import com.stuypulse.stuylib.streams.numbers.IStream;
+import com.stuypulse.stuylib.streams.numbers.filters.IFilter;
 import com.stuypulse.stuylib.streams.numbers.filters.LowPassFilter;
 import com.stuypulse.stuylib.streams.vectors.VStream;
 import com.stuypulse.stuylib.streams.vectors.filters.VDeadZone;
 import com.stuypulse.stuylib.streams.vectors.filters.VLowPassFilter;
 import com.stuypulse.stuylib.streams.vectors.filters.VRateLimit;
 import com.stuypulse.stuylib.util.AngleVelocity;
+import com.stuypulse.stuylib.util.StopWatch;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -48,6 +50,9 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     private FieldObject2d hub;
     private AlignAngleSolution virtualhub;
     private Pose2d currentPose;
+    private StopWatch mTimer;
+    private Angle mLastError;
+    private IFilter mDFilter;
 
     private final AngleController controller;
     private final IStream angleVelocity;
@@ -56,6 +61,9 @@ public class SwerveDriveMovmentAlignToHub extends Command {
         this.gamepad = gamepad;
         virtualhub = new AlignAngleSolution(new Rotation2d(), new Rotation2d(), new Pose3d());
         superstructure = Superstructure.getInstance();
+        mTimer = new StopWatch();
+        mLastError = Angle.kZero;
+        mDFilter = IFilter.create(x -> x);
 
         prevfieldRelRobotSpeeds = new ChassisSpeeds();
         fieldRelRobotSpeeds = new ChassisSpeeds();
@@ -87,7 +95,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
         .filtered(
             new VDeadZone(Drive.DEADBAND),
             x -> x.clamp(1),
-            x -> x.pow(Drive.POWER.get()),
+            x -> x.pow(Drive.POWER),
             x -> x.mul(Swerve.Constraints.MAX_VELOCITY_M_PER_S),
             new VRateLimit(Swerve.Constraints.MAX_ACCEL_M_PER_S_SQUARED),
             new VLowPassFilter(Drive.RC)
@@ -139,7 +147,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
         swerve.setExpectedHubPose(solution.estimateTargetPose().toPose2d());
         Rotation2d targetangle = getSolution().requiredYaw().plus(Rotation2d.k180deg);
         if (Settings.DEBUG_MODE) {
-            SmartDashboard.putNumber("Swerve/Movment Align/Target angle", targetangle.getDegrees());
+            SmartDashboard.putNumber("Swerve/Movment Align/Target angle", Rotation2d.k180deg.getDegrees());
             SmartDashboard.putNumber("Swerve/Movment Align/Controller Error", getAngleError());
             SmartDashboard.putNumber("Swerve/Movment Align/Distance to Target", getDistanceToTarget(solution.estimateTargetPose().toPose2d().getTranslation()));
         }
@@ -148,12 +156,18 @@ public class SwerveDriveMovmentAlignToHub extends Command {
                 speed.get(),
                 SLMath.clamp(angleVelocity.get() 
                     + controller.update(
-                        Angle.fromRotation2d(targetangle), 
+                        Angle.fromRotation2d(Rotation2d.k180deg), 
                         Angle.fromRotation2d(currentPose.getRotation())),
                     -Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S,
                     Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S
                 )
             );
+            Angle error = Angle.fromRotation2d(Rotation2d.k180deg).sub(Angle.fromRotation2d(currentPose.getRotation()));
+            double dt = mTimer.reset();
+            double derivative = mDFilter.get(error.velocityRadians(mLastError, dt));
+            SmartDashboard.putNumber("Swerve/Movment Align/Derivative", derivative);
+            SmartDashboard.putNumber("Swerve/Movment Align/DT", dt);
+            mLastError = error;
         } else {
             swerve.drive(new Vector2D(new Translation2d()), 0);
         }
@@ -163,4 +177,10 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     public void end(boolean interrupted) {
         swerve.drive(new Vector2D(new Translation2d()), 0);
     }
+
+    @Override
+    public void initialize() {
+        mTimer.reset();
+    }
+
 }

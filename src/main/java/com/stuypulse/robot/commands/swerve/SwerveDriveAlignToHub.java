@@ -33,8 +33,8 @@ public class SwerveDriveAlignToHub extends Command {
         swerve = CommandSwerveDrivetrain.getInstance();
         
         drive = new SwerveRequest.FieldCentric()
-            .withDeadband(Settings.Swerve.Constraints.MAX_VELOCITY_M_PER_S * Settings.Driver.Drive.DEADBAND.get())
-            .withRotationalDeadband(Settings.Swerve.Constraints.MAX_ANGULAR_ACCEL_RAD_PER_S * Settings.Driver.Turn.DEADBAND.get())
+            .withDeadband(Settings.Swerve.Constraints.MAX_VELOCITY_M_PER_S * Settings.Driver.Drive.DEADBAND)
+            .withRotationalDeadband(Settings.Swerve.Constraints.MAX_ANGULAR_ACCEL_RAD_PER_S * Settings.Driver.Turn.DEADBAND)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); 
 
         controller = new AnglePIDController(Gains.Swerve.Motion.THETA.kP, Gains.Swerve.Motion.THETA.kI, Gains.Swerve.Motion.THETA.kD)

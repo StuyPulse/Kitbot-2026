@@ -5,6 +5,8 @@
 
 package com.stuypulse.robot.constants;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.path.PathConstraints;
 import com.stuypulse.stuylib.network.SmartBoolean;
@@ -20,14 +22,18 @@ import edu.wpi.first.math.util.Units;
 public interface Settings {
     double DT = 0.020;
 
-    boolean DEBUG_MODE = true;
+    boolean DEBUG_MODE = false;
     CANBus CANIVORE = new CANBus("Swerve Drive Drive", "./logs/example.hoot");
 
     public interface EnabledSubsystems {
-        SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
-        SmartBoolean TURRET = new SmartBoolean("Enabled Subsystems/Turret Is Enabled", false);
-        SmartBoolean SUPERSTRUCTURE = new SmartBoolean("Enabled Subsystems/Superstructure Is Enabled", true);
-        SmartBoolean LIMELIGHT = new SmartBoolean("Enabled Subsystems/Limelight Is Enabled", true);
+        // SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
+        // SmartBoolean TURRET = new SmartBoolean("Enabled Subsystems/Turret Is Enabled", false);
+        // SmartBoolean SUPERSTRUCTURE = new SmartBoolean("Enabled Subsystems/Superstructure Is Enabled", false); // TODO: set true
+        // SmartBoolean LIMELIGHT = new SmartBoolean("Enabled Subsystems/Limelight Is Enabled", true);
+        Supplier<Boolean> SWERVE =  () -> true;
+        Supplier<Boolean> TURRET = () -> false;
+        Supplier<Boolean> SUPERSTRUCTURE =  () -> false; // TODO: set true
+        Supplier<Boolean> LIMELIGHT = () -> true;
     }
     public interface Superstructure {
         public interface Intake_Shooter {
@@ -56,8 +62,7 @@ public interface Settings {
             double MAX_SHOOT_DISTANCE = 3.0;
         }
         public interface ShootOnMove {
-            public SmartNumber poseMultiplier = new SmartNumber("Swerve/Movment Align/Settings/pose Multiplier", 1.0); //TODO: remove Smartnumber
-            public SmartNumber PHASE_DELAY = new SmartNumber("Swerve/Movment Align/Settings/phase delay", 0.03);
+            public double PHASE_DELAY =  0.03;  //TODO: make pose multipiler
         }
     }
 
@@ -79,18 +84,17 @@ public interface Settings {
         }
 
         public interface Motion {
-
-            SmartNumber MAX_VELOCITY = new SmartNumber("Swerve/Motion/Max Velocity", 2.5);
-            SmartNumber MAX_ACCELERATION = new SmartNumber("Swerve/Motion/Max Acceleration", 2.5);
-            SmartNumber MAX_ANGULAR_VELOCITY = new SmartNumber("Swerve/Motion/Max Angular Velocity", Units.degreesToRadians(540));
-            SmartNumber MAX_ANGULAR_ACCELERATION = new SmartNumber("Swerve/Motion/Max Angular Acceleration", Units.degreesToRadians(720));
+            double MAX_VELOCITY = 2.5;
+            double MAX_ACCELERATION = 2.5;
+            double MAX_ANGULAR_VELOCITY = Units.degreesToRadians(540);
+            double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(720);
 
             PathConstraints DEFAULT_CONSTRAINTS =
                 new PathConstraints(
-                    MAX_VELOCITY.get(),
-                    MAX_ACCELERATION.get(),
-                    MAX_ANGULAR_VELOCITY.get(),
-                    MAX_ANGULAR_ACCELERATION.get());
+                    MAX_VELOCITY,
+                    MAX_ACCELERATION,
+                    MAX_ANGULAR_VELOCITY,
+                    MAX_ANGULAR_ACCELERATION);
 
         }
 
@@ -163,16 +167,15 @@ public interface Settings {
 
     public interface Driver {
         public interface Drive {
-            SmartNumber DEADBAND = new SmartNumber("Driver Settings/Drive/Deadband", 0.05);
-
-            SmartNumber RC = new SmartNumber("Driver Settings/Drive/RC", 0.05);
-            SmartNumber POWER = new SmartNumber("Driver Settings/Drive/Power", 2);
+             double DEADBAND = 0.05;
+             double RC = 0.05;
+             double POWER = 2;
         }
         public interface Turn {
-            SmartNumber DEADBAND = new SmartNumber("Driver Settings/Turn/Deadband", 0.05);
+            double DEADBAND = 0.05;
 
-            SmartNumber RC = new SmartNumber("Driver Settings/Turn/RC", 0.05);
-            SmartNumber POWER = new SmartNumber("Driver Settings/Turn/Power", 2);
+            double RC = 0.05;
+            double POWER = 2;
         }
     }  
 }

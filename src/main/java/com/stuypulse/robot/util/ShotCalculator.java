@@ -95,8 +95,8 @@ public final class ShotCalculator {
 
         shooterPose = shooterPose.exp(
             new Twist3d(
-                fieldRelRobotVelocity.vxMetersPerSecond * Settings.Superstructure.ShootOnMove.PHASE_DELAY.getAsDouble(),
-                fieldRelRobotVelocity.vyMetersPerSecond * Settings.Superstructure.ShootOnMove.PHASE_DELAY.getAsDouble(),
+                fieldRelRobotVelocity.vxMetersPerSecond * Settings.Superstructure.ShootOnMove.PHASE_DELAY,
+                fieldRelRobotVelocity.vyMetersPerSecond * Settings.Superstructure.ShootOnMove.PHASE_DELAY,
                 0,
                 0,
                 0,
@@ -116,11 +116,11 @@ public final class ShotCalculator {
             // double axMetersPerSecondSquared =(fieldRelRobotVelocity.vxMetersPerSecond - prevFieldRelRobotVelocity.vxMetersPerSecond) / DT;
             // double ayMetersPerSecondSquared = (fieldRelRobotVelocity.vyMetersPerSecond - prevFieldRelRobotVelocity.vyMetersPerSecond) / DT;
 
-            double dx = (fieldRelRobotVelocity.vxMetersPerSecond * t
-            + 0.5 * axMetersPerSecondSquared * t * t) * Settings.Superstructure.ShootOnMove.poseMultiplier.getAsDouble();
+            double dx = fieldRelRobotVelocity.vxMetersPerSecond * t
+            + 0.5 * axMetersPerSecondSquared * t * t;
 
-            double dy = (fieldRelRobotVelocity.vyMetersPerSecond * t
-            + 0.5 * ayMetersPerSecondSquared * t * t ) * Settings.Superstructure.ShootOnMove.poseMultiplier.getAsDouble();
+            double dy = fieldRelRobotVelocity.vyMetersPerSecond * t
+            + 0.5 * ayMetersPerSecondSquared * t * t ;
 
             effectiveTarget = new Pose3d(
                 targetPose.getX() - dx,

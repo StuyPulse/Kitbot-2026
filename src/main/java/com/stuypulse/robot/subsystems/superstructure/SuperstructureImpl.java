@@ -71,6 +71,7 @@ public class SuperstructureImpl extends Superstructure {
         } else {
             intakeShooterMotor.setVoltage(0);
             indexMotor.setVoltage(0);
+            return;
         }
 
         SmartDashboard.putString("SuperStructure/State", getState().toString());

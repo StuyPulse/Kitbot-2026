@@ -384,14 +384,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 () -> false,
                 instance
             );
-            PathPlannerLogging.setLogActivePathCallback((poses) -> {
-                if (Robot.isBlue()) {
-                    Field.FIELD2D.getObject("path").setPoses(poses);
-                }
-                else {
-                    Field.FIELD2D.getObject("path").setPoses(Field.transformToOppositeAlliance(poses));
-                }
-            });
+            PathPlannerLogging.setLogActivePathCallback( null
+            //     (poses) -> {
+            //     if (Robot.isBlue()) {
+            //         Field.FIELD2D.getObject("path").setPoses(poses);
+            //     }
+            //     else {
+            //         Field.FIELD2D.getObject("path").setPoses(Field.transformToOppositeAlliance(poses));
+            //     }
+            // }
+            );
         } catch (Exception e) {
             e.printStackTrace();
         }

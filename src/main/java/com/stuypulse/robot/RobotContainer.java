@@ -141,7 +141,7 @@ public class RobotContainer {
         autonChooser.addOption("Swerve Translation Dynamic Backward", swerve.sysIdTranslationDynamic(Direction.kReverse));
 
         autonChooser.addOption("Swerve Rotation Dynamic Forward", swerve.sysidDynamicRotation(Direction.kForward));
-        autonChooser.addOption("Swerve Rotation Dynamic Forward", swerve.sysidDynamicRotation(Direction.kReverse));
+        autonChooser.addOption("Swerve Rotation Dynamic Backward", swerve.sysidDynamicRotation(Direction.kReverse));
         autonChooser.addOption("Swerve Rotation Quasistatic Forward", swerve.sysidQuasistaticRotation(Direction.kForward));
         autonChooser.addOption("Swerve Rotation Quasistatic Forward", swerve.sysidQuasistaticRotation(Direction.kReverse));
 
