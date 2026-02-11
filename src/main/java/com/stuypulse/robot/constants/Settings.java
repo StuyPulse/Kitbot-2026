@@ -30,7 +30,48 @@ public interface Settings {
         SmartBoolean TURRET = new SmartBoolean("Enabled Subsystems/Turret Is Enabled", true);
         SmartBoolean SUPERSTRUCTURE = new SmartBoolean("Enabled Subsystems/Superstructure Is Enabled", false);
         SmartBoolean LIMELIGHT = new SmartBoolean("Enabled Subsystems/Limelight Is Enabled", true);
+        SmartBoolean CLIMBER = new SmartBoolean("Enabled Subsystems/Turret Is Enabled", false);
     }
+
+    public interface ClimberHopper {
+        // TODO: GET THESE
+        // Voltages
+        double CLIMBER_UP = 2;
+        double CLIMBER_DOWN = -3;
+        double HOPPER_DOWN = -3;
+        double HOPPER_UP = 2;
+
+        double MASS_KG = 1;
+        
+        double STALL = 10;
+        double EXTENDED = 0;
+        double RETRACTED = -1;
+
+        double ROTATIONS_AT_BOTTOM = 0;
+        // TODO: get these limits
+        double MIN_HEIGHT_METERS = 0;
+        double MAX_HEIGHT_METERS = 10;
+
+        double DEBOUNCE = 0.25;
+
+        double GYRO_TOLERANCE = 0;
+        double HEIGHT_TOLERANCE = 1;
+
+        double RAMP_RATE = 50;
+
+        double DRUM_RADIUS_METERS = ((MAX_HEIGHT_METERS - MIN_HEIGHT_METERS) / (Encoders.NUM_ROTATIONS_TO_REACH_TOP / Encoders.GEARING)) / 2 / Math.PI;
+
+        public interface Encoders {
+            // TODO: get these
+            double GEARING = 52.0/12.0;
+
+            double NUM_ROTATIONS_TO_REACH_TOP = (MAX_HEIGHT_METERS - MIN_HEIGHT_METERS) / (0.480 / 13); // Number of rotations that the motor has to spin, NOT the gear
+            double POSITION_CONVERSION_FACTOR = (MAX_HEIGHT_METERS - MIN_HEIGHT_METERS) / NUM_ROTATIONS_TO_REACH_TOP;
+            double VELOCITY_CONVERSION_FACTOR = (MAX_HEIGHT_METERS - MIN_HEIGHT_METERS) / NUM_ROTATIONS_TO_REACH_TOP / 60;
+        }
+    }
+
+
     public interface Superstructure {
         public interface Intake_Shooter {
             double INTAKE_SPEED = 0.5;

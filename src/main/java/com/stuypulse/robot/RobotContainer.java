@@ -6,6 +6,7 @@
 package com.stuypulse.robot;
 
 import com.stuypulse.robot.commands.auton.DoNothingAuton;
+import com.stuypulse.robot.commands.climberhopper.ClimberHopperDefaultCommand;
 import com.stuypulse.robot.commands.superstructure.SuperstructureIntake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
@@ -16,6 +17,7 @@ import com.stuypulse.robot.commands.turret.TurretIdle;
 import com.stuypulse.robot.commands.turret.TurretShoot;
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Ports;
+import com.stuypulse.robot.subsystems.climberhopper.ClimberHopper;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.subsystems.turret.Turret;
@@ -39,6 +41,7 @@ public class RobotContainer {
     public final LimelightVision limelight = LimelightVision.getInstance();
     public final Superstructure superstructure = Superstructure.getInstance();
     public final Turret turret = Turret.getInstance();
+    private final ClimberHopper climberHopper = ClimberHopper.getInstance();
 
     // Autons
     private static SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -60,6 +63,7 @@ public class RobotContainer {
 
     private void configureDefaultCommands() {
         swerve.setDefaultCommand(new SwerveDriveDrive(driver));
+        climberHopper.setDefaultCommand(new ClimberHopperDefaultCommand());
     }
 
     /***************/
@@ -67,6 +71,8 @@ public class RobotContainer {
     /***************/
 
     private void configureButtonBindings() {
+        // TODO: Put HopperClimber button bindings
+
 
         // driver.getTopButton()
         //     .whileTrue(new SuperstructureShoot())
