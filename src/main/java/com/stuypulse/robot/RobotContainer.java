@@ -6,7 +6,9 @@
 package com.stuypulse.robot;
 
 import com.stuypulse.robot.commands.auton.DoNothingAuton;
+import com.stuypulse.robot.commands.climberhopper.ClimberDown;
 import com.stuypulse.robot.commands.climberhopper.ClimberHopperDefaultCommand;
+import com.stuypulse.robot.commands.climberhopper.ClimberUp;
 import com.stuypulse.robot.commands.superstructure.SuperstructureIntake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
@@ -72,15 +74,19 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         // TODO: Put HopperClimber button bindings
+        driver.getLeftBumper()
+            .whileTrue(new ClimberUp());
 
+        driver.getRightBumper()
+            .whileTrue(new ClimberDown());
 
         // driver.getTopButton()
         //     .whileTrue(new SuperstructureShoot())
         //     .whileFalse(new SuperstructureIntake());
 
-        driver.getTopButton()
-            .whileTrue(new TurretShoot())
-            .whileFalse(new TurretIdle());
+        // driver.getTopButton()
+        //     .whileTrue(new TurretShoot())
+        //     .whileFalse(new TurretIdle());
 
         // driver.getLeftButton()
         // .whileTrue(new SwerveDriveAlignToHub());
