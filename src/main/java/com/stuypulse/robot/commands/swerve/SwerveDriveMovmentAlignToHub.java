@@ -53,16 +53,17 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     private AlignAngleSolution virtualhub;
     private Pose2d currentPose;
     private StopWatch mTimer;
-    PIDController anglePid;
+    private PIDController anglePid;
     // private Angle mLastError;
     // private IFilter mDFilter;
 
     private final AngleController controller;
-    private final IStream angleVelocity;
 
     public SwerveDriveMovmentAlignToHub(Gamepad gamepad) {
 
         anglePid = new PIDController(Gains.Swerve.Alignment.THETA.kP, Gains.Swerve.Alignment.THETA.kI, Gains.Swerve.Alignment.THETA.kD);
+        anglePid.setTolerance(Settings.Swerve.Constraints.angletoleranceDegrees);
+        // anglePid.enableContinuousInput(); TODO: implament
         this.gamepad = gamepad;
         virtualhub = new AlignAngleSolution(new Rotation2d(), new Rotation2d(), new Pose3d());
         superstructure = Superstructure.getInstance();
@@ -83,18 +84,18 @@ public class SwerveDriveMovmentAlignToHub extends Command {
                 Gains.Swerve.Motion.THETA.kD)
                 .setOutputFilter(x -> -x);
         
-        AngleVelocity derivative = new AngleVelocity();
+        // AngleVelocity derivative = new AngleVelocity();
 
-        angleVelocity = IStream.create(() -> derivative.get(Angle.fromRotation2d(getSolution().requiredYaw())))
-            .filtered(
-                new LowPassFilter(Assist.ANGLE_DERIV_RC),
-                // make angleVelocity contribute less once distance is less than REDUCED_FF_DIST
-                // so that angular velocity doesn't oscillate
-                x -> x * Math.min(1, getDistanceToTarget(getSolution().estimateTargetPose().getTranslation().toTranslation2d()) / Assist.REDUCED_FF_DIST),
-                // new RateLimit(Settings.Swerve.MAX_ANGULAR_ACCEL),
-                x -> SLMath.clamp(x, -Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S, Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S),
-                x -> -x
-            );
+        // angleVelocity = IStream.create(() -> derivative.get(Angle.fromRotation2d(getSolution().requiredYaw())))
+        //     .filtered(
+        //         new LowPassFilter(Assist.ANGLE_DERIV_RC),
+        //         // make angleVelocity contribute less once distance is less than REDUCED_FF_DIST
+        //         // so that angular velocity doesn't oscillate
+        //         x -> x * Math.min(1, getDistanceToTarget(getSolution().estimateTargetPose().getTranslation().toTranslation2d()) / Assist.REDUCED_FF_DIST),
+        //         // new RateLimit(Settings.Swerve.MAX_ANGULAR_ACCEL),
+        //         x -> SLMath.clamp(x, -Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S, Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S),
+        //         x -> -x
+        //     );
 
         speed = VStream.create(this::getDriverInputAsVelocity)
         .filtered(
@@ -143,15 +144,24 @@ public class SwerveDriveMovmentAlignToHub extends Command {
         return new Vector2D(-gamepad.getLeftStick().x, -gamepad.getLeftStick().y);
     }
 
+    private Rotation2d getErrorDegrees(Rotation2d setpoint, Rotation2d current) {
+        double setpointDegrees = setpoint.getDegrees();
+        double currentDegrees = current.getDegrees();
+        Rotation2d differance = (Math.abs(setpointDegrees - currentDegrees) > 180) ?  Rotation2d.fromDegrees(Math.abs(currentDegrees) - 180) : setpoint.minus(current);
+        return differance;
+    }
+
     @Override
     public void execute() {
         AlignAngleSolution solution = getSolution();
         swerve.setExpectedHubPose(solution.estimateTargetPose().toPose2d());
         Rotation2d targetangle = getSolution().requiredYaw();
-        double error = targetangle.rotateBy(swerve.getPose().getRotation()).getDegrees();
+        Rotation2d currentRotation = swerve.getPose().getRotation();
+        Rotation2d error = getErrorDegrees(Rotation2d.k180deg, currentRotation);
         if (Settings.DEBUG_MODE) {
-            SmartDashboard.putNumber("Swerve/Movment Align/Target angle", Rotation2d.k180deg.getDegrees());
-            SmartDashboard.putNumber("Swerve/Movment Align/Controller Error", error);
+            SmartDashboard.putNumber("Swerve/Movment Align/Target angle Radians", Rotation2d.k180deg.getRadians());
+            SmartDashboard.putNumber("Swerve/Movment Align/Current Angle Radians", currentRotation.getRadians());
+            SmartDashboard.putNumber("Swerve/Movment Align/Controller Error", error.getDegrees());
             SmartDashboard.putNumber("Swerve/Movment Align/Distance to Target", getDistanceToTarget(solution.estimateTargetPose().toPose2d().getTranslation()));
         }
 
@@ -159,7 +169,7 @@ public class SwerveDriveMovmentAlignToHub extends Command {
             swerve.drive(
                 speed.get(),
                 SLMath.clamp(anglePid.calculate(
-                    error,
+                    error.getDegrees(),
                     0.0
                     ),
                     -Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S,
@@ -180,11 +190,13 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     @Override
     public void end(boolean interrupted) {
         swerve.drive(new Vector2D(new Translation2d()), 0);
+        anglePid.close();
     }
 
     @Override
     public void initialize() {
         mTimer.reset();
+        anglePid.reset();
     }
 
 }

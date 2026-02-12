@@ -122,6 +122,7 @@ public interface Settings {
             double MAX_ACCEL_M_PER_S_SQUARED = 15.0;
             double MAX_ANGULAR_VEL_RAD_PER_S = Units.degreesToRadians(720);
             double MAX_ANGULAR_ACCEL_RAD_PER_S = Units.degreesToRadians(900);
+            double angletoleranceDegrees = 1.0;
     
             PathConstraints DEFAULT_CONSTRAINTS =
                 new PathConstraints(
