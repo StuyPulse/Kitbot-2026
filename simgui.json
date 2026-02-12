@@ -5,6 +5,7 @@
       "/SmartDashboard/Autonomous": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/Visualizers/Turret": "Mechanism2d"
     },
     "windows": {
@@ -48,6 +49,9 @@
             "Settings": {
               "open": true
             },
+            "open": true
+          },
+          "Pose": {
             "open": true
           },
           "open": true

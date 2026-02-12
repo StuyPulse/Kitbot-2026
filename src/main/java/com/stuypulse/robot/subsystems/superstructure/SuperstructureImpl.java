@@ -75,10 +75,10 @@ public class SuperstructureImpl extends Superstructure {
         }
 
         SmartDashboard.putString("SuperStructure/State", getState().toString());
-        SmartDashboard.putNumber("SuperStructure/Main Wheels Target Speed", getState().getMainWheelsTargetSpeed());
-        SmartDashboard.putNumber("SuperStructure/Indexer Target Speed", getState().getIndexerTargetSpeed());
-        SmartDashboard.putNumber("SuperStructure/Main Wheels Current Speed (RPM)", intakeShooterMotor.getVelocity().getValueAsDouble() * 60.0);
         if (Settings.DEBUG_MODE) {
+            SmartDashboard.putNumber("SuperStructure/Main Wheels Target Speed", getState().getMainWheelsTargetSpeed());
+            SmartDashboard.putNumber("SuperStructure/Indexer Target Speed", getState().getIndexerTargetSpeed());
+            SmartDashboard.putNumber("SuperStructure/Main Wheels Current Speed (RPM)", intakeShooterMotor.getVelocity().getValueAsDouble() * 60.0);
             SmartDashboard.putNumber("SuperStructure/DistanceFromGoal", swerve.getDistanceFromHub());
             SmartDashboard.putNumber("SuperStructure/Indexer Applied DutyCycle", indexMotor.getAppliedOutput());
             SmartDashboard.putNumber("SuperStructure/Interpolated RPM", InterpolationUtil.getRpmfromdistance(swerve.getExpectedHubDistance()));

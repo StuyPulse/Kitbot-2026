@@ -9,7 +9,7 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 }
-
+// sftp://lvuser@roboRIO-516-frc.local/u
 // Set this to the latest version of StuyLib.
 // You can check here: https://github.com/StuyPulse/StuyLib/releases.
 final String STUYLIB_VERSION = '2026.1.1-SNAPSHOT'
@@ -26,7 +26,7 @@ deploy {
         roborio(getTargetTypeClass('RoboRIO')) {
             // Team number is loaded either from the .wpilib/wpilib_preferences.json
             // or from command line. If not found an exception will be thrown.
-            // You can use getTeamOrDefault(team) instead of getTeamNumber if you
+            // You can use getTe`amOrDefault(team) instead of getTeamNumber if you
             // want to store a team number in this file.
             team = project.frc.getTeamNumber()
             debug = project.frc.getDebugOrDefault(false)
@@ -36,13 +36,19 @@ deploy {
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                //     // Enable VisualVM connection
-                //     jvmArgs.add("-Dcom.sun.management.jmxremote=true")
-                //     jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
-                //     jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
-                //     jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
-                //     jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
-                //     jvmArgs.add("-Djava.rmi.server.hostname=10.5.16.2") // Replace TE.AM with team number
+                    // Enable VisualVM connection
+                    jvmArgs.add("-Dcom.sun.management.jmxremote=true")
+                    jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
+                    jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
+                    jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
+                    jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
+                    jvmArgs.add("-Djava.rmi.server.hostname=10.5.16.2") // Replace TE.AM with team number
+                    // If you have other configuration here, you do not need to remove it.
+                    // Enable automatic heap dumps on OutOfMemoryError
+                    // Note: the heap dump path here is a path on a USB flash drive, see below
+                    // jvmArgs.add("-XX:+HeapDumpOnOutOfMemoryError")
+                    // jvmArgs.add("-XX:HeapDumpPath=/u/frc-usercode.hprof")   
+                    // jvmArgs.add("-ulimit -c unlimited")
                 }
 
                 // Static files artifact

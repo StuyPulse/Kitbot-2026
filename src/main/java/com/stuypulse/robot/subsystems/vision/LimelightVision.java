@@ -111,13 +111,14 @@ public class LimelightVision extends SubsystemBase{
                     
                         //CommandSwerveDrivetrain.getInstance().addVisionMeasurement(robotPose, timestamp, Settings.Vision.MIN_STDDEVS.times(1 + poseEstimate.avgTagDist));
                         CommandSwerveDrivetrain.getInstance().addVisionMeasurement(robotPose, timestamp, Settings.Vision.MT1_STDEVS);
-                        SmartDashboard.putNumber("Vision/Pose X Component", robotPose.getX());
-                        SmartDashboard.putNumber("Vision/Pose Y Component", robotPose.getY());
-                        SmartDashboard.putNumber("Vision/Pose Theta (Degrees)", robotPose.getRotation().getDegrees());
-
-                        SmartDashboard.putBoolean("Vision/" + names[i] + " Has Data", true);
-                    }
-                    else {
+                        if (Settings.DEBUG_MODE) {
+                            SmartDashboard.putNumber("Vision/Pose X Component", robotPose.getX());
+                            SmartDashboard.putNumber("Vision/Pose X Component", robotPose.getX());
+                            SmartDashboard.putNumber("Vision/Pose Y Component", robotPose.getY());
+                            SmartDashboard.putNumber("Vision/Pose Theta (Degrees)", robotPose.getRotation().getDegrees());
+                            SmartDashboard.putBoolean("Vision/" + names[i] + " Has Data", true);
+                        }
+                    } if (Settings.DEBUG_MODE) {
                         SmartDashboard.putBoolean("Vision/" + names[i] + " Has Data", false);
                     }
                 }

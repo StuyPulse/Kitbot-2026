@@ -41,18 +41,18 @@ public class Robot extends TimedRobot {
         DataLogManager.start();
         SignalLogger.start();
 
-        // alliance = Alliance.Blue;
-        // SignalLogger.setPath()
+        alliance = Alliance.Blue;
+        // SignalLogger.setPath();
     }
 
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        // SmartDashboard.putData(CommandScheduler.getInstance());
+        SmartDashboard.putData(CommandScheduler.getInstance());
 
-        // if (DriverStation.getAlliance().isPresent()) {
-        //     alliance = DriverStation.getAlliance().get();
-        // }
+        if (DriverStation.getAlliance().isPresent()) {
+            alliance = DriverStation.getAlliance().get();
+        }
     }
 
     /*********************/

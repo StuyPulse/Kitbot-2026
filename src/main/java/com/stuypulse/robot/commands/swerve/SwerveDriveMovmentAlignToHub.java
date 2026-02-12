@@ -1,5 +1,6 @@
 package com.stuypulse.robot.commands.swerve;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.constants.Field;
@@ -29,6 +30,7 @@ import com.stuypulse.stuylib.streams.vectors.filters.VRateLimit;
 import com.stuypulse.stuylib.util.AngleVelocity;
 import com.stuypulse.stuylib.util.StopWatch;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -51,19 +53,22 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     private AlignAngleSolution virtualhub;
     private Pose2d currentPose;
     private StopWatch mTimer;
-    private Angle mLastError;
-    private IFilter mDFilter;
+    PIDController anglePid;
+    // private Angle mLastError;
+    // private IFilter mDFilter;
 
     private final AngleController controller;
     private final IStream angleVelocity;
 
     public SwerveDriveMovmentAlignToHub(Gamepad gamepad) {
+
+        anglePid = new PIDController(Gains.Swerve.Alignment.THETA.kP, Gains.Swerve.Alignment.THETA.kI, Gains.Swerve.Alignment.THETA.kD);
         this.gamepad = gamepad;
         virtualhub = new AlignAngleSolution(new Rotation2d(), new Rotation2d(), new Pose3d());
         superstructure = Superstructure.getInstance();
         mTimer = new StopWatch();
-        mLastError = Angle.kZero;
-        mDFilter = IFilter.create(x -> x);
+        // mLastError = Angle.kZero;
+        // mDFilter = IFilter.create(x -> x);
 
         prevfieldRelRobotSpeeds = new ChassisSpeeds();
         fieldRelRobotSpeeds = new ChassisSpeeds();
@@ -105,19 +110,16 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     }
 
     public AlignAngleSolution getSolution() {
-         // hub.setPose(Robot.isBlue() ? Field.getAllianceHubPose() : Field.transformToOppositeAlliance(Field.getAllianceHubPose()));
         hub.setPose(Field.transformToOppositeAlliance(Field.getAllianceHubPose()));
-        // currentPose = Robot.isBlue() ? swerve.getPose() : Field.transformToOppositeAlliance(swerve.getPose());
         currentPose = swerve.getPose();
         prevfieldRelRobotSpeeds = fieldRelRobotSpeeds;
         fieldRelRobotSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(swerve.getChassisSpeeds(),
                 currentPose.getRotation());
-        SmartDashboard.putString("Swerve/Movment Align/prev field relative Robot Speeds", prevfieldRelRobotSpeeds.toString());
-        SmartDashboard.putString("Swerve/Movment Align/field relative Robot Speeds", fieldRelRobotSpeeds.toString());
+        Pigeon2 gyro = swerve.getPigeon2();
         virtualhub = ShotCalculator
                 .solveShootOnTheFly(new Pose3d(currentPose),
                         Field.getAllianceHubPose3d(),
-                        swerve.getPigeon2().getAccelerationX().getValueAsDouble(), swerve.getPigeon2().getAccelerationY().getValueAsDouble(), fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 3, 0.1);
+                        gyro.getAccelerationX().getValueAsDouble(), gyro.getAccelerationY().getValueAsDouble(), fieldRelRobotSpeeds, superstructure.getState().getMainWheelsTargetSpeed() / 60.0, 3, 0.1);
         // virtualhub = Field.transformToOppositeAlliance(virtualhub); 
         fieldVirtualHub.setPose(Robot.isBlue() ? virtualhub.estimateTargetPose().toPose2d() : Field.transformToOppositeAlliance(virtualhub.estimateTargetPose().toPose2d()));
         return virtualhub;
@@ -145,29 +147,31 @@ public class SwerveDriveMovmentAlignToHub extends Command {
     public void execute() {
         AlignAngleSolution solution = getSolution();
         swerve.setExpectedHubPose(solution.estimateTargetPose().toPose2d());
-        Rotation2d targetangle = getSolution().requiredYaw().plus(Rotation2d.k180deg);
+        Rotation2d targetangle = getSolution().requiredYaw();
+        double error = targetangle.rotateBy(swerve.getPose().getRotation()).getDegrees();
         if (Settings.DEBUG_MODE) {
             SmartDashboard.putNumber("Swerve/Movment Align/Target angle", Rotation2d.k180deg.getDegrees());
-            SmartDashboard.putNumber("Swerve/Movment Align/Controller Error", getAngleError());
+            SmartDashboard.putNumber("Swerve/Movment Align/Controller Error", error);
             SmartDashboard.putNumber("Swerve/Movment Align/Distance to Target", getDistanceToTarget(solution.estimateTargetPose().toPose2d().getTranslation()));
         }
+
         if (getDistanceToTarget(solution.estimateTargetPose().toPose2d().getTranslation()) < Settings.Superstructure.interpolation.MAX_SHOOT_DISTANCE) {
             swerve.drive(
                 speed.get(),
-                SLMath.clamp(angleVelocity.get() 
-                    + controller.update(
-                        Angle.fromRotation2d(Rotation2d.k180deg), 
-                        Angle.fromRotation2d(currentPose.getRotation())),
+                SLMath.clamp(anglePid.calculate(
+                    error,
+                    0.0
+                    ),
                     -Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S,
                     Settings.Swerve.Constraints.MAX_ANGULAR_VEL_RAD_PER_S
                 )
             );
-            Angle error = Angle.fromRotation2d(Rotation2d.k180deg).sub(Angle.fromRotation2d(currentPose.getRotation()));
-            double dt = mTimer.reset();
-            double derivative = mDFilter.get(error.velocityRadians(mLastError, dt));
-            SmartDashboard.putNumber("Swerve/Movment Align/Derivative", derivative);
-            SmartDashboard.putNumber("Swerve/Movment Align/DT", dt);
-            mLastError = error;
+            // Angle error = Angle.fromRotation2d(Rotation2d.k180deg).sub(Angle.fromRotation2d(currentPose.getRotation()));
+            // // double dt = mTimer.reset();
+            // // double derivative = mDFilter.get(error.velocityRadians(mLastError, dt));
+            // // SmartDashboard.putNumber("Swerve/Movment Align/Derivative", derivative);
+            // // SmartDashboard.putNumber("Swerve/Movment Align/DT", dt);
+            // // mLastError = error;
         } else {
             swerve.drive(new Vector2D(new Translation2d()), 0);
         }
