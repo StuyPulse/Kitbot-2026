@@ -59,15 +59,15 @@ public class SwerveDriveAlignToHub extends Command {
 
     private Rotation2d getTargetAngle() {
         Translation2d currentPose = CommandSwerveDrivetrain.getInstance().getPose().getTranslation();
-        Translation2d speakerPose = Field.getAllianceHubPose().getTranslation();
-        return currentPose.minus(speakerPose).getAngle();
+        Translation2d hubPose = Field.getAllianceHubPose().getTranslation();
+        return currentPose.minus(hubPose).getAngle();
     }
 
     
     private double getDistanceToTarget() {
         Translation2d currentPose = CommandSwerveDrivetrain.getInstance().getPose().getTranslation();
-        Translation2d speakerPose = Field.getAllianceHubPose().getTranslation();
-        return currentPose.getDistance(speakerPose);
+        Translation2d hubPose = Field.getAllianceHubPose().getTranslation();
+        return currentPose.getDistance(hubPose);
     }
 
     protected double getAngleError() {

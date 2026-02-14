@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** This interface stores information about the field elements. */
@@ -29,6 +30,7 @@ public interface Field {
     double WIDTH = Units.inchesToMeters(317.000); 
     double LENGTH = Units.inchesToMeters(651.200);
 
+    
     // Alliance relative hub center coordinates
     public final Pose2d hubCenter = new Pose2d(Units.inchesToMeters(182.11), WIDTH / 2.0, new Rotation2d());
 
@@ -36,7 +38,23 @@ public interface Field {
         return hubCenter;
     }
 
+
+    // Alliance relative hub center coordinates
+    public final Pose2d towerCenter = new Pose2d(Units.inchesToMeters(42.0), Units.inchesToMeters(147.47), new Rotation2d());
+    public final double barDisplacement = Units.inchesToMeters(11.38);
+
+    public static Pose2d getTowerPose(){
+        return towerCenter;
+    }
+
+    public static Pose2d getClosesTowerSide(Pose2d robotPose){
+        return robotPose.nearest(Arrays.asList(new Pose2d[] {
+            new Pose2d(towerCenter.getX(), towerCenter.getY() + barDisplacement, new Rotation2d(270)),
+            new Pose2d(towerCenter.getX(), towerCenter.getY() - barDisplacement, new Rotation2d(90))
+        }));
+    }
     // 1.0 meters from driverstation wall and field wall
+
     public final Pose2d leftFerryZone = new Pose2d(1.0, WIDTH - 1.0, new Rotation2d());
     public final Pose2d rightFerryZone = new Pose2d(1.0, 1.0, new Rotation2d());
 
