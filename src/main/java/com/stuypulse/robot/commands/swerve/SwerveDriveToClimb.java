@@ -2,19 +2,23 @@ package com.stuypulse.robot.commands.swerve;
 
 import com.stuypulse.robot.commands.swerve.pidToPose.SwerveDrivePIDToPose;
 import com.stuypulse.robot.constants.Field;
+import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.Settings.Swerve;
+import com.stuypulse.robot.constants.Settings.Swerve.Alignment.Targets;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.math.Vector2D;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.math.geometry.Pose2d;
 
 public class SwerveDriveToClimb extends Command{
     private final CommandSwerveDrivetrain swerve;
     private Pose2d targetPose;
     
-    public SwerveDriveToClimb(Gamepad driver) {
+    public SwerveDriveToClimb() {
         swerve = CommandSwerveDrivetrain.getInstance();
         
         targetPose = getTargetPose();
@@ -23,8 +27,13 @@ public class SwerveDriveToClimb extends Command{
 
     private Pose2d getTargetPose(){
         Pose2d closestRung = Field.getClosestTowerSide(swerve.getPose());
-        Translation2d offsetTranslation = new Translation2d(swerve.getPose().getX() - closestRung.getX(), - (swerve.getPose().getY() - closestRung.getY()));
-        return new Pose2d(swerve.getPose().getTranslation().plus(offsetTranslation), closestRung.getRotation());
+        Translation2d offsetTranslation;
+        if (closestRung.getY() == Field.towerCenter.getY() + Field.barDisplacement){
+            offsetTranslation = new Translation2d(0, Targets.DISTANCE_TO_RUNGS);
+        } else {
+            offsetTranslation = new Translation2d(0, -Targets.DISTANCE_TO_RUNGS);
+        }
+        return new Pose2d(closestRung.getTranslation().plus(offsetTranslation), closestRung.getRotation());
     }
 
     // @Override
@@ -34,7 +43,7 @@ public class SwerveDriveToClimb extends Command{
 
     @Override
     public void execute() {
-        new SwerveDrivePIDToPose(targetPose); 
+        CommandScheduler.getInstance().schedule(new SwerveDrivePIDToPose(targetPose));
     }
 
 

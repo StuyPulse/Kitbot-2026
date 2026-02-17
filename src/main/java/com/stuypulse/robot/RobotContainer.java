@@ -108,7 +108,7 @@ public class RobotContainer {
         //         .onFalse(new SetTurretZero());
 
         driver.getRightButton()
-            .whileTrue(new SwerveDriveToClimb(driver));
+            .whileTrue(new SwerveDriveToClimb());
 
     }
 
