@@ -24,7 +24,7 @@ public class SwerveDriveToClimb extends Command{
     private Pose2d getTargetPose(){
         Pose2d closestRung = Field.getClosestTowerSide(swerve.getPose());
         Translation2d offsetTranslation = new Translation2d(swerve.getPose().getX() - closestRung.getX(), - (swerve.getPose().getY() - closestRung.getY()));
-        return new Pose2d(closestRung.getTranslation().plus(offsetTranslation), closestRung.getRotation());
+        return new Pose2d(swerve.getPose().getTranslation().plus(offsetTranslation), closestRung.getRotation());
     }
 
     // @Override
