@@ -49,11 +49,11 @@ public interface Field {
 
     public static Pose2d getClosestTowerSide(Pose2d robotPose){
         return robotPose.nearest(Arrays.asList(new Pose2d[] {
-            new Pose2d(towerCenter.getX(), towerCenter.getY() + barDisplacement, new Rotation2d(270)),
-            new Pose2d(towerCenter.getX(), towerCenter.getY() - barDisplacement, new Rotation2d(90))
+            new Pose2d(towerCenter.getX(), towerCenter.getY() + barDisplacement, new Rotation2d(180)),
+            new Pose2d(towerCenter.getX(), towerCenter.getY() - barDisplacement, new Rotation2d(0))
         }));
     }
-    
+
     // 1.0 meters from driverstation wall and field wall
 
     public final Pose2d leftFerryZone = new Pose2d(1.0, WIDTH - 1.0, new Rotation2d());
