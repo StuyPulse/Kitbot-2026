@@ -14,7 +14,7 @@ public class SwerveDriveToClimb extends Command{
     private final CommandSwerveDrivetrain swerve;
     private Pose2d targetPose;
     
-    public SwerveDriveToClimb(Gamepad driver){
+    public SwerveDriveToClimb(Gamepad driver) {
         swerve = CommandSwerveDrivetrain.getInstance();
         
         targetPose = getTargetPose();
