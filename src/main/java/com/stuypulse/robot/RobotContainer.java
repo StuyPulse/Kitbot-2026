@@ -15,6 +15,9 @@ import com.stuypulse.robot.commands.superstructure.SuperstructureIntake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
 import com.stuypulse.robot.commands.swerve.SwerveDriveAlignToHub;
+import com.stuypulse.robot.commands.swerve.SwerveDriveClimbAlign;
+import com.stuypulse.robot.commands.swerve.SwerveDriveClimbAlignBot;
+import com.stuypulse.robot.commands.swerve.SwerveDriveClimbAlignTop;
 import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
 import com.stuypulse.robot.commands.swerve.SwerveDriveToClimb;
 import com.stuypulse.robot.commands.swerve.SwerveResetRotation;
@@ -108,7 +111,7 @@ public class RobotContainer {
         //         .onFalse(new SetTurretZero());
 
         driver.getRightButton()
-            .whileTrue(new SwerveDriveToClimb());
+            .whileTrue(new SwerveDriveClimbAlign());
 
     }
 

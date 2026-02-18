@@ -6,6 +6,8 @@
 package com.stuypulse.robot.constants;
 
 import com.stuypulse.robot.Robot;
+import com.stuypulse.robot.constants.Settings.Swerve.Alignment.Targets;
+import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.util.vision.AprilTag;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 /** This interface stores information about the field elements. */
 public interface Field {
@@ -39,7 +42,7 @@ public interface Field {
     }
 
 
-    // Alliance relative hub center coordinates
+    // Alliance relative tower center coordinates
     public final Pose2d towerCenter = new Pose2d(Units.inchesToMeters(42.0), Units.inchesToMeters(147.47), new Rotation2d());
     public final double barDisplacement = Units.inchesToMeters(11.38);
 
@@ -47,10 +50,21 @@ public interface Field {
         return towerCenter;
     }
 
-    public static Pose2d getClosestTowerSide(Pose2d robotPose){
-        return robotPose.nearest(Arrays.asList(new Pose2d[] {
-            new Pose2d(towerCenter.getX(), towerCenter.getY() + barDisplacement, new Rotation2d(180)),
+    public static boolean closerToTop(){
+        return (CommandSwerveDrivetrain.getInstance().getPose().getY() >= Field.towerCenter.getY());
+    }
+    
+    public static Pose2d getClosestTowerSide(){
+        return CommandSwerveDrivetrain.getInstance().getPose().nearest(Arrays.asList(new Pose2d[] {
+            new Pose2d(towerCenter.getX(), towerCenter.getY() + barDisplacement, new Rotation2d(Units.degreesToRadians(180))),
             new Pose2d(towerCenter.getX(), towerCenter.getY() - barDisplacement, new Rotation2d(0))
+        }));
+    }
+
+    public static Pose2d getClosestTowerSideWithDist(){
+        return CommandSwerveDrivetrain.getInstance().getPose().nearest(Arrays.asList(new Pose2d[] {
+            new Pose2d(towerCenter.getX(), towerCenter.getY() + barDisplacement + Targets.DISTANCE_TO_RUNGS, new Rotation2d(Units.degreesToRadians(180))),
+            new Pose2d(towerCenter.getX(), towerCenter.getY() - barDisplacement - Targets.DISTANCE_TO_RUNGS, new Rotation2d(0))
         }));
     }
 

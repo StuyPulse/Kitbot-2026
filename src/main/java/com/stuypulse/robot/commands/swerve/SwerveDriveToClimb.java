@@ -23,14 +23,16 @@ public class SwerveDriveToClimb extends Command{
     }
 
     private Pose2d getTargetPose(){
-        Pose2d closestRung = Field.getClosestTowerSide(swerve.getPose());
+        Pose2d closestRung = Field.getClosestTowerSide();
         Translation2d offsetTranslation;
         if (swerve.getPose().getY() >= Field.towerCenter.getY()){
             offsetTranslation = new Translation2d(0, Targets.DISTANCE_TO_RUNGS);
         } else {
             offsetTranslation = new Translation2d(0, -Targets.DISTANCE_TO_RUNGS);
         }
+        SmartDashboard.putNumber("Swerve/closest rung", closestRung.getTranslation().plus(offsetTranslation).getY());
         return new Pose2d(closestRung.getTranslation().plus(offsetTranslation), closestRung.getRotation());
+        // return closestRung;
     }
 
     // @Override
@@ -40,12 +42,22 @@ public class SwerveDriveToClimb extends Command{
 
     @Override
     public void execute() {
+        targetPose = getTargetPose();
         CommandScheduler.getInstance().schedule(new SwerveDrivePIDToPose(targetPose));
-        SmartDashboard.putNumber("Target Pose X", targetPose.getX());
-        SmartDashboard.putNumber("Target Pose Y", targetPose.getY());
-        SmartDashboard.putNumber("Target Pose Rotation", targetPose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Swerve/Target Pose X", targetPose.getX());
+        SmartDashboard.putNumber("Swerve/Target Pose Y", targetPose.getY());
+        SmartDashboard.putNumber("Swerve/Target Pose Rotation", targetPose.getRotation().getDegrees());
+        Translation2d offsetTranslation;
+        if (swerve.getPose().getY() >= Field.towerCenter.getY()){
+            offsetTranslation = new Translation2d(0, Targets.DISTANCE_TO_RUNGS);
+        } else {
+            offsetTranslation = new Translation2d(0, -Targets.DISTANCE_TO_RUNGS);
+        }
 
-
+        SmartDashboard.putNumber("Swerve/Closest X", Field.getClosestTowerSide().getX());
+        SmartDashboard.putNumber("Swerve/Closest Y", Field.getClosestTowerSide().getY());
+        // SmartDashboard.putNumber("Swerve/Closest X with offset", Field.getClosestTowerSide().getTranslation().plus(offsetTranslation)).getX();
+        // SmartDashboard.putNumber("Swerve/Closest Y with offset", Field.getClosestTowerSide().getTranslation().plus(offsetTranslation)).getY();
     }
 
 

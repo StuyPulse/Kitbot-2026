@@ -136,7 +136,7 @@ public interface Settings {
             }
 
             public interface Targets {
-                double DISTANCE_TO_RUNGS = Units.inchesToMeters(10);
+                double DISTANCE_TO_RUNGS = Units.inchesToMeters(20);
             }
         }
     }

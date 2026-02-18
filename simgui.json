@@ -32,9 +32,20 @@
     }
   },
   "NetworkTables": {
+    "retained": {
+      ".schema": {
+        "open": true
+      }
+    },
     "transitory": {
       "SmartDashboard": {
-        "Autonomous": {
+        "Alignment": {
+          "open": true
+        },
+        "Field": {
+          "open": true
+        },
+        "Swerve": {
           "open": true
         },
         "Turret": {
