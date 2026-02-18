@@ -10,6 +10,7 @@ package com.stuypulse.robot.commands.swerve.pidToPose;
 import com.stuypulse.stuylib.control.angle.feedback.AnglePIDController;
 import com.stuypulse.stuylib.control.feedback.PIDController;
 import com.stuypulse.stuylib.math.Vector2D;
+import com.stuypulse.stuylib.network.SmartBoolean;
 import com.stuypulse.stuylib.streams.angles.filters.AMotionProfile;
 import com.stuypulse.stuylib.streams.booleans.BStream;
 import com.stuypulse.stuylib.streams.booleans.filters.BDebounceRC;
@@ -20,6 +21,8 @@ import com.stuypulse.stuylib.streams.vectors.VStream;
 import com.stuypulse.stuylib.streams.vectors.filters.VFilter;
 import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.constants.Field;
+import com.stuypulse.robot.constants.Gains;
+import com.stuypulse.robot.constants.Gains.Shooter.PID;
 import com.stuypulse.robot.constants.Gains.Swerve.Alignment;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
@@ -56,6 +59,9 @@ public class SwerveDrivePIDToPose extends Command {
     private Number thetaTolerance;
     private Number maxVelocityWhenAligned;
 
+    private PIDController X;  
+    private PIDController Y; 
+    private final AnglePIDController theta; 
     private VStream translationSetpoint;
 
     private Supplier<Boolean> canEnd;
@@ -67,10 +73,14 @@ public class SwerveDrivePIDToPose extends Command {
     public SwerveDrivePIDToPose(Supplier<Pose2d> targetPose) {
         swerve = CommandSwerveDrivetrain.getInstance();
 
+        X = new PIDController(Alignment.X.kP, Alignment.X.kI, Alignment.X.kD);
+        Y = new PIDController(Alignment.Y.kP, Alignment.Y.kI, Alignment.Y.kD);
+        theta = new AnglePIDController(Alignment.THETA.kP, Alignment.THETA.kI, Alignment.THETA.kD);
+
         controller = new HolonomicController(
-            new PIDController(Alignment.XY.kP, Alignment.XY.kI, Alignment.XY.kD),
-            new PIDController(Alignment.XY.kP, Alignment.XY.kI, Alignment.XY.kD),
-            new AnglePIDController(Alignment.THETA.kP, Alignment.THETA.kI, Alignment.THETA.kD)
+            X,
+            Y,
+            theta
                 .setSetpointFilter(new AMotionProfile(Settings.Swerve.Alignment.Constraints.DEFUALT_MAX_ANGULAR_VELOCITY, Settings.Swerve.Alignment.Constraints.DEFAULT_MAX_ANGULAR_ACCELERATION)));
 
         maxVelocity = Settings.Swerve.Alignment.Constraints.DEFAULT_MAX_VELOCITY;
@@ -87,7 +97,7 @@ public class SwerveDrivePIDToPose extends Command {
             .filtered(new BDebounceRC.Both(Settings.Swerve.Alignment.Tolerances.ALIGNMENT_DEBOUNCE));
 
         velocityError = IStream.create(() -> new Translation2d(controller.getError().vxMetersPerSecond, controller.getError().vyMetersPerSecond).getNorm())
-            .filtered(new LowPassFilter(0.05))
+            .filtered(new LowPassFilter(0.1))
             .filtered(x -> Math.abs(x));
 
         xTolerance = Settings.Swerve.Alignment.Tolerances.X_TOLERANCE;
@@ -135,13 +145,9 @@ public class SwerveDrivePIDToPose extends Command {
         }
     }
 
-                    // this.maxVelocity, 
-                    // this.maxAcceleration,
-                    // new Vector2D(swerve.getPose().getTranslation()),
-                    // Vector2D.kOrigin)
     @Override
     public void initialize() {
-        translationSetpoint = getNewTranslationSetpointGenerator();
+        // translationSetpoint = getNewTranslationSetpointGenerator();
     }
 
     private boolean isAlignedX() {
@@ -160,8 +166,23 @@ public class SwerveDrivePIDToPose extends Command {
         return isAlignedX() && isAlignedY() && isAlignedTheta() && velocityError.get() < maxVelocityWhenAligned.doubleValue();
     }
 
+    public void updateControllers() {
+        X.setP(Gains.Swerve.Alignment.xkP.doubleValue());
+        X.setI(Gains.Swerve.Alignment.xkI.doubleValue());
+        X.setD(Gains.Swerve.Alignment.xkD.doubleValue());
+        
+        Y.setP(Gains.Swerve.Alignment.ykP.doubleValue());
+        Y.setI(Gains.Swerve.Alignment.ykI.doubleValue());
+        Y.setD(Gains.Swerve.Alignment.ykD.doubleValue());
+
+        theta.setP(Gains.Swerve.Alignment.akP.doubleValue());
+        theta.setI(Gains.Swerve.Alignment.akI.doubleValue());
+        theta.setD(Gains.Swerve.Alignment.akD.doubleValue());
+    }
+
     @Override
     public void execute() {
+        updateControllers();
         targetPose2d.setPose(Robot.isBlue() ? targetPose.get() : Field.transformToOppositeAlliance(targetPose.get()));
 
         controller.update(new Pose2d(translationSetpoint.get().getTranslation2d(), targetPose.get().getRotation()), swerve.getPose());
@@ -183,6 +204,8 @@ public class SwerveDrivePIDToPose extends Command {
         SmartDashboard.putBoolean("Alignment/Is Aligned X", isAlignedX());
         SmartDashboard.putBoolean("Alignment/Is Aligned Y", isAlignedY());
         SmartDashboard.putBoolean("Alignment/Is Aligned Theta", isAlignedTheta());
+
+    
     }
 
     @Override

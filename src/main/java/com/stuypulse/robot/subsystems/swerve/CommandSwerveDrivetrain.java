@@ -356,7 +356,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 this::resetPose,
                 this::getChassisSpeeds,
                 this::setChassisSpeeds,
-                new PPHolonomicDriveController(Gains.Swerve.Alignment.XY, Gains.Swerve.Alignment.THETA),
+                new PPHolonomicDriveController(Gains.Swerve.Alignment.X, Gains.Swerve.Alignment.THETA), // SKETCHY FINAL BOSS
                 RobotConfig.fromGUISettings(),
                 () -> false,
                 instance
