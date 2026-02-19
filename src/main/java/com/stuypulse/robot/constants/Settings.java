@@ -23,7 +23,7 @@ public interface Settings {
 
     double DT = 0.020;
     boolean DEBUG_MODE = true;
-    CANBus CANIVORE = new CANBus("Swerve Drive Drive", "./logs/example.hoot");
+    CANBus CANIVORE = new CANBus("Default Name", "./logs/example.hoot");
 
     public interface EnabledSubsystems {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);

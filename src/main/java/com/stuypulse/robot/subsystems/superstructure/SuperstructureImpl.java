@@ -19,7 +19,7 @@ public class SuperstructureImpl extends Superstructure {
     private final SparkMax indexMotor;
     
     public SuperstructureImpl() {
-        intakeShooterMotor = new TalonFX(Ports.Superstructure.INTAKE_SHOOTER_MOTOR, "Swerve Drive Drive");
+        intakeShooterMotor = new TalonFX(Ports.Superstructure.INTAKE_SHOOTER_MOTOR, "Default Name");
         Motors.Superstructure.intakeShooterMotorConfig.configure(intakeShooterMotor);  
         
         indexMotor = new SparkMax(Ports.Superstructure.INDEXER_MOTOR, MotorType.kBrushed);
