@@ -1,5 +1,6 @@
 package com.stuypulse.robot.subsystems.climberhopper;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.stuypulse.robot.constants.Constants;
 import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.constants.Settings;
@@ -28,18 +29,50 @@ public class ClimberHopperImpl extends ClimberHopper {
         return stalling.getAsBoolean();
     }
 
-    public double getPosition() { // TODO: convert motor encoder position to meters somehow
-        return this.motor.getPosition().getValueAsDouble() * Settings.ClimberHopper.Encoders.POSITION_CONVERSION_FACTOR;
+    @Override
+    public double getCurrentHeight() { // TODO: convert motor encoder position to meters somehow
+        return this.motor.getPosition().getValueAsDouble() * Constants.ClimberHopper.Encoders.POSITION_CONVERSION_FACTOR;
+    }
+
+    private boolean isWithinTolerance(double toleranceMeters) {
+        return Math.abs(getState().getTargetHeight() - getCurrentHeight()) < toleranceMeters;
     }
 
     @Override
+    public boolean atTargetHeight() {
+        return isWithinTolerance(Settings.ClimberHopper.HEIGHT_TOLERANCE_METERS);
+    }
+
+    // @Override
+    // public void setVoltageOverride(Optional<Double> voltage) {
+    //     this.voltageOverride = voltage;
+    // }
+
+    @Override
     public void periodic() {
-        voltage = getState().getTargetVoltage();
+        super.periodic();
+
+        if (!atTargetHeight()) {
+            if (getCurrentHeight() < getState().getTargetHeight()) {
+                voltage = Settings.ClimberHopper.MOTOR_VOLTAGE;
+            } else {
+                voltage = - Settings.ClimberHopper.MOTOR_VOLTAGE;
+            }
+        } else {
+            voltage = 0;
+        }
+
+        // TODO: Figure out some way to reset the encoder reading when stall
+        // if (atTargetHeight() && getState() == ClimberHopperState.HOPPER_DOWN) {
+        //     if (voltageOverride.isPresent()) {
+
+        //     }
+        // }
 
         motor.setVoltage(voltage);
+
         SmartDashboard.putNumber("ClimberHopper/Voltage", voltage);
         SmartDashboard.putNumber("ClimberHopper/Current", motor.getSupplyCurrent().getValueAsDouble());
         SmartDashboard.putBoolean("ClimberHopper/Stalling", getStalling());
-
     }
 }
