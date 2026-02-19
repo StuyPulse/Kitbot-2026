@@ -28,13 +28,13 @@ public interface Ports {
         public interface Turn {
             int FRONT_LEFT = 42;
             int BACK_LEFT = 11;
-            int BACK_RIGHT = 0;
+            int BACK_RIGHT = 5;
             int FRONT_RIGHT = 13;
         }
         public interface CANCoderIds {
-            int FRONT_LEFT = 4;
+            int FRONT_LEFT = 1;
             int BACK_LEFT = 3;
-            int BACK_RIGHT = 1;
+            int BACK_RIGHT = 0;
             int FRONT_RIGHT = 2;
         }
     }
