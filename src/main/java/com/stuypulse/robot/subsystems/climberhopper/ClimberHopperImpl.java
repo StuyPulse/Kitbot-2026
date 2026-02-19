@@ -15,8 +15,13 @@ public class ClimberHopperImpl extends ClimberHopper {
     private final BStream stalling;
     private double voltage;
 
+    private final ClimberHopperVisualizer visualizer;
+
     public ClimberHopperImpl() {
         super();
+
+        visualizer = ClimberHopperVisualizer.getInstance();
+
         motor = new TalonFX(Ports.Turret.TURRET_MOTOR);
         Motors.Turret.MOTOR_CONFIG.configure(motor);
         motor.setPosition(0); // hopper all the way down according to le henry
@@ -71,8 +76,12 @@ public class ClimberHopperImpl extends ClimberHopper {
 
         motor.setVoltage(voltage);
 
+        visualizer.update(getCurrentHeight());
+
         SmartDashboard.putNumber("ClimberHopper/Voltage", voltage);
         SmartDashboard.putNumber("ClimberHopper/Current", motor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("ClimberHopper/PositionHeight", getCurrentHeight());
         SmartDashboard.putBoolean("ClimberHopper/Stalling", getStalling());
+        SmartDashboard.putBoolean("ClimberHopper/AtTargetHeight", atTargetHeight());
     }
 }

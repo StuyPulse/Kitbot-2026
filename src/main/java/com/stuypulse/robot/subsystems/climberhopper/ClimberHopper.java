@@ -16,11 +16,11 @@ public abstract class ClimberHopper extends SubsystemBase {
     private static final ClimberHopper instance;
     
     static {
-        // if (Robot.isReal()) {
-        //     instance = new ClimberHopperImpl();
-        // } else {
+        if (Robot.isReal()) {
+            instance = new ClimberHopperImpl();
+        } else {
             instance = new ClimberHopperSim();
-        // }
+        }
     }
 
     public static ClimberHopper getInstance() {
