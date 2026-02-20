@@ -1,12 +1,8 @@
 package com.stuypulse.robot.commands.swerve;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
-import com.ctre.phoenix6.swerve.SwerveModule;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
-import com.stuypulse.robot.subsystems.swerve.TunerConstants;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class SwerveWheelCharacterization extends Command {
@@ -16,11 +12,12 @@ public class SwerveWheelCharacterization extends Command {
     private double driveRadius;
     private double gyroDelta;
     private double wheelDelta;
+    private double wheelRadius;
 
     public SwerveWheelCharacterization() { 
         swerve = CommandSwerveDrivetrain.getInstance();
         gyroInitial = swerve.getPigeon2().getRotation2d().getRadians();
-        wheelInitial = swerve.getModule(0).getDriveMotor().getPosition().getValueAsDouble();
+        wheelInitial = swerve.getModule(0).getDriveMotor().getPosition().getValueAsDouble() * 2 * Math.PI;
         driveRadius = Math.sqrt(17.15 * 17.15 + 19.7 * 19.7); // Got from TunerConstants, field is private. 
         addRequirements(swerve);
     }
@@ -36,10 +33,16 @@ public class SwerveWheelCharacterization extends Command {
         swerve.setControl(swerve.getFieldCentricSwerveRequest()
             .withVelocityX(0.0)
             .withVelocityY(0.0)
-            .withRotationalRate(2.0)
+            .withRotationalRate(0.5)
         );
         
         gyroDelta = swerve.getPigeon2().getRotation2d().getRadians() - gyroInitial;
+        wheelDelta = swerve.getModule(0).getDriveMotor().getPosition().getValueAsDouble() * 2 * Math.PI - wheelInitial;
+        wheelRadius = gyroDelta * driveRadius / wheelDelta;
+
+        SmartDashboard.putNumber("Radius Characterization/Radius", wheelRadius);
+        SmartDashboard.putNumber("Radius Characterization/Gyro Delta", gyroDelta);
+        SmartDashboard.putNumber("Radius Characterization/Wheel Delta", wheelDelta);
     }
 
 
