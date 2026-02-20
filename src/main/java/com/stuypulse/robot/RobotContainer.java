@@ -5,7 +5,10 @@
 
 package com.stuypulse.robot;
 
+import javax.print.DocFlavor.STRING;
+
 import com.stuypulse.robot.commands.auton.DoNothingAuton;
+import com.stuypulse.robot.commands.auton.WheelTestAuton;
 import com.stuypulse.robot.commands.climberhopper.ClimberDown;
 import com.stuypulse.robot.commands.climberhopper.ClimberHopperDefaultCommand;
 import com.stuypulse.robot.commands.climberhopper.ClimberUp;
@@ -23,7 +26,8 @@ import com.stuypulse.robot.subsystems.climberhopper.ClimberHopper;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import com.stuypulse.robot.subsystems.turret.Turret;
-import com.stuypulse.robot.subsystems.vision.LimelightVision;
+import com.stuypulse.robot.util.PathUtil.AutonConfig;
+// import com.stuypulse.robot.subsystems.vision.LimelightVision;
 import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
 
@@ -40,7 +44,7 @@ public class RobotContainer {
 
     // Subsystems
     public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
-    public final LimelightVision limelight = LimelightVision.getInstance();
+    // public final LimelightVision limelight = LimelightVision.getInstance();
     public final Superstructure superstructure = Superstructure.getInstance();
     public final Turret turret = Turret.getInstance();
     private final ClimberHopper climberHopper = ClimberHopper.getInstance();
@@ -123,6 +127,10 @@ public class RobotContainer {
 
         autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdDynamic(Direction.kForward));
         autonChooser.addOption("Swerve Dynamic Backward", swerve.sysIdDynamic(Direction.kReverse));
+
+        AutonConfig STRAIGHT_TEST = new AutonConfig("Straight Line Odometry Test", WheelTestAuton::new,
+            "Example Path");
+        STRAIGHT_TEST.register(autonChooser);
 
         SmartDashboard.putData("Autonomous", autonChooser);
     }
