@@ -2,53 +2,78 @@ package com.stuypulse.robot.commands.swerve;
 
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class SwerveWheelCharacterization extends Command {
-    private final CommandSwerveDrivetrain swerve;
-    private double[] wheelInitial;
-    private double gyroInitial;
-    private double driveRadius;
-    private double gyroDelta;
-    private double wheelDelta;
-    private double wheelRadius;
-    private double[] wheelCurrent;
 
-    public SwerveWheelCharacterization() { 
+    private static final double ROTATIONAL_RATE = 0.5; // rad/s
+    private static final double DRIVE_RADIUS = Math.sqrt(17.15 * 17.15 + 19.7 * 19.7) * 0.0254; // convert cm -> meters if needed
+
+    private final CommandSwerveDrivetrain swerve;
+
+    private double[] wheelInitial;
+    private Rotation2d lastAngle;
+    private double gyroDelta;
+
+    public SwerveWheelCharacterization() {
         swerve = CommandSwerveDrivetrain.getInstance();
-        gyroInitial = swerve.getPigeon2().getRotation2d().getRadians();
-        wheelInitial = swerve.getRadiusCharacterizationModulePositions();
-        driveRadius = Math.sqrt(17.15 * 17.15 + 19.7 * 19.7); // Got from TunerConstants, field is private. 
         addRequirements(swerve);
     }
 
-    // @Override
-    // public void initialize() {
-    //     gyroInitial = swerve.getPigeon2().getRotation2d().getRadians();
-    //     wheelInitial = swerve.getRadiusCharacterizationModulePositions();
-    // }
+    @Override
+    public void initialize() {
+        wheelInitial = swerve.getRadiusCharacterizationModulePositions();
+        lastAngle = swerve.getPigeon2().getRotation2d();
+        gyroDelta = 0.0;
+    }
 
     @Override
     public void execute() {
         swerve.setControl(swerve.getFieldCentricSwerveRequest()
             .withVelocityX(0.0)
             .withVelocityY(0.0)
-            .withRotationalRate(0.5)
+            .withRotationalRate(ROTATIONAL_RATE)
         );
-        
-        gyroDelta = swerve.getPigeon2().getRotation2d().getRadians() - gyroInitial;
-        wheelCurrent = swerve.getRadiusCharacterizationModulePositions();
-        for(int i = 0; i < 4; i++){
-           wheelDelta += (wheelCurrent[i] - wheelInitial[i]) / 4;
+
+        Rotation2d currentAngle = swerve.getPigeon2().getRotation2d();
+        gyroDelta += Math.abs(currentAngle.minus(lastAngle).getRadians());
+        lastAngle = currentAngle;
+
+        double[] wheelCurrent = swerve.getRadiusCharacterizationModulePositions();
+        double wheelDelta = 0.0;
+        for (int i = 0; i < 4; i++) {
+            wheelDelta += Math.abs(wheelCurrent[i] - wheelInitial[i]) / 4.0;
         }
-        wheelRadius = gyroDelta * driveRadius / wheelDelta;
+
+        double wheelRadius = (gyroDelta * DRIVE_RADIUS) / wheelDelta;
 
         SmartDashboard.putNumber("Radius Characterization/Radius", wheelRadius);
         SmartDashboard.putNumber("Radius Characterization/Gyro Delta", gyroDelta);
         SmartDashboard.putNumber("Radius Characterization/Wheel Delta", wheelDelta);
     }
 
-    
-}
+    @Override
+    public void end(boolean interrupted) {
+        swerve.setControl(swerve.getFieldCentricSwerveRequest()
+        .withVelocityX(0).withVelocityY(0).withRotationalRate(0));
+        double[] wheelCurrent = swerve.getRadiusCharacterizationModulePositions();
+        double wheelDelta = 0.0;
+        for (int i = 0; i < 4; i++) {
+            wheelDelta += Math.abs(wheelCurrent[i] - wheelInitial[i]) / 4.0;
+        }
 
+        double wheelRadius = (gyroDelta * DRIVE_RADIUS) / wheelDelta;
+
+        System.out.println("********** Wheel Radius Characterization Results **********");
+        System.out.printf("\tWheel Delta: %.9f radians%n", wheelDelta);
+        System.out.printf("\tGyro Delta:  %.9f radians%n", gyroDelta);
+        System.out.printf("\tWheel Radius: %.9f meters / %.9f inches%n", wheelRadius, wheelRadius * 39.3701);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false; // driver cancels manually
+    }
+}

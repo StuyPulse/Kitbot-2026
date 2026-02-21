@@ -17,6 +17,7 @@ import com.stuypulse.robot.commands.superstructure.SuperstructureOuttake;
 import com.stuypulse.robot.commands.superstructure.SuperstructureShoot;
 import com.stuypulse.robot.commands.swerve.SwerveDriveDrive;
 import com.stuypulse.robot.commands.swerve.SwerveResetRotation;
+import com.stuypulse.robot.commands.swerve.SwerveWheelCharacterization;
 import com.stuypulse.robot.commands.turret.TurretFerry;
 import com.stuypulse.robot.commands.turret.TurretIdle;
 import com.stuypulse.robot.commands.turret.TurretShoot;
@@ -127,6 +128,8 @@ public class RobotContainer {
 
         autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdDynamic(Direction.kForward));
         autonChooser.addOption("Swerve Dynamic Backward", swerve.sysIdDynamic(Direction.kReverse));
+        
+        autonChooser.addOption("Wheel Characterization",new SwerveWheelCharacterization());
 
         AutonConfig STRAIGHT_TEST = new AutonConfig("Straight Line Odometry Test", WheelTestAuton::new,
             "Example Path");
