@@ -421,6 +421,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         ));
     }
 
+    public double[] getRadiusCharacterizationModulePositions(){
+        double[] positions = new double[4];
+        for(int i = 0; i < 3; i++){
+            positions[i] = getModule(i).getDriveMotor().getPosition().getValueAsDouble() * 2 * Math.PI;
+        }
+        return positions;
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Swerve/Pose/X", getPose().getX());

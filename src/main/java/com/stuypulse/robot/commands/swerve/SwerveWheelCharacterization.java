@@ -7,26 +7,27 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class SwerveWheelCharacterization extends Command {
     private final CommandSwerveDrivetrain swerve;
-    private double wheelInitial;
+    private double[] wheelInitial;
     private double gyroInitial;
     private double driveRadius;
     private double gyroDelta;
     private double wheelDelta;
     private double wheelRadius;
+    private double[] wheelCurrent;
 
     public SwerveWheelCharacterization() { 
         swerve = CommandSwerveDrivetrain.getInstance();
         gyroInitial = swerve.getPigeon2().getRotation2d().getRadians();
-        wheelInitial = swerve.getModule(0).getDriveMotor().getPosition().getValueAsDouble() * 2 * Math.PI;
+        wheelInitial = swerve.getRadiusCharacterizationModulePositions();
         driveRadius = Math.sqrt(17.15 * 17.15 + 19.7 * 19.7); // Got from TunerConstants, field is private. 
         addRequirements(swerve);
     }
 
-    @Override
-    public void initialize() {
-        gyroInitial = swerve.getPigeon2().getRotation2d().getRadians();
-        wheelInitial = swerve.getModule(0).getDriveMotor().getPosition().getValueAsDouble();
-    }
+    // @Override
+    // public void initialize() {
+    //     gyroInitial = swerve.getPigeon2().getRotation2d().getRadians();
+    //     wheelInitial = swerve.getRadiusCharacterizationModulePositions();
+    // }
 
     @Override
     public void execute() {
@@ -37,7 +38,10 @@ public class SwerveWheelCharacterization extends Command {
         );
         
         gyroDelta = swerve.getPigeon2().getRotation2d().getRadians() - gyroInitial;
-        wheelDelta = swerve.getModule(0).getDriveMotor().getPosition().getValueAsDouble() * 2 * Math.PI - wheelInitial;
+        wheelCurrent = swerve.getRadiusCharacterizationModulePositions();
+        for(int i = 0; i < 4; i++){
+           wheelDelta += (wheelCurrent[i] - wheelInitial[i]) / 4;
+        }
         wheelRadius = gyroDelta * driveRadius / wheelDelta;
 
         SmartDashboard.putNumber("Radius Characterization/Radius", wheelRadius);
@@ -45,6 +49,6 @@ public class SwerveWheelCharacterization extends Command {
         SmartDashboard.putNumber("Radius Characterization/Wheel Delta", wheelDelta);
     }
 
-
+    
 }
 
