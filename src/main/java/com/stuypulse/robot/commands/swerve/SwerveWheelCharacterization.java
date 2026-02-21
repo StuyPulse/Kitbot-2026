@@ -2,14 +2,20 @@ package com.stuypulse.robot.commands.swerve;
 
 import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class SwerveWheelCharacterization extends Command {
 
-    private static final double ROTATIONAL_RATE = 0.5; // rad/s
-    private static final double DRIVE_RADIUS = Math.sqrt(17.15 * 17.15 + 19.7 * 19.7) * 0.0254; // convert cm -> meters if needed
+    private static final double ROTATIONAL_RATE = 1.0; // rad/s
+    private static final double DRIVE_RADIUS = Math.sqrt(9.25 * 9.25 + 15.25 * 15.25) * 0.0254; // imperically found track width
+    private static final double RAMP_RATE = 0.05;
+    private final Timer timer = new Timer();
+
+    private final SlewRateLimiter limiter = new SlewRateLimiter(RAMP_RATE);
 
     private final CommandSwerveDrivetrain swerve;
 
@@ -24,6 +30,8 @@ public class SwerveWheelCharacterization extends Command {
 
     @Override
     public void initialize() {
+        timer.restart();
+        limiter.reset(0.0);
         wheelInitial = swerve.getRadiusCharacterizationModulePositions();
         lastAngle = swerve.getPigeon2().getRotation2d();
         gyroDelta = 0.0;
@@ -31,12 +39,14 @@ public class SwerveWheelCharacterization extends Command {
 
     @Override
     public void execute() {
+        double speed = limiter.calculate(ROTATIONAL_RATE);
         swerve.setControl(swerve.getFieldCentricSwerveRequest()
             .withVelocityX(0.0)
             .withVelocityY(0.0)
-            .withRotationalRate(ROTATIONAL_RATE)
+            .withRotationalRate(speed)
         );
 
+        if (timer.get() > 1.0) {
         Rotation2d currentAngle = swerve.getPigeon2().getRotation2d();
         gyroDelta += Math.abs(currentAngle.minus(lastAngle).getRadians());
         lastAngle = currentAngle;
@@ -44,14 +54,16 @@ public class SwerveWheelCharacterization extends Command {
         double[] wheelCurrent = swerve.getRadiusCharacterizationModulePositions();
         double wheelDelta = 0.0;
         for (int i = 0; i < 4; i++) {
+            System.out.println("Wheel Current " + i + " " + wheelCurrent[i]);
+            System.out.println("Wheel Initial " + i + " " + wheelInitial[i]);
             wheelDelta += Math.abs(wheelCurrent[i] - wheelInitial[i]) / 4.0;
         }
 
-        double wheelRadius = (gyroDelta * DRIVE_RADIUS) / wheelDelta;
+        double wheelRadius = (gyroDelta * DRIVE_RADIUS) / wheelDelta; 
 
         SmartDashboard.putNumber("Radius Characterization/Radius", wheelRadius);
         SmartDashboard.putNumber("Radius Characterization/Gyro Delta", gyroDelta);
-        SmartDashboard.putNumber("Radius Characterization/Wheel Delta", wheelDelta);
+        SmartDashboard.putNumber("Radius Characterization/Wheel Delta", wheelDelta);}
     }
 
     @Override
@@ -59,9 +71,12 @@ public class SwerveWheelCharacterization extends Command {
         swerve.setControl(swerve.getFieldCentricSwerveRequest()
         .withVelocityX(0).withVelocityY(0).withRotationalRate(0));
         double[] wheelCurrent = swerve.getRadiusCharacterizationModulePositions();
+        
         double wheelDelta = 0.0;
         for (int i = 0; i < 4; i++) {
-            wheelDelta += Math.abs(wheelCurrent[i] - wheelInitial[i]) / 4.0;
+            System.out.println("Wheel Current " + i + " " + wheelCurrent[i]);
+            System.out.println("Wheel Initial " + i + " " + wheelInitial[i]);
+            wheelDelta += (Math.abs(wheelCurrent[i] - wheelInitial[i]) / 4.0);
         }
 
         double wheelRadius = (gyroDelta * DRIVE_RADIUS) / wheelDelta;
@@ -75,5 +90,4 @@ public class SwerveWheelCharacterization extends Command {
     @Override
     public boolean isFinished() {
         return false; // driver cancels manually
-    }
-}
+    } }

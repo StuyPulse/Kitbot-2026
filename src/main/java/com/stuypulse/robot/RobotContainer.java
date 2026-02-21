@@ -129,7 +129,7 @@ public class RobotContainer {
         autonChooser.addOption("Swerve Dynamic Forward", swerve.sysIdDynamic(Direction.kForward));
         autonChooser.addOption("Swerve Dynamic Backward", swerve.sysIdDynamic(Direction.kReverse));
         
-        autonChooser.addOption("Wheel Characterization",new SwerveWheelCharacterization());
+        autonChooser.addOption("Wheel Characterization", new SwerveWheelCharacterization());
 
         AutonConfig STRAIGHT_TEST = new AutonConfig("Straight Line Odometry Test", WheelTestAuton::new,
             "Example Path");
