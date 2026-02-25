@@ -22,6 +22,7 @@ public class SwerveWheelCharacterization extends Command {
     private double[] wheelInitial;
     private Rotation2d lastAngle;
     private double gyroDelta;
+    private boolean initalReading;
 
     public SwerveWheelCharacterization() {
         swerve = CommandSwerveDrivetrain.getInstance();
@@ -32,9 +33,8 @@ public class SwerveWheelCharacterization extends Command {
     public void initialize() {
         timer.restart();
         limiter.reset(0.0);
-        wheelInitial = swerve.getRadiusCharacterizationModulePositions();
-        lastAngle = swerve.getPigeon2().getRotation2d();
         gyroDelta = 0.0;
+        initalReading = false;
     }
 
     @Override
@@ -47,6 +47,13 @@ public class SwerveWheelCharacterization extends Command {
         );
 
         if (timer.get() > 1.0) {
+            if (!initalReading) {
+                wheelInitial = swerve.getRadiusCharacterizationModulePositions();
+                lastAngle = swerve.getPigeon2().getRotation2d();
+                gyroDelta = 0.0;
+                initalReading = true;
+            }
+        
         Rotation2d currentAngle = swerve.getPigeon2().getRotation2d();
         gyroDelta += Math.abs(currentAngle.minus(lastAngle).getRadians());
         lastAngle = currentAngle;
@@ -54,14 +61,15 @@ public class SwerveWheelCharacterization extends Command {
         double[] wheelCurrent = swerve.getRadiusCharacterizationModulePositions();
         double wheelDelta = 0.0;
         for (int i = 0; i < 4; i++) {
-            System.out.println("Wheel Current " + i + " " + wheelCurrent[i]);
-            System.out.println("Wheel Initial " + i + " " + wheelInitial[i]);
+            // System.out.println("Wheel Current " + i + " " + wheelCurrent[i]);
+            // System.out.println("Wheel Initial " + i + " " + wheelInitial[i]);
             wheelDelta += Math.abs(wheelCurrent[i] - wheelInitial[i]) / 4.0;
         }
 
         double wheelRadius = (gyroDelta * DRIVE_RADIUS) / wheelDelta; 
 
-        SmartDashboard.putNumber("Radius Characterization/Radius", wheelRadius);
+        SmartDashboard.putNumber("Radius Characterization/Radius (m)", wheelRadius);
+        SmartDashboard.putNumber("Radius Characterization/Radius (in.)", wheelRadius * 39.3701);
         SmartDashboard.putNumber("Radius Characterization/Gyro Delta", gyroDelta);
         SmartDashboard.putNumber("Radius Characterization/Wheel Delta", wheelDelta);}
     }
