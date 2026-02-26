@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class SwerveWheelCharacterization extends Command {
 
     private static final double ROTATIONAL_RATE = 1.0; // rad/s
-    private static final double DRIVE_RADIUS = Math.sqrt(9.25 * 9.25 + 15.25 * 15.25) * 0.0254; // imperically found track width
+    private static final double DRIVE_RADIUS = Math.sqrt(9.375 * 9.375 + 15.375 * 15.375) * 0.0254; // emperically found track width
     private static final double RAMP_RATE = 0.05;
     private final Timer timer = new Timer();
 

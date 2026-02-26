@@ -424,7 +424,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public double[] getRadiusCharacterizationModulePositions(){
         double[] positions = new double[4];
         for(int i = 0; i < 4; i++){
-            positions[i] = getModule(i).getDriveMotor().getPosition().getValueAsDouble() * 2 * Math.PI;
+            positions[i] = getModule(i).getDriveMotor().getPosition().getValueAsDouble() * 2 * Math.PI / 6.12;
         }
         return positions;
     }
