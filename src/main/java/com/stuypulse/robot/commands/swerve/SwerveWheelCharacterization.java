@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class SwerveWheelCharacterization extends Command {
 
     private static final double ROTATIONAL_RATE = 1.0; // rad/s
-    private static final double DRIVE_RADIUS = Math.sqrt(9.375 * 9.375 + 15.375 * 15.375) * 0.0254; // emperically found track width
+    private static final double DRIVE_RADIUS = Math.sqrt(9.376 * 9.376 + 15.375 * 15.375) * 0.0254; // found from CAD
     private static final double RAMP_RATE = 0.05;
-    private final Timer timer = new Timer();
 
+    private final Timer timer = new Timer();
     private final SlewRateLimiter limiter = new SlewRateLimiter(RAMP_RATE);
 
     private final CommandSwerveDrivetrain swerve;
@@ -61,8 +61,6 @@ public class SwerveWheelCharacterization extends Command {
         double[] wheelCurrent = swerve.getRadiusCharacterizationModulePositions();
         double wheelDelta = 0.0;
         for (int i = 0; i < 4; i++) {
-            // System.out.println("Wheel Current " + i + " " + wheelCurrent[i]);
-            // System.out.println("Wheel Initial " + i + " " + wheelInitial[i]);
             wheelDelta += Math.abs(wheelCurrent[i] - wheelInitial[i]) / 4.0;
         }
 
@@ -82,8 +80,6 @@ public class SwerveWheelCharacterization extends Command {
         
         double wheelDelta = 0.0;
         for (int i = 0; i < 4; i++) {
-            System.out.println("Wheel Current " + i + " " + wheelCurrent[i]);
-            System.out.println("Wheel Initial " + i + " " + wheelInitial[i]);
             wheelDelta += (Math.abs(wheelCurrent[i] - wheelInitial[i]) / 4.0);
         }
 
