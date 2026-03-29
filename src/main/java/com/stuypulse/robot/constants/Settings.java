@@ -23,7 +23,6 @@ public interface Settings {
 
     double DT = 0.020;
     boolean DEBUG_MODE = true;
-    CANBus CANIVORE = new CANBus("Default Name", "./logs/example.hoot");
 
     public interface EnabledSubsystems {
         SmartBoolean SWERVE = new SmartBoolean("Enabled Subsystems/Swerve Is Enabled", true);
@@ -188,6 +187,8 @@ public interface Settings {
             SmartNumber POWER = new SmartNumber("Driver Settings/Turn/Power", 2);
         }
     }  
+
+    
 }
 
 

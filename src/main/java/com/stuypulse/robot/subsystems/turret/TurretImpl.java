@@ -32,8 +32,7 @@ public class TurretImpl extends Turret {
     private Optional<Double> voltageOverride;
 
     public TurretImpl() {
-        CANBus canbus = Settings.CANIVORE;
-        turretMotor = new TalonFX(Ports.Turret.TURRET_MOTOR, canbus);
+        turretMotor = new TalonFX(Ports.Turret.TURRET_MOTOR);
         turretMotor.setPosition(0.0); //TODO: encoderless only
 
         Motors.Turret.MOTOR_CONFIG.configure(turretMotor);

@@ -47,7 +47,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain swerve = CommandSwerveDrivetrain.getInstance();
     // public final LimelightVision limelight = LimelightVision.getInstance();
     public final Superstructure superstructure = Superstructure.getInstance();
-    public final Turret turret = Turret.getInstance();
+    //public final Turret turret = Turret.getInstance();
     private final ClimberHopper climberHopper = ClimberHopper.getInstance();
 
     // Autons
@@ -79,11 +79,11 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         // TODO: Put HopperClimber button bindings
-        driver.getLeftBumper()
-            .whileTrue(new ClimberUp());
+        // driver.getLeftBumper()
+        //     .whileTrue(new ClimberUp());
 
-        driver.getRightBumper()
-            .whileTrue(new ClimberDown());
+        // driver.getRightBumper()
+        //     .whileTrue(new ClimberDown());
 
         // driver.getTopButton()
         //     .whileTrue(new SuperstructureShoot())
@@ -110,11 +110,11 @@ public class RobotContainer {
         driver.getDPadUp()
                 .onTrue(new SwerveResetRotation());
 
-        driver.getLeftButton().whileTrue(new TurretShoot())
-                .onFalse(new TurretIdle());
+        // driver.getLeftButton().whileTrue(new TurretShoot())
+        //         .onFalse(new TurretIdle());
 
-        driver.getRightButton().whileTrue(new TurretFerry())
-                .onFalse(new TurretIdle());
+        // driver.getRightButton().whileTrue(new TurretFerry())
+        //         .onFalse(new TurretIdle());
     }
 
     /**************/
